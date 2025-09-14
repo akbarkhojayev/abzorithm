@@ -1,0 +1,21 @@
+# Minimal Python image for code execution
+FROM python:3.11-slim
+
+# Non-root user
+RUN groupadd -r codeuser && useradd -r -g codeuser codeuser
+
+# Working directory
+WORKDIR /app
+
+# Code execution script
+COPY run_code.py .
+
+# Permissions
+RUN chown codeuser:codeuser /app/run_code.py
+RUN chmod +x /app/run_code.py
+
+# Non-root user
+USER codeuser
+
+# Default command
+CMD ["python3", "run_code.py"]

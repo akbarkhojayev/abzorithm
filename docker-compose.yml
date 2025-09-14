@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  abzorithm:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=True
+    command: python manage.py runserver 0.0.0.0:8000
+    
+  code-executor:
+    build: 
+      context: .
+      dockerfile: Dockerfile.executor
+    command: python3 run_code.py
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+    # Security settings
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+    user: "1000:1000"
+    network_mode: "none"  # No network access
