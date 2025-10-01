@@ -11,7 +11,7 @@ def run_python_function_docker(user_code: str, func_name: str, test_input: str, 
     try:
         # Docker container ishga tushirish
         result = subprocess.run([
-            'sudo', 'docker', 'run', 
+            'docker', 'run', 
             '--rm',  # Container'ni avtomatik o'chirish
             '--memory=200m',  # 200MB RAM cheklash
             '--cpus=2',  # CPU cheklash
@@ -48,7 +48,7 @@ def build_docker_image():
     """
     try:
         result = subprocess.run([
-            'sudo', 'docker', 'build', 
+            'docker', 'build', 
             '-t', 'abzorithm_code_executor',
             '-f', 'Dockerfile.executor',
             '.'

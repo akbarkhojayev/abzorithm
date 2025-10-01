@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-"""
-Xavfsiz kod ishga tushirish uchun Docker container script
-"""
 import sys
 import json
 import ast
@@ -31,9 +27,8 @@ def run_user_code(user_code: str, test_input: str, expected_output: str, timeout
         resource.setrlimit(resource.RLIMIT_FSIZE, (5 * 1024 * 1024, 5 * 1024 * 1024))  # 5MB file size
         resource.setrlimit(resource.RLIMIT_NPROC, (20, 20))  # 20 process
     except (OSError, ValueError):
-        pass  # Resource limits not supported on this system
-    
-    # Input parsing
+        pass
+
     input_lines = test_input.replace('\r', '').strip().split("\n")
     args = []
     
@@ -41,8 +36,7 @@ def run_user_code(user_code: str, test_input: str, expected_output: str, timeout
         x = x.strip()
         if not x:
             continue
-            
-        # List format parsing
+
         if "[" in x and "]" in x:
             try:
                 if " = [" in x:
@@ -58,8 +52,7 @@ def run_user_code(user_code: str, test_input: str, expected_output: str, timeout
                     continue
             except:
                 pass
-        
-        # Comma-separated format
+
         if "," in x and not "=" in x and not "[" in x and not "]" in x:
             try:
                 nums = [int(item.strip()) for item in x.split(",")]
@@ -67,8 +60,7 @@ def run_user_code(user_code: str, test_input: str, expected_output: str, timeout
                 continue
             except:
                 pass
-        
-        # Multiple parameters
+
         if "," in x and "=" in x and "[" in x and "]" in x:
             try:
                 parts = x.split(", ")
@@ -86,8 +78,7 @@ def run_user_code(user_code: str, test_input: str, expected_output: str, timeout
                 continue
             except:
                 pass
-        
-        # JSON parsing
+
         try:
             parsed = json.loads(x)
             if isinstance(parsed, (str, int, float, bool, type(None), list, dict)):
@@ -102,8 +93,7 @@ def run_user_code(user_code: str, test_input: str, expected_output: str, timeout
                     args.append(int(x))
             except ValueError:
                 args.append(x)
-    
-    # Safe argument formatting
+
     def _safe_literal(val):
         if isinstance(val, str):
             return json.dumps(val, ensure_ascii=False)
@@ -119,7 +109,7 @@ def run_user_code(user_code: str, test_input: str, expected_output: str, timeout
     except ValueError as e:
         return False, "InvalidInput", f"Invalid argument: {str(e)}", 0
 
-    # Xavfsiz kod wrapper
+
     code_wrapper = f"""
 import sys
 import json
@@ -162,7 +152,6 @@ if __name__ == "__main__":
         sys.stderr.write(f"Error: {{error_msg}}")
 """
 
-    # Temporary file yaratish
     try:
         with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
             f.write(code_wrapper)
@@ -175,7 +164,6 @@ if __name__ == "__main__":
 
     start_time = time.time()
     try:
-        # Subprocess ishga tushirish
         import subprocess
         result = subprocess.run(
             [sys.executable, temp_path],
@@ -191,12 +179,10 @@ if __name__ == "__main__":
             error_msg = result.stderr.replace('\n', ' ').replace('\r', ' ')[:200]
             return False, "RuntimeError", f"Runtime error: {error_msg}", exec_time
 
-        # Output processing
         output = result.stdout.strip()
         if len(output) > 1000:
             return False, "OutputError", "Output too large", exec_time
 
-        # Expected output parsing
         try:
             expected_json = json.loads(expected_output)
         except json.JSONDecodeError:

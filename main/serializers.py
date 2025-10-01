@@ -43,7 +43,6 @@ class SubmissionSerializer(serializers.ModelSerializer):
         model = Submission
         fields = '__all__'
 
-
 class SubmissionCreateSerializer(serializers.ModelSerializer):
     code = serializers.CharField(required=False, allow_blank=True)
     template_code = serializers.SerializerMethodField(read_only=True)
@@ -62,7 +61,6 @@ class SubmissionCreateSerializer(serializers.ModelSerializer):
             return generate_code_template(problem.function_name, input_example)
         except Exception:
             return generate_code_template('solve', '')
-
 
 class SubmissionListSerializer(serializers.ModelSerializer):
     class Meta:

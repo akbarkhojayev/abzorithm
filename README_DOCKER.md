@@ -14,7 +14,7 @@ docker-compose up -d
 # 3. Test qilish
 python3 test_docker.py
 ```
-
+p
 ## 📁 Fayl Tuzilishi
 
 ```

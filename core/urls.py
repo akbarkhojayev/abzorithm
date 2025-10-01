@@ -32,6 +32,7 @@ urlpatterns += [
     path("users/register/", UserCreateView.as_view(), name="user-register"),
     path("users/", UserListView.as_view(), name="user-list"),
     path("users/<int:pk>/", UserDetailView.as_view(), name="user-detail"),
+    path("users/me/", CurrentUserView.as_view(), name="current-user"),
     path("users/me/update/", UserUpdateView.as_view(), name="user-update"),
     path("leaderboard/", LeaderboardView.as_view(), name="leaderboard"),
     path("problems/", ProblemList.as_view(), name="problem-list"),

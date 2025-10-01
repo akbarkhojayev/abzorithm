@@ -1,11 +1,6 @@
-#!/usr/bin/env python3
-"""
-Docker yechimini test qilish uchun script
-"""
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 from main.utils_docker import run_python_function_docker
 
 def test_docker_execution():

@@ -28,6 +28,13 @@ class UserUpdateView(generics.UpdateAPIView):
     def get_object(self):
         return self.request.user
 
+class CurrentUserView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
+
 class ProblemList(generics.ListAPIView):
     queryset = Problem.objects.all().order_by('-created_at')
     serializer_class = ProblemSerializer
@@ -106,7 +113,6 @@ class SubmissionCreateView(generics.CreateAPIView):
         user = submission.user
         testcases = problem.testcases.all()
 
-        # Agar kod bo‘sh bo‘lsa -> template generate qilamiz
         if not submission.code or not str(submission.code).strip():
             input_example = getattr(problem, "input_example", "")
             submission.code = generate_code_template(problem.function_name, input_example)
@@ -115,7 +121,6 @@ class SubmissionCreateView(generics.CreateAPIView):
         total_exec_time = 0
         failed_test = None
 
-        # Har bir testni ishlatamiz
         for index, tc in enumerate(testcases, start=1):
             ok, status_str, output, exec_time = run_python_function(
                 submission.code,
@@ -126,7 +131,6 @@ class SubmissionCreateView(generics.CreateAPIView):
             total_exec_time += exec_time
 
             if not ok:
-                # ❌ Xato chiqqan joyda to‘xtaymiz
                 submission.status = status_str
                 submission.execution_time = total_exec_time
                 submission.failed_test = index
@@ -146,7 +150,6 @@ class SubmissionCreateView(generics.CreateAPIView):
                     "user_score": user.score,
                 }, status=status.HTTP_201_CREATED)
 
-        # ✅ Agar shu joyga yetgan bo‘lsa — hammasi o‘tdi
         submission.status = "Accepted"
         submission.execution_time = total_exec_time
         submission.failed_test = None
@@ -155,7 +158,6 @@ class SubmissionCreateView(generics.CreateAPIView):
         submission.error_output = None
         submission.save()
 
-        # ✅ Faqat birinchi Accepted bo‘lsa score +1
         already_accepted = Submission.objects.filter(
             user=user,
             problem=problem,
@@ -188,7 +190,6 @@ class SubmissionTemplateView(generics.RetrieveAPIView):
             "problem": problem.id,
             "template_code": template
         })
-
 class LeaderboardView(generics.ListAPIView):
     queryset = User.objects.all().order_by('-score', 'username')
     serializer_class = UserSerializer

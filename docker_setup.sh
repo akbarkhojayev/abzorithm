@@ -25,11 +25,11 @@ else
     exit 1
 fi
 
-echo "🚀 Starting services with docker-compose..."
-docker-compose up -d
+echo "🚀 Starting services with docker compose..."
+docker compose up -d
 
 echo "✅ Setup complete! Platform is running at http://localhost:8000"
 echo ""
-echo "To stop the platform: docker-compose down"
-echo "To view logs: docker-compose logs -f"
-echo "To rebuild: docker-compose up --build"
+echo "To stop the platform: docker compose down"
+echo "To view logs: docker compose logs -f"
+echo "To rebuild: docker compose up --build"
