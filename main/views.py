@@ -39,11 +39,23 @@ class ProblemList(generics.ListAPIView):
     queryset = Problem.objects.all().order_by('-created_at')
     serializer_class = ProblemSerializer
     permission_classes = (AllowAny,)
+    lookup_field = 'slug'
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 class ProblemDetail(generics.RetrieveAPIView):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     permission_classes = (IsAuthenticated,)
+    lookup_field = 'slug'
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 class TestCaseList(generics.ListAPIView):
     queryset = TestCase.objects.all().order_by('order')
@@ -96,9 +108,15 @@ class SubmissionDetailView(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
 
 class SubmissionListView(generics.ListAPIView):
-    queryset = Submission.objects.all().order_by('-submitted_at')
     serializer_class = SubmissionListSerializer
     permission_classes = (IsAuthenticated,)
+    
+    def get_queryset(self):
+        queryset = Submission.objects.all().order_by('-submitted_at')
+        user_id = self.request.query_params.get('user', None)
+        if user_id is not None:
+            queryset = queryset.filter(user_id=user_id)
+        return queryset
 
 class SubmissionCreateView(generics.CreateAPIView):
     queryset = Submission.objects.all()

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import ProblemsPage from './pages/ProblemsPage';
 import ProblemSolverPage from './pages/ProblemSolverPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import ProfilePage from './pages/ProfilePage';
+import Footer from './components/Footer';
 import { api } from './services/api';
+import './styles/Footer.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,10 +48,21 @@ function App() {
         />
         <Route 
           path="/problems" 
-          element={isAuthenticated ? <ProblemsPage /> : <Navigate to="/login" />} 
+          element={
+            isAuthenticated ? (
+              <div className="app-container">
+                <main className="main-content">
+                  <ProblemsPage />
+                </main>
+                <Footer />
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          } 
         />
         <Route 
-          path="/problem/:id" 
+          path="/problem/:slug" 
           element={isAuthenticated ? <ProblemSolverPage /> : <Navigate to="/login" />} 
         />
         <Route 
@@ -60,7 +73,7 @@ function App() {
           path="/profile" 
           element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />} 
         />
-        <Route path="/" element={<Navigate to={isAuthenticated ? "/problems" : "/login"} />} />
+        <Route path="/" element={<Navigate to="/problems" />} />
       </Routes>
     </Router>
   );

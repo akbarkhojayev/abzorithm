@@ -15,8 +15,12 @@ function ProfilePage() {
     username: '',
     email: '',
     bio: '',
-    country: ''
+    country: '',
+    avatar: null
   });
+  
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [recentSubmissions, setRecentSubmissions] = useState([]);
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -36,12 +40,30 @@ function ProfilePage() {
         username: userData.username || '',
         email: userData.email || '',
         bio: userData.bio || '',
-        country: userData.country || ''
+        country: userData.country || '',
+        avatar: null
       });
+      setAvatarPreview(userData.avatar);
+      
+      // Load recent submissions
+      try {
+        const submissions = await api.getUserSubmissions(userData.id);
+        setRecentSubmissions(submissions.slice(0, 5));
+      } catch (err) {
+        console.error('Failed to load submissions:', err);
+      }
     } catch (error) {
       console.error('Failed to load user:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileData({...profileData, avatar: file});
+      setAvatarPreview(URL.createObjectURL(file));
     }
   };
 
@@ -51,11 +73,17 @@ function ProfilePage() {
     setMessage({ type: '', text: '' });
 
     try {
-      // Note: Backend needs update endpoint
-      await api.client.patch('/users/me/', {
-        email: profileData.email,
-        bio: profileData.bio,
-        country: profileData.country
+      const formData = new FormData();
+      formData.append('bio', profileData.bio);
+      formData.append('country', profileData.country);
+      if (profileData.avatar) {
+        formData.append('avatar', profileData.avatar);
+      }
+      
+      await api.client.patch('/users/me/update/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -130,18 +158,23 @@ function ProfilePage() {
           </button>
         </div>
         <div className="nav-user">
-          <button onClick={handleLogout} className="btn-logout">
+          <button onClick={handleLogout} className="btn-logout-simple">
             <i className="fas fa-sign-out-alt"></i>
             <span>Logout</span>
           </button>
         </div>
       </nav>
 
-      <div className="profile-container">
+      <div className="profile-main-container">
+        <div className="profile-container">
         <div className="profile-sidebar">
           <div className="profile-card">
             <div className="profile-avatar">
-              {user?.username?.charAt(0).toUpperCase()}
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.username} />
+              ) : (
+                user?.username?.charAt(0).toUpperCase()
+              )}
             </div>
             <h2 className="profile-name">{user?.username}</h2>
             <p className="profile-email">{user?.email}</p>
@@ -154,15 +187,6 @@ function ProfilePage() {
                 <div className="stat-info">
                   <div className="stat-value">{user?.score || 0}</div>
                   <div className="stat-label">Score</div>
-                </div>
-              </div>
-              <div className="stat-box">
-                <div className="stat-icon">
-                  <i className="fas fa-check-circle"></i>
-                </div>
-                <div className="stat-info">
-                  <div className="stat-value">0</div>
-                  <div className="stat-label">Solved</div>
                 </div>
               </div>
             </div>
@@ -199,6 +223,37 @@ function ProfilePage() {
               <div className="form-section">
                 <h3>Personal Information</h3>
                 
+                <div className="form-group avatar-upload">
+                  <label>Profile Picture</label>
+                  <div className="avatar-upload-container">
+                    <div className="avatar-preview">
+                      {avatarPreview ? (
+                        <img src={avatarPreview} alt="Avatar preview" />
+                      ) : (
+                        <div className="avatar-placeholder">
+                          {user?.username?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="avatar-upload-actions">
+                      <h4>Upload Your Photo</h4>
+                      <p>Choose a photo that represents you</p>
+                      <input
+                        type="file"
+                        id="avatar-input"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        style={{ display: 'none' }}
+                      />
+                      <label htmlFor="avatar-input" className="btn-upload">
+                        <i className="fas fa-camera"></i>
+                        <span>Choose Photo</span>
+                      </label>
+                      <small>JPG, PNG or GIF (Max 5MB)</small>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="form-group">
                   <label>Username</label>
                   <input
@@ -215,9 +270,10 @@ function ProfilePage() {
                   <input
                     type="email"
                     value={profileData.email}
-                    onChange={(e) => setProfileData({...profileData, email: e.target.value})}
-                    required
+                    disabled
+                    className="disabled"
                   />
+                  <small>Email cannot be changed</small>
                 </div>
 
                 <div className="form-group">
@@ -310,6 +366,55 @@ function ProfilePage() {
             </form>
           )}
         </div>
+        </div>
+
+        {/* Recent Submissions Sidebar */}
+        <aside className="activity-sidebar">
+          <div className="activity-card">
+            <h3>
+              <i className="fas fa-history"></i>
+              Recent Submissions
+            </h3>
+            
+            {recentSubmissions.length === 0 ? (
+              <div className="empty-activity">
+                <i className="fas fa-inbox"></i>
+                <p>No submissions yet</p>
+                <button onClick={() => navigate('/problems')} className="btn-start">
+                  <i className="fas fa-code"></i>
+                  Start Solving
+                </button>
+              </div>
+            ) : (
+              <div className="activity-list">
+                {recentSubmissions.map((submission) => (
+                  <div key={submission.id} className="activity-item">
+                    <div className="activity-icon">
+                      <i className={`fas fa-${submission.status === 'Accepted' ? 'check-circle' : 'times-circle'}`}></i>
+                    </div>
+                    <div className="activity-info">
+                      <div className="activity-title">{submission.problem_title || `Problem #${submission.problem}`}</div>
+                      <div className="activity-meta">
+                        <span className={`status-badge ${submission.status.toLowerCase().replace(' ', '-')}`}>
+                          {submission.status}
+                        </span>
+                        <span className="activity-time">
+                          {new Date(submission.submitted_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {submission.execution_time && (
+                        <div className="activity-stats">
+                          <i className="fas fa-bolt"></i>
+                          {submission.execution_time.toFixed(2)}ms
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </aside>
       </div>
     </div>
   );

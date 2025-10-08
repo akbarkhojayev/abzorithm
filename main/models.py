@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.text import slugify
 
 class User(AbstractUser):
     bio = models.TextField(blank=True, null=True)
@@ -25,9 +26,22 @@ class Problem(models.Model):
     tags = models.CharField(max_length=255, blank=True)
     function_name = models.CharField(max_length=50, default="Solution().solve")
     created_at = models.DateTimeField(auto_now_add=True)
+    slug = models.SlugField(max_length=100, unique=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            num = 1
+            while Problem.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
+
 
 
 class TestCase(models.Model):
@@ -51,8 +65,7 @@ class Submission(models.Model):
 
     LANGUAGE_CHOICES = [
         ('python', 'Python'),
-        ('cpp', 'C++'),
-        ('java', 'Java'),
+        ('javascript', 'Javascript'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")
@@ -64,12 +77,10 @@ class Submission(models.Model):
     execution_time = models.FloatField(null=True, blank=True)
     memory_used = models.FloatField(null=True, blank=True)
 
-    # ❗ LeetCode uslubidagi qo‘shimchalar
-    failed_test = models.IntegerField(null=True, blank=True)   # Qaysi testda yiqildi
-    error_input = models.TextField(null=True, blank=True)      # Test input
-    error_expected = models.TextField(null=True, blank=True)   # Expected natija
-    error_output = models.TextField(null=True, blank=True)     # Sizning chiqaringan natijangiz
+    failed_test = models.IntegerField(null=True, blank=True)
+    error_input = models.TextField(null=True, blank=True)
+    error_expected = models.TextField(null=True, blank=True)
+    error_output = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.problem.title} ({self.status})"
-

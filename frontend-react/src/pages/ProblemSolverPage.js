@@ -6,7 +6,7 @@ import { api } from '../services/api';
 import './ProblemSolverPage.css';
 
 function ProblemSolverPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [problem, setProblem] = useState(null);
   const [code, setCode] = useState('');
@@ -14,33 +14,59 @@ function ProblemSolverPage() {
   const [loading, setLoading] = useState(false);
   const [testCases, setTestCases] = useState([]);
   const [activeTab, setActiveTab] = useState('testcase');
+  const [descriptionTab, setDescriptionTab] = useState('description');
   const [leftWidth, setLeftWidth] = useState(50);
   const [testHeight, setTestHeight] = useState(250);
+  const [fontSize, setFontSize] = useState(14);
+  const [originalCode, setOriginalCode] = useState('');
 
   useEffect(() => {
     loadProblem();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [slug]);
+
+  const increaseFontSize = () => {
+    if (fontSize < 24) {
+      setFontSize(fontSize + 2);
+    }
+  };
+
+  const decreaseFontSize = () => {
+    if (fontSize > 10) {
+      setFontSize(fontSize - 2);
+    }
+  };
+
+  const resetCode = () => {
+    setCode(originalCode);
+    setResult(null);
+    setActiveTab('testcase');
+  };
 
   const loadProblem = async () => {
     try {
-      const [problemData, template, testCasesData, userData] = await Promise.all([
-        api.getProblem(id),
-        api.getTemplate(id),
-        api.getTestCases(id),
+      // First get the problem by slug
+      const problemData = await api.getProblem(slug);
+      
+      // Then use the problem ID for template and test cases
+      const [template, testCasesData, userData] = await Promise.all([
+        api.getTemplate(problemData.id),
+        api.getTestCases(problemData.id),
         api.getCurrentUser()
       ]);
       
-      console.log('Problem ID:', id);
+      console.log('Problem Slug:', slug);
+      console.log('Problem ID:', problemData.id);
       console.log('Test Cases:', testCasesData);
       console.log('Test Cases Count:', testCasesData.length);
       
       // Filter test cases for this problem only
-      const filteredTestCases = testCasesData.filter(tc => tc.problem === parseInt(id));
+      const filteredTestCases = testCasesData.filter(tc => tc.problem === problemData.id);
       console.log('Filtered Test Cases:', filteredTestCases);
       
       setProblem(problemData);
       setCode(template.template_code || '');
+      setOriginalCode(template.template_code || '');
       setTestCases(filteredTestCases);
       
       // Update score display
@@ -151,7 +177,7 @@ function ProblemSolverPage() {
     
     try {
       const res = await api.submitCode({ 
-        problem: parseInt(id), 
+        problem: problem.id, 
         code: code 
       });
       setResult(res);
@@ -185,14 +211,11 @@ function ProblemSolverPage() {
       <nav className="navbar solver-navbar">
         <div className="nav-left">
           <button onClick={() => navigate('/problems')} className="btn-back">
-            <i className="fas fa-arrow-left"></i>
-            <span>Back to Problems</span>
+            <i className="fas fa-chevron-left"></i>
           </button>
-          <div className="problem-info">
-            <h2 className="nav-problem-title">{problem.title}</h2>
-            <span className={`nav-difficulty ${problem.difficulty}`}>
-              {problem.difficulty}
-            </span>
+          <div className="nav-brand">
+            <i className="fas fa-code brand-icon"></i>
+            <span className="brand-text">Abzorithm</span>
           </div>
         </div>
         <div className="nav-right">
@@ -205,17 +228,43 @@ function ProblemSolverPage() {
 
       <div className="solver-layout">
         <div className="problem-panel" style={{ width: `${leftWidth}%` }}>
+          {/* Problem Tabs */}
+          <div className="problem-tabs">
+            <button 
+              className={`problem-tab ${descriptionTab === 'description' ? 'active' : ''}`}
+              onClick={() => setDescriptionTab('description')}
+            >
+              <i className="fas fa-file-alt"></i>
+              Description
+            </button>
+            <button 
+              className={`problem-tab ${descriptionTab === 'editorial' ? 'active' : ''}`}
+              onClick={() => setDescriptionTab('editorial')}
+            >
+              <i className="fas fa-book"></i>
+              Editorial
+            </button>
+            <button 
+              className={`problem-tab ${descriptionTab === 'submissions' ? 'active' : ''}`}
+              onClick={() => setDescriptionTab('submissions')}
+            >
+              <i className="fas fa-history"></i>
+              Submissions
+            </button>
+          </div>
+
           <div className="problem-content">
-            <div className="problem-header-section">
-              <div className="problem-meta">
-                <span className={`difficulty-pill ${problem.difficulty}`}>
-                  <i className="fas fa-signal"></i>
-                  {problem.difficulty}
-                </span>
-                <span className="problem-id">Problem #{problem.id}</span>
-              </div>
-              <h1 className="problem-main-title">{problem.title}</h1>
-            </div>
+            {descriptionTab === 'description' && (
+              <>
+                <div className="problem-header-section">
+                  <h1 className="problem-main-title">{problem.title}</h1>
+                  <div className="problem-meta">
+                    <span className={`difficulty-pill ${problem.difficulty}`}>
+                      <i className="fas fa-signal"></i>
+                      {problem.difficulty}
+                    </span>
+                  </div>
+                </div>
 
             <div className="problem-section">
               <div className="section-header">
@@ -245,6 +294,22 @@ function ProblemSolverPage() {
                 </div>
               </div>
             </div>
+              </>
+            )}
+
+            {descriptionTab === 'editorial' && (
+              <div className="empty-state">
+                <i className="fas fa-book"></i>
+                <p>Editorial coming soon...</p>
+              </div>
+            )}
+
+            {descriptionTab === 'submissions' && (
+              <div className="empty-state">
+                <i className="fas fa-history"></i>
+                <p>Your submissions will appear here</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -261,6 +326,32 @@ function ProblemSolverPage() {
               </div>
             </div>
             <div className="editor-actions">
+              <div className="font-size-controls">
+                <button 
+                  onClick={decreaseFontSize}
+                  className="btn-font-size"
+                  title="Decrease Font Size"
+                  disabled={fontSize <= 10}
+                >
+                  <i className="fas fa-minus"></i>
+                </button>
+                <span className="font-size-display">{fontSize}px</span>
+                <button 
+                  onClick={increaseFontSize}
+                  className="btn-font-size"
+                  title="Increase Font Size"
+                  disabled={fontSize >= 24}
+                >
+                  <i className="fas fa-plus"></i>
+                </button>
+                <button 
+                  onClick={resetCode}
+                  className="btn-reset"
+                  title="Reset Code to Template"
+                >
+                  <i className="fas fa-undo"></i>
+                </button>
+              </div>
               <button 
                 onClick={formatCode}
                 className="btn-format"
@@ -269,16 +360,10 @@ function ProblemSolverPage() {
                 <i className="fas fa-magic"></i>
                 <span>Format</span>
               </button>
-              <button 
-                onClick={handleSubmit} 
-                disabled={loading}
-                className="btn-run"
-              >
-                {loading ? '⏳ Running...' : '▶ Run Code'}
-              </button>
             </div>
           </div>
           
+          <div style={{ '--editor-font-size': `${fontSize}px`, flex: 1, display: 'flex', flexDirection: 'column' }}>
           <CodeMirror
             value={code}
             height="100%"
@@ -309,6 +394,7 @@ function ProblemSolverPage() {
               lintKeymap: true,
             }}
           />
+          </div>
 
           <div 
             className="vertical-resizer" 
@@ -332,6 +418,23 @@ function ProblemSolverPage() {
                   Result
                 </button>
               </div>
+              <button 
+                onClick={handleSubmit} 
+                disabled={loading}
+                className="btn-run-main"
+              >
+                {loading ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    <span>Running...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-play"></i>
+                    <span>Run Code</span>
+                  </>
+                )}
+              </button>
             </div>
 
             <div className="test-content">

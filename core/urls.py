@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -36,10 +38,14 @@ urlpatterns += [
     path("users/me/update/", UserUpdateView.as_view(), name="user-update"),
     path("leaderboard/", LeaderboardView.as_view(), name="leaderboard"),
     path("problems/", ProblemList.as_view(), name="problem-list"),
-    path("problems/<int:pk>/", ProblemDetail.as_view(), name="problem-detail"),
+    path("problems/<slug:slug>/", ProblemDetail.as_view(), name="problem-detail"),
     path("testcases/", TestCaseList.as_view(), name="testcase-list"),
     path("submissions/", SubmissionListView.as_view(), name="submission-list"),
     path("submissions/create/", SubmissionCreateView.as_view(), name="submission-create"),
     path("submissions/template/<int:pk>/", SubmissionTemplateView.as_view(), name="submission-template"),
     path("submissions/<int:pk>/", SubmissionDetailView.as_view(), name="submission-detail"),
 ]
+
+# Media files serving in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

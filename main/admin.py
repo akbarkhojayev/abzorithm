@@ -2,10 +2,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, Problem, TestCase, Submission
 
-
-# ====================
-# Custom User Admin
-# ====================
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
@@ -20,26 +16,20 @@ class CustomUserAdmin(UserAdmin):
     ordering = ("-score", "username")
 
 
-# ====================
-# Problem Admin
-# ====================
 class TestCaseInline(admin.TabularInline):
     model = TestCase
-    extra = 1  # yangi qo‘shishda bitta bo‘sh forma chiqadi
-
+    extra = 1
 
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "difficulty", "created_at", "tags")
+    list_display = ("id", "title", "difficulty", "created_at", "tags", "slug")
     list_filter = ("difficulty", "created_at", "tags")
     search_fields = ("title", "description", "tags")
     ordering = ("-created_at",)
-    inlines = [TestCaseInline]  # Problemni ochganda test case’larni ham qo‘shib bo‘ladi
+    inlines = [TestCaseInline]
+    readonly_fields = ("slug",)
 
 
-# ====================
-# TestCase Admin
-# ====================
 @admin.register(TestCase)
 class TestCaseAdmin(admin.ModelAdmin):
     list_display = ("id", "problem", "order", "is_hidden")
@@ -48,9 +38,6 @@ class TestCaseAdmin(admin.ModelAdmin):
     ordering = ("problem", "order")
 
 
-# ====================
-# Submission Admin
-# ====================
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "problem", "status", "language", "execution_time", "memory_used", "submitted_at")

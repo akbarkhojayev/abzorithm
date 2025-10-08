@@ -61,9 +61,11 @@ Abzorithm - bu algoritmik masalalarni yechish va dasturlash ko'nikmalarini oshir
 
 ### 👤 Profile Management
 - View user information
-- Update profile details
+- Update profile details (bio, country)
+- **Avatar upload** - Profile picture management
 - Change password
-- View submission history
+- **Recent activity** - View last 5 submissions
+- User statistics (score, solved problems)
 
 ---
 
@@ -116,6 +118,8 @@ source .venv/bin/activate  # Linux/Mac
 ```bash
 pip install -r requirements.txt
 ```
+
+**Eslatma:** Pillow kutubxonasi profil rasmlari uchun kerak.
 
 ### 4. Database yarating
 ```bash

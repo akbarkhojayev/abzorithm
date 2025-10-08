@@ -22,15 +22,28 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("id", "username", "email", "bio", "avatar", "score", "country")
 
 class UserUpdateSerializer(serializers.ModelSerializer):
+    avatar = serializers.ImageField(required=False, allow_null=True)
+    
     class Meta:
         model = User
         fields = ("id", "username", "email", "bio", "avatar", "country")
         read_only_fields = ("id", "username", "email")
 
 class ProblemSerializer(serializers.ModelSerializer):
+    is_solved = serializers.SerializerMethodField()
+
     class Meta:
         model = Problem
         fields = '__all__'
+
+    def get_is_solved(self, obj):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.submissions.filter(
+                user=request.user,
+                status='Accepted'
+            ).exists()
+        return False
 
 
 class TestCaseSerializer(serializers.ModelSerializer):
@@ -63,6 +76,8 @@ class SubmissionCreateSerializer(serializers.ModelSerializer):
             return generate_code_template('solve', '')
 
 class SubmissionListSerializer(serializers.ModelSerializer):
+    problem_title = serializers.CharField(source='problem.title', read_only=True)
+    
     class Meta:
         model = Submission
         fields = '__all__'

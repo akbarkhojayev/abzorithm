@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = 'http://13.61.149.80';
 
 class API {
   constructor() {
@@ -44,8 +44,8 @@ class API {
     return response.data;
   }
 
-  async getProblem(id) {
-    const response = await this.client.get(`/problems/${id}/`);
+  async getProblem(slug) {
+    const response = await this.client.get(`/problems/${slug}/`);
     return response.data;
   }
 
@@ -85,6 +85,12 @@ class API {
   // Leaderboard
   async getLeaderboard() {
     const response = await this.client.get('/leaderboard/');
+    return response.data;
+  }
+
+  // User submissions
+  async getUserSubmissions(userId) {
+    const response = await this.client.get(`/submissions/?user=${userId}`);
     return response.data;
   }
 }
