@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Problem, TestCase, Submission
+from .models import User, Problem, TestCase, Submission, Example
+
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
@@ -20,13 +21,19 @@ class TestCaseInline(admin.TabularInline):
     model = TestCase
     extra = 1
 
+class ExampleInline(admin.TabularInline):
+    model = Example
+    extra = 1
+    fields = ('ex_input', 'ex_output')
+    show_change_link = True
+
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "difficulty", "created_at", "tags", "slug")
     list_filter = ("difficulty", "created_at", "tags")
     search_fields = ("title", "description", "tags")
     ordering = ("-created_at",)
-    inlines = [TestCaseInline]
+    inlines = [TestCaseInline, ExampleInline]
     readonly_fields = ("slug",)
 
 

@@ -29,8 +29,14 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         fields = ("id", "username", "email", "bio", "avatar", "country")
         read_only_fields = ("id", "username", "email")
 
+class ExampleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Example
+        fields = ['ex_input', 'ex_output']
+
 class ProblemSerializer(serializers.ModelSerializer):
     is_solved = serializers.SerializerMethodField()
+    examples = ExampleSerializer(many=True, read_only=True)
 
     class Meta:
         model = Problem

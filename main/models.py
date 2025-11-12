@@ -42,6 +42,10 @@ class Problem(models.Model):
     def __str__(self):
         return self.title
 
+class Example(models.Model):
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name="examples")
+    ex_input = models.TextField()
+    ex_output = models.TextField()
 
 
 class TestCase(models.Model):
