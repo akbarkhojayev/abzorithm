@@ -12,7 +12,6 @@ from pathlib import Path
 import string
 import ast
 
-# --- Wrapper funksiyasi ---
 import json
 import ast
 import subprocess
@@ -147,7 +146,7 @@ if __name__ == "__main__":
         if is_equal:
             return True, "Accepted", output, exec_time
         else:
-            return False, "Wrong Answer", f"Got: {output}, Expected: {expected_output_clean}", exec_time
+            return False, "Wrong Answer", f"Output: {output}", exec_time
 
     except subprocess.TimeoutExpired:
         return False, "TimeLimit", "⏰ Time Limit Exceeded", timeout
@@ -335,3 +334,206 @@ def generate_code_template(function_name: str, input_example: str, output_exampl
     return template
 
 
+
+
+def generate_javascript_template(function_name: str, input_example: str, output_example: str = "") -> str:
+    """
+    JavaScript template generator - input_example'dan parametrlarni aniqlaydi
+    """
+    # Funksiya nomini tayyorlash
+    name = function_name.strip()
+    if "." in name:
+        try:
+            name = name.split(".")[-1]
+            if name.endswith("()"):
+                name = name[:-2]
+        except Exception:
+            pass
+    if name.endswith("()"):
+        name = name[:-2]
+    method_name = name or "solve"
+
+    # Input example tayyorlash
+    input_example = input_example.strip().replace('\r', '')
+    lines = [line.strip() for line in input_example.split("\n") if line.strip()]
+
+    param_names = []
+    
+    # Case 1: "name = value" format
+    if any("=" in ln for ln in lines):
+        for ln in lines:
+            if "=" in ln:
+                left, right = ln.split("=", 1)
+                pname = left.strip()
+                sanitized = ''.join(ch if ch.isalnum() or ch == '_' else '_' for ch in pname).strip('_') or 'arg'
+                param_names.append(sanitized)
+    # Case 2: JSON yoki dict
+    elif len(lines) == 1:
+        single = lines[0]
+        parsed = None
+        try:
+            parsed = json.loads(single)
+        except Exception:
+            try:
+                parsed = ast.literal_eval(single)
+            except Exception:
+                pass
+
+        if isinstance(parsed, dict) and parsed:
+            param_names = list(parsed.keys())
+        elif isinstance(parsed, list):
+            param_names = ["arr"]
+        elif parsed is not None:
+            param_names = ["a"]
+        else:
+            param_names = ["a"]
+    else:
+        for i in range(len(lines)):
+            param_names.append(string.ascii_lowercase[i])
+
+    params_str = ", ".join(param_names) if param_names else "a, b"
+
+    template = f'''class Solution {{
+    {method_name}({params_str}) {{
+        // Kodingizni shu yerda yozing
+        return 0;
+    }}
+}}
+'''
+    return template
+
+
+def generate_dart_template(function_name: str, input_example: str, output_example: str = "") -> str:
+    """
+    Dart template generator - input_example'dan parametrlarni aniqlaydi
+    """
+    # Funksiya nomini tayyorlash
+    name = function_name.strip()
+    if "." in name:
+        try:
+            name = name.split(".")[-1]
+            if name.endswith("()"):
+                name = name[:-2]
+        except Exception:
+            pass
+    if name.endswith("()"):
+        name = name[:-2]
+    method_name = name or "solve"
+
+    # Input example tayyorlash
+    input_example = input_example.strip().replace('\r', '')
+    lines = [line.strip() for line in input_example.split("\n") if line.strip()]
+
+    param_names = []
+    param_types = []
+    
+    # Case 1: "name = value" format
+    if any("=" in ln for ln in lines):
+        for ln in lines:
+            if "=" in ln:
+                left, right = ln.split("=", 1)
+                pname = left.strip()
+                sanitized = ''.join(ch if ch.isalnum() or ch == '_' else '_' for ch in pname).strip('_') or 'arg'
+                try:
+                    val = ast.literal_eval(right.strip())
+                except Exception:
+                    try:
+                        val = json.loads(right.strip())
+                    except Exception:
+                        val = right.strip()
+                
+                # Dart type mapping
+                dart_type = "dynamic"
+                if isinstance(val, bool):
+                    dart_type = "bool"
+                elif isinstance(val, int):
+                    dart_type = "int"
+                elif isinstance(val, float):
+                    dart_type = "double"
+                elif isinstance(val, str):
+                    dart_type = "String"
+                elif isinstance(val, list):
+                    if val and all(isinstance(x, int) for x in val):
+                        dart_type = "List<int>"
+                    elif val and all(isinstance(x, str) for x in val):
+                        dart_type = "List<String>"
+                    else:
+                        dart_type = "List<dynamic>"
+                
+                param_names.append(sanitized)
+                param_types.append(dart_type)
+    # Case 2: JSON yoki dict
+    elif len(lines) == 1:
+        single = lines[0]
+        parsed = None
+        try:
+            parsed = json.loads(single)
+        except Exception:
+            try:
+                parsed = ast.literal_eval(single)
+            except Exception:
+                pass
+
+        if isinstance(parsed, dict) and parsed:
+            for k, v in parsed.items():
+                dart_type = "dynamic"
+                if isinstance(v, bool):
+                    dart_type = "bool"
+                elif isinstance(v, int):
+                    dart_type = "int"
+                elif isinstance(v, float):
+                    dart_type = "double"
+                elif isinstance(v, str):
+                    dart_type = "String"
+                elif isinstance(v, list):
+                    dart_type = "List<dynamic>"
+                param_names.append(k)
+                param_types.append(dart_type)
+        elif isinstance(parsed, list):
+            param_names = ["arr"]
+            param_types = ["List<dynamic>"]
+        elif parsed is not None:
+            param_names = ["a"]
+            param_types = ["dynamic"]
+        else:
+            param_names = ["a"]
+            param_types = ["dynamic"]
+    else:
+        for i in range(len(lines)):
+            param_names.append(string.ascii_lowercase[i])
+            param_types.append("dynamic")
+
+    if not param_names:
+        param_names = ["a", "b"]
+        param_types = ["dynamic", "dynamic"]
+
+    params_str = ", ".join(
+        f"{t} {n}" for n, t in zip(param_names, param_types)
+    )
+
+    # Output type
+    try:
+        out_val = ast.literal_eval(output_example) if output_example else None
+        if isinstance(out_val, bool):
+            return_type = "bool"
+        elif isinstance(out_val, int):
+            return_type = "int"
+        elif isinstance(out_val, float):
+            return_type = "double"
+        elif isinstance(out_val, str):
+            return_type = "String"
+        elif isinstance(out_val, list):
+            return_type = "List<dynamic>"
+        else:
+            return_type = "dynamic"
+    except Exception:
+        return_type = "dynamic"
+
+    template = f'''class Solution {{
+  {return_type} {method_name}({params_str}) {{
+    // Kodingizni shu yerda yozing
+    return null;
+  }}
+}}
+'''
+    return template

@@ -206,15 +206,12 @@ if __name__ == "__main__":
         if actual_json == expected_json:
             return True, "Accepted", "Test passed", exec_time
         else:
-            expected_str = json.dumps(expected_json, ensure_ascii=False) if expected_json is not None else "None"
             actual_str = json.dumps(actual_json, ensure_ascii=False) if actual_json is not None else "None"
             
-            if len(expected_str) > 100:
-                expected_str = expected_str[:97] + "..."
             if len(actual_str) > 100:
                 actual_str = actual_str[:97] + "..."
                 
-            return False, "Wrong Answer", f"Got: {actual_str}, Expected: {expected_str}", exec_time
+            return False, "Wrong Answer", actual_str, exec_time
 
     except subprocess.TimeoutExpired:
         return False, "Time Limit Exceeded", f"Execution time exceeded {timeout}s", timeout

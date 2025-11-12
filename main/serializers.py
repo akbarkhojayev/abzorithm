@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from main.models import *
-from .utils import generate_code_template
+from .utils import generate_code_template, generate_javascript_template, generate_dart_template
 
 class UserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -71,9 +71,17 @@ class SubmissionCreateSerializer(serializers.ModelSerializer):
         try:
             problem = obj.problem
             input_example = getattr(problem, "input_example", "")
-            return generate_code_template(problem.function_name, input_example)
+            output_example = getattr(problem, "output_example", "")
+            language = obj.language
+            
+            if language == 'javascript':
+                return generate_javascript_template(problem.function_name, input_example, output_example)
+            elif language == 'dart':
+                return generate_dart_template(problem.function_name, input_example, output_example)
+            else:
+                return generate_code_template(problem.function_name, input_example, output_example)
         except Exception:
-            return generate_code_template('solve', '')
+            return generate_code_template('solve', '', '')
 
 class SubmissionListSerializer(serializers.ModelSerializer):
     problem_title = serializers.CharField(source='problem.title', read_only=True)

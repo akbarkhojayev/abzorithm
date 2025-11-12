@@ -1,5 +1,22 @@
-# Minimal Python image for code execution
-FROM python:3.11-slim
+# Multi-language code execution image
+FROM ubuntu:22.04
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    nodejs \
+    npm \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Dart
+RUN wget -qO- https://storage.googleapis.com/dart-archive/channels/stable/release/latest/linux_packages/dart_3.2.0-1_amd64.deb -O dart.deb \
+    && dpkg -i dart.deb || apt-get install -f -y \
+    && rm dart.deb
+
+# Add Dart to PATH
+ENV PATH="/usr/lib/dart/bin:${PATH}"
 
 # Non-root user
 RUN groupadd -r codeuser && useradd -r -g codeuser codeuser
@@ -7,12 +24,14 @@ RUN groupadd -r codeuser && useradd -r -g codeuser codeuser
 # Working directory
 WORKDIR /app
 
-# Code execution script
+# Copy all executor scripts
 COPY run_code.py .
+COPY run_code_js.py .
+COPY run_code_dart.py .
 
 # Permissions
-RUN chown codeuser:codeuser /app/run_code.py
-RUN chmod +x /app/run_code.py
+RUN chown -R codeuser:codeuser /app
+RUN chmod +x /app/*.py
 
 # Non-root user
 USER codeuser

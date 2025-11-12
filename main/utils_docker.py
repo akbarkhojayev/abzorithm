@@ -4,10 +4,19 @@ import tempfile
 import os
 from typing import Tuple
 
-def run_python_function_docker(user_code: str, func_name: str, test_input: str, expected_output: str, timeout: int = 2) -> Tuple[bool, str, str, float]:
+def run_python_function_docker(user_code: str, func_name: str, test_input: str, expected_output: str, timeout: int = 2, language: str = 'python') -> Tuple[bool, str, str, float]:
     """
     Docker container orqali xavfsiz kod ishga tushirish
     """
+    # Til bo'yicha executor tanlash
+    executor_map = {
+        'python': 'run_code.py',
+        'javascript': 'run_code_js.py',
+        'dart': 'run_code_dart.py',
+    }
+    
+    executor_script = executor_map.get(language, 'run_code.py')
+    
     try:
         # Docker container ishga tushirish
         result = subprocess.run([
@@ -16,7 +25,7 @@ def run_python_function_docker(user_code: str, func_name: str, test_input: str, 
             '--memory=200m',  # 200MB RAM cheklash
             '--cpus=2',  # CPU cheklash
             'abzorithm_code_executor',  # Image nomi
-            'python3', 'run_code.py',  # Python script ishga tushirish
+            'python3', executor_script,  # Executor script ishga tushirish
             user_code,
             test_input,
             expected_output

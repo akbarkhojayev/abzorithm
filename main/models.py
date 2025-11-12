@@ -65,7 +65,8 @@ class Submission(models.Model):
 
     LANGUAGE_CHOICES = [
         ('python', 'Python'),
-        ('javascript', 'Javascript'),
+        ('javascript', 'JavaScript'),
+        ('dart', 'Dart'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="submissions")
