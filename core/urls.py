@@ -42,8 +42,7 @@ urlpatterns += [
     path("testcases/", TestCaseList.as_view(), name="testcase-list"),
     path("submissions/", SubmissionListView.as_view(), name="submission-list"),
     path("submissions/create/", SubmissionCreateView.as_view(), name="submission-create"),
-    path("submissions/template/<int:pk>/<str:language>/", SubmissionTemplateView.as_view(), name="submission-template-lang"),
-    # path("submissions/template/<int:pk>/", SubmissionTemplateView.as_view(), name="submission-template"),
+    path("submissions/template/<int:pk>/", SubmissionTemplateView.as_view(), name="submission-template"),
     path("submissions/<int:pk>/", SubmissionDetailView.as_view(), name="submission-detail"),
 ]
 

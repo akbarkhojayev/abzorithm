@@ -95,3 +95,17 @@ class SubmissionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Submission
         fields = '__all__'
+
+class TemplateLanguageSerializer(serializers.Serializer):
+    """Serializer for template language choice"""
+    LANGUAGE_CHOICES = [
+        ('python', 'Python'),
+        ('javascript', 'JavaScript'),
+        ('dart', 'Dart'),
+    ]
+    
+    language = serializers.ChoiceField(
+        choices=LANGUAGE_CHOICES,
+        default='python',
+        help_text='Programming language for the template'
+    )
