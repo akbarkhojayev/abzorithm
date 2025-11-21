@@ -259,69 +259,25 @@ class SubmissionCreateView(generics.CreateAPIView):
             "user_score": user.score,
         }, status=status.HTTP_201_CREATED)
 
-class SubmissionTemplateView(generics.GenericAPIView):
-    """
-    Get code template for a problem in specified language.
-    
-    Use query parameter: ?language=python (or javascript, dart)
-    """
+
+class SubmissionTemplateView(generics.RetrieveAPIView):
     queryset = Problem.objects.all()
     permission_classes = (IsAuthenticated,)
-    serializer_class = TemplateLanguageSerializer
 
-    @swagger_auto_schema(
-        operation_description="Get code template for a problem. Specify language via query parameter.",
-        query_serializer=TemplateLanguageSerializer,
-        responses={
-            200: openapi.Response(
-                description='Template code generated successfully',
-                examples={
-                    'application/json': {
-                        'problem': 1,
-                        'language': 'python',
-                        'template_code': 'class Solution:\n    def solve(self):\n        pass'
-                    }
-                }
-            ),
-            400: openapi.Response(
-                description='Invalid language choice',
-                examples={
-                    'application/json': {
-                        'error': 'Invalid language. Choose from: python, javascript, dart'
-                    }
-                }
-            )
-        }
-    )
-    def get(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
         problem = self.get_object()
 
-        # Get and validate language from query params
-        serializer = self.get_serializer(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        language = serializer.validated_data.get('language', 'python')
-        
-        # Generate template based on language
+        language = kwargs.get('language') or request.query_params.get('language', 'python')
+
         if language == 'javascript':
-            template = generate_javascript_template(
-                problem.function_name, 
-                problem.input_example, 
-                problem.output_example
-            )
+            template = generate_javascript_template(problem.function_name, problem.input_example,
+                                                    problem.output_example)
         elif language == 'dart':
-            template = generate_dart_template(
-                problem.function_name, 
-                problem.input_example, 
-                problem.output_example
-            )
-        else:  # python
-            template = generate_code_template(
-                problem.function_name, 
-                problem.input_example, 
-                problem.output_example, 
-                problem.description
-            )
-        
+            template = generate_dart_template(problem.function_name, problem.input_example, problem.output_example)
+        else:
+            template = generate_code_template(problem.function_name, problem.input_example, problem.output_example,
+                                              problem.description)
+
         return Response({
             "problem": problem.id,
             "language": language,
