@@ -1,22 +1,23 @@
 # Multi-language code execution image
 FROM ubuntu:22.04
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
+# Install minimal dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
-    python3-pip \
     nodejs \
-    npm \
     wget \
-    && rm -rf /var/lib/apt/lists/*
+    unzip \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
-# Install Dart
-RUN wget -qO- https://storage.googleapis.com/dart-archive/channels/stable/release/latest/linux_packages/dart_3.2.0-1_amd64.deb -O dart.deb \
-    && dpkg -i dart.deb || apt-get install -f -y \
-    && rm dart.deb
+# Install Dart SDK (direct download)
+RUN wget -q https://storage.googleapis.com/dart-archive/channels/stable/release/3.2.0/sdk/dartsdk-linux-x64-release.zip \
+    && unzip -q dartsdk-linux-x64-release.zip -d /usr/lib/ \
+    && rm dartsdk-linux-x64-release.zip
 
 # Add Dart to PATH
-ENV PATH="/usr/lib/dart/bin:${PATH}"
+ENV PATH="/usr/lib/dart-sdk/bin:${PATH}"
 
 # Non-root user
 RUN groupadd -r codeuser && useradd -r -g codeuser codeuser
