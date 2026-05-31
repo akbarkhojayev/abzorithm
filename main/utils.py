@@ -515,7 +515,21 @@ def generate_code_template(function_name: str, input_example: str, output_exampl
 
     # --- Input example tayyorlash ---
     input_example = input_example.strip().replace('\r', '')
+
+    # Handle both newline-separated and comma-separated parameters
+    # First, try to split by newlines
     lines = [line.strip() for line in input_example.split("\n") if line.strip()]
+
+    # If single line with multiple assignments separated by commas (like "a = 5, b = 3")
+    # But NOT if it's a single list assignment (like "nums = [1, 2, 3, 4, 5]")
+    if len(lines) == 1 and "=" in lines[0] and "," in lines[0]:
+        # Only split if there are multiple "=" signs (multiple parameters)
+        if lines[0].count("=") > 1:
+            parts = [p.strip() for p in lines[0].split(",")]
+            lines = []
+            for part in parts:
+                if "=" in part:
+                    lines.append(part)
 
     param_names = []
     param_types = []
@@ -614,10 +628,23 @@ def generate_javascript_template(function_name: str, input_example: str, output_
 
     # Input example tayyorlash
     input_example = input_example.strip().replace('\r', '')
+
+    # Handle both newline-separated and comma-separated parameters
     lines = [line.strip() for line in input_example.split("\n") if line.strip()]
 
+    # If single line with multiple assignments separated by commas (like "a = 5, b = 3")
+    # But NOT if it's a single list assignment (like "nums = [1, 2, 3, 4, 5]")
+    if len(lines) == 1 and "=" in lines[0] and "," in lines[0]:
+        # Only split if there are multiple "=" signs (multiple parameters)
+        if lines[0].count("=") > 1:
+            parts = [p.strip() for p in lines[0].split(",")]
+            lines = []
+            for part in parts:
+                if "=" in part:
+                    lines.append(part)
+
     param_names = []
-    
+
     # Case 1: "name = value" format
     if any("=" in ln for ln in lines):
         for ln in lines:
@@ -681,11 +708,24 @@ def generate_dart_template(function_name: str, input_example: str, output_exampl
 
     # Input example tayyorlash
     input_example = input_example.strip().replace('\r', '')
+
+    # Handle both newline-separated and comma-separated parameters
     lines = [line.strip() for line in input_example.split("\n") if line.strip()]
+
+    # If single line with multiple assignments separated by commas (like "a = 5, b = 3")
+    # But NOT if it's a single list assignment (like "nums = [1, 2, 3, 4, 5]")
+    if len(lines) == 1 and "=" in lines[0] and "," in lines[0]:
+        # Only split if there are multiple "=" signs (multiple parameters)
+        if lines[0].count("=") > 1:
+            parts = [p.strip() for p in lines[0].split(",")]
+            lines = []
+            for part in parts:
+                if "=" in part:
+                    lines.append(part)
 
     param_names = []
     param_types = []
-    
+
     # Case 1: "name = value" format
     if any("=" in ln for ln in lines):
         for ln in lines:
@@ -700,7 +740,7 @@ def generate_dart_template(function_name: str, input_example: str, output_exampl
                         val = json.loads(right.strip())
                     except Exception:
                         val = right.strip()
-                
+
                 # Dart type mapping
                 dart_type = "dynamic"
                 if isinstance(val, bool):
@@ -718,7 +758,7 @@ def generate_dart_template(function_name: str, input_example: str, output_exampl
                         dart_type = "List<String>"
                     else:
                         dart_type = "List<dynamic>"
-                
+
                 param_names.append(sanitized)
                 param_types.append(dart_type)
     # Case 2: JSON yoki dict
