@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Problems.css";
 import { Link, useNavigate } from "react-router-dom";
 import { getProblems } from "../services/app.js";
@@ -17,6 +17,7 @@ function Problems({ problemData, setProblemData }) {
   const [allTags, setAllTags] = useState([]);
   const [categoryCounts, setCategoryCounts] = useState({});
   const difficulties = ["Easy", "Medium", "Hard"];
+  const scrollContainerRef = useRef(null);
 
   useEffect(() => {
     loadProblems();
@@ -95,6 +96,10 @@ function Problems({ problemData, setProblemData }) {
       } else {
         loadProblems();
       }
+      // Reset scroll to top when filters change
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = 0;
+      }
     }, 300);
 
     return () => clearTimeout(delay);
@@ -102,76 +107,77 @@ function Problems({ problemData, setProblemData }) {
 
 
   return (
-    <div className="problems-wrapper">
-      {/* CATEGORIES SIDEBAR - Grid column 2 */}
-      {allTags.length > 0 && (
-        <div className="categories-card">
-          <h2 className="categories-title">Mavzu</h2>
-          <div className="categories-grid">
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                className={`category-item ${selectedTag === tag ? "active" : ""}`}
-                onClick={() => setSelectedTag(selectedTag === tag ? "" : tag)}
-                title={`${tag} - ${categoryCounts[tag] || 0} masalalar`}
-              >
-                <span className="category-name">{tag}</span>
-                <span className="category-count">{categoryCounts[tag] || 0}</span>
-              </button>
-            ))}
-          </div>
+    <>
+      {/* STICKY CONTROLS: Title + Search + Filter - Centered */}
+      <div className="problems-controls-sticky">
+        <h2 className="sticky-title">Masalalar</h2>
+        <div className="search-box">
+          <FiSearch className="search-icon" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="Masala qidirish..."
+            className="search-input"
+            aria-label="Masalalar bo'yicha qidirish"
+          />
         </div>
-      )}
 
-      {/* MAIN CONTENT - Grid column 1 */}
-      <div className="problems-content">
-        {/* ERROR MESSAGE */}
-        {error && (
-          <div className="error-banner" role="alert">
-            <p>{error}</p>
-            <button onClick={loadProblems} className="error-retry-btn">
-              Qayta urinish
-            </button>
+        <select
+          value={selectedDifficulty}
+          onChange={(e) => setSelectedDifficulty(e.target.value)}
+          className="difficulty-select"
+          aria-label="Darajasi bo'yicha filtrlash"
+        >
+          <option value="">Darajasi</option>
+          {difficulties.map((difficulty) => (
+            <option key={difficulty} value={difficulty}>
+              {difficulty}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="problems-wrapper" ref={scrollContainerRef}>
+        {/* CATEGORIES SIDEBAR - Grid column 2 */}
+        {allTags.length > 0 && (
+          <div className="categories-card">
+            <h2 className="categories-title">Mavzu</h2>
+            <div className="categories-grid">
+              {allTags.map((tag) => (
+                <button
+                  key={tag}
+                  className={`category-item ${selectedTag === tag ? "active" : ""}`}
+                  onClick={() => setSelectedTag(selectedTag === tag ? "" : tag)}
+                  title={`${tag} - ${categoryCounts[tag] || 0} masalalar`}
+                >
+                  <span className="category-name">{tag}</span>
+                  <span className="category-count">{categoryCounts[tag] || 0}</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
-        {/* HEADER: Title + Subtitle */}
-        <div className="problems-header">
-          <h1 className="page-title">Masalalar</h1>
-          <p className="page-subtitle">Algoritmik masalalarni yechish orqali o'zingizni sinab ko'ring</p>
-        </div>
+        {/* MAIN CONTENT - Grid column 1 */}
+        <div className="problems-content">
+          {/* ERROR MESSAGE */}
+          {error && (
+            <div className="error-banner" role="alert">
+              <p>{error}</p>
+              <button onClick={loadProblems} className="error-retry-btn">
+                Qayta urinish
+              </button>
+            </div>
+          )}
 
-        {/* CONTROLS: Search + Filter Tags */}
-        <div className="problems-controls">
-          <div className="search-box">
-            <FiSearch className="search-icon" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              type="text"
-              placeholder="Masala qidirish..."
-              className="search-input"
-              aria-label="Masalalar bo'yicha qidirish"
-            />
+          {/* HEADER: Subtitle */}
+          <div className="problems-header">
+            <p className="page-subtitle">Algoritmik masalalarni yechish orqali o'zingizni sinab ko'ring</p>
           </div>
 
-          <select
-            value={selectedDifficulty}
-            onChange={(e) => setSelectedDifficulty(e.target.value)}
-            className="difficulty-select"
-            aria-label="Darajasi bo'yicha filtrlash"
-          >
-            <option value="">Darajasi</option>
-            {difficulties.map((difficulty) => (
-              <option key={difficulty} value={difficulty}>
-                {difficulty}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* PROBLEMS TABLE */}
-        <div className="problems-table">
+          {/* PROBLEMS TABLE */}
+          <div className="problems-table">
           {loader ? (
             <div className="loader-list">
               {[...Array(10)].map((_, i) => (
@@ -225,6 +231,7 @@ function Problems({ problemData, setProblemData }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
