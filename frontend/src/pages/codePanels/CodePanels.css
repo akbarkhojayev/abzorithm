@@ -695,7 +695,7 @@ body,
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-left: clamp(2px, 0.5vw, 4px) solid #2563eb;
-  border-radius: clamp(0.2rem, 0.5vw, 0.3rem);
+  border-radius: 12px;
   flex-shrink: 0;
 }
 
@@ -827,7 +827,7 @@ body,
   background: #f8fafc;
   color: #1e293b;
   padding: clamp(0.75rem, 1.5vw, 1rem);
-  border-radius: clamp(0.25rem, 0.5vw, 0.375rem);
+  border-radius: 12px;
   border: 1px solid #e2e8f0;
   word-break: break-all;
   line-height: 1.6;
@@ -892,7 +892,7 @@ body,
   padding: clamp(1rem, 2vw, 1.25rem);
   background: linear-gradient(135deg, #f0fdf4, #dbeafe);
   border: 1px solid #86efac;
-  border-radius: clamp(0.375rem, 0.75vw, 0.5rem);
+  border-radius: 12px;
   text-align: center;
 }
 
