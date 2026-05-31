@@ -153,7 +153,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
         className="container"
         ref={containerRef}
         style={{
-          gridTemplateColumns: `${panelRatio * 100}% 6px 1fr`,
+          gridTemplateColumns: `${panelRatio}fr 6px ${1 - panelRatio}fr`,
           gridTemplateRows: `${editorHeight}px 6px ${resultsHeight}px`,
         }}
       >
