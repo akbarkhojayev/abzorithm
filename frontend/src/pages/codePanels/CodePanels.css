@@ -178,14 +178,7 @@ body,
 }
 
 .section h2 {
-  font-size: clamp(16px, 3vw, 20px);
-  font-weight: 800;
-  margin: 0 0 12px 0;
-  color: #1e293b;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #e2e8f0;
+  display: none;
 }
 
 [data-theme="dark"] .section h2 {
@@ -194,10 +187,11 @@ body,
 }
 
 .section p {
-  font-size: clamp(14px, 2.5vw, 17px);
-  line-height: 1.8;
+  font-size: clamp(16px, 3.5vw, 20px);
+  line-height: 1.9;
   color: #475569;
   font-weight: 500;
+  margin: 0 0 12px 0;
 }
 
 [data-theme="dark"] .section p {
@@ -222,11 +216,11 @@ body,
 }
 
 .example-box h3 {
-  font-size: clamp(14px, 2vw, 16px);
+  font-size: clamp(15px, 2.5vw, 18px);
   font-weight: 700;
-  margin: 0 0 8px 0;
+  margin: 0 0 10px 0;
   color: #1e293b;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #cbd5e1;
 }
 
@@ -238,7 +232,7 @@ body,
 .example-row {
   display: flex;
   gap: 12px;
-  font-size: clamp(12px, 2vw, 14px);
+  font-size: clamp(14px, 2.5vw, 16px);
 }
 
 .example-row div {
@@ -261,15 +255,15 @@ body,
 .example-row pre {
   background: #1e293b;
   color: #38bdf8;
-  padding: 12px;
+  padding: 14px;
   border-radius: 4px;
   border: 1px solid #334155;
   overflow-x: auto;
   margin: 0;
   font-family: "Monaco", "Fira Code", monospace;
-  font-size: clamp(13px, 2vw, 15px);
+  font-size: clamp(14px, 2.5vw, 17px);
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.7;
   white-space: pre-wrap;
   word-break: break-word;
 }
