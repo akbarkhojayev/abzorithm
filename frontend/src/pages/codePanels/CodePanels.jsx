@@ -310,33 +310,58 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                       </div>
 
                       {output.failed_test && output.failed_test !== "-" && (
-                        <div className="error-box">
-                          <div className="error-title">
-                            <p>❌ {output.failed_test}</p>
+                        <div className="judge-result">
+                          {/* Header */}
+                          <div className="judge-header">
+                            <div className="judge-status wrong">
+                              <span className="status-icon">✗</span>
+                              <span className="status-text">Xato</span>
+                            </div>
+                            <div className="judge-meta">
+                              <span className="test-case">{output.failed_test}</span>
+                              <span className="runtime">⏱ {output.time}s</span>
+                            </div>
                           </div>
-                          <div className="error-details">
-                            {output.error_input && output.error_input !== "-" && (
-                              <div className="error-item">
-                                <span className="error-label">Kirish:</span>
-                                <span className="error-code">{output.error_input}</span>
-                              </div>
-                            )}
-                            {output.error_expected && output.error_expected !== "-" && (
-                              <div className="error-item">
-                                <span className="error-label">Kutilgan:</span>
-                                <span className="error-code">{output.error_expected}</span>
-                              </div>
-                            )}
-                            {output.error_output && output.error_output !== "-" && (
-                              <div className="error-item">
-                                <span className="error-label">Sizning javob:</span>
-                                <span className="error-code">
-                                  {output.error_output.includes("Got:")
-                                    ? output.error_output.split("Got:")[1].trim()
-                                    : output.error_output}
-                                </span>
-                              </div>
-                            )}
+
+                          {/* Input Section */}
+                          <div className="judge-section">
+                            <div className="section-label">Input:</div>
+                            <div className="section-code">
+                              {output.error_input && output.error_input !== "-" && (
+                                output.error_input
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Your Output Section */}
+                          <div className="judge-section">
+                            <div className="section-label">Sizning natijangiz:</div>
+                            <div className="section-code your-output">
+                              {output.error_output && output.error_output !== "-" && (
+                                output.error_output.includes("Got:")
+                                  ? output.error_output.split("Got:")[1].trim()
+                                  : output.error_output
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Expected Output Section */}
+                          <div className="judge-section">
+                            <div className="section-label">Kutilgan natija:</div>
+                            <div className="section-code expected-output">
+                              {output.error_expected && output.error_expected !== "-" && (
+                                output.error_expected
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Explanation */}
+                          <div className="judge-explanation">
+                            <div className="explanation-title">📝 Tushuntirish:</div>
+                            <div className="explanation-text">
+                              Sizning kodingiz to'g'ri natija bermadi. Yuborgan natijangiz bilan kutilgan natija mos kelmadi.
+                              Masalaning shartini qayta o'qib, algoritmingizni tekshirib ko'ring.
+                            </div>
                           </div>
                         </div>
                       )}

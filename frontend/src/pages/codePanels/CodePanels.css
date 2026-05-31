@@ -672,68 +672,212 @@ body,
 }
 
 
-.error-box {
+/* ============================================
+   JUDGE RESULT - LEETCODE STYLE
+   ============================================ */
+
+.judge-result {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   padding: 0;
   background: transparent;
   border: none;
   flex-shrink: 0;
+}
+
+/* Header */
+.judge-header {
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: linear-gradient(135deg, #fef2f2, #fde8e8);
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  gap: 16px;
 }
 
-.error-title {
-  margin-bottom: 4px;
+[data-theme="dark"] .judge-header {
+  background: linear-gradient(135deg, #7f1d1d, #5f1d1d);
+  border-color: #991b1b;
 }
 
-.error-title h3 {
-  margin: 0;
-  font-size: clamp(20px, 5vw, 28px);
-  font-weight: 900;
-  color: #ef4444;
-  letter-spacing: -0.5px;
+.judge-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-[data-theme="dark"] .error-title h3 {
+.judge-status.wrong {
+  color: #dc2626;
+}
+
+[data-theme="dark"] .judge-status.wrong {
   color: #f87171;
 }
 
-.error-section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.judge-status.passed {
+  color: #16a34a;
 }
 
-.error-section-title {
-  font-size: clamp(13px, 2vw, 15px);
-  font-weight: 600;
+[data-theme="dark"] .judge-status.passed {
+  color: #86efac;
+}
+
+.status-icon {
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 900;
+}
+
+.status-text {
+  font-size: clamp(14px, 2.5vw, 18px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.judge-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(12px, 2vw, 14px);
+  color: #64748b;
+}
+
+[data-theme="dark"] .judge-meta {
+  color: #cbd5e1;
+}
+
+.test-case {
+  font-weight: 700;
   color: #1e293b;
 }
 
-[data-theme="dark"] .error-section-title {
+[data-theme="dark"] .test-case {
   color: #e2e8f0;
 }
 
-.error-section-content {
+.runtime {
+  font-size: clamp(11px, 1.8vw, 13px);
+}
+
+/* Sections */
+.judge-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  font-size: clamp(13px, 2vw, 15px);
+  font-weight: 700;
+  color: #1e293b;
+  text-transform: capitalize;
+}
+
+[data-theme="dark"] .section-label {
+  color: #e2e8f0;
+}
+
+.section-code {
   font-size: clamp(12px, 2vw, 14px);
   font-family: "Monaco", "Fira Code", monospace;
-  background: #2d3a4f;
-  color: #38bdf8;
+  background: #f8fafc;
+  color: #1e293b;
   padding: 12px;
   border-radius: 4px;
+  border: 1px solid #e2e8f0;
   word-break: break-all;
-  font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.6;
+  white-space: pre-wrap;
   overflow-x: auto;
-  border: 1px solid #3f4a5a;
-  max-height: 100px;
+  max-height: 120px;
   overflow-y: auto;
 }
 
-[data-theme="dark"] .error-section-content {
-  background: #2d3a4f;
+[data-theme="dark"] .section-code {
+  background: #1e293b;
   color: #38bdf8;
-  border-color: #3f4a5a;
+  border-color: #334155;
+}
+
+.section-code.your-output {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+[data-theme="dark"] .section-code.your-output {
+  background: #7f1d1d;
+  color: #fca5a5;
+  border-color: #991b1b;
+}
+
+.section-code.expected-output {
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+[data-theme="dark"] .section-code.expected-output {
+  background: #052e16;
+  color: #86efac;
+  border-color: #166534;
+}
+
+/* Explanation */
+.judge-explanation {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: #f0f9ff;
+  border-left: 3px solid #3b82f6;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .judge-explanation {
+  background: #0c2340;
+  border-left-color: #60a5fa;
+}
+
+.explanation-title {
+  font-size: clamp(13px, 2vw, 15px);
+  font-weight: 700;
+  color: #1e40af;
+}
+
+[data-theme="dark"] .explanation-title {
+  color: #93c5fd;
+}
+
+.explanation-text {
+  font-size: clamp(12px, 1.8vw, 14px);
+  color: #0c4a6e;
+  line-height: 1.7;
+}
+
+[data-theme="dark"] .explanation-text {
+  color: #bfdbfe;
+}
+
+/* Scrollbar Styling */
+.section-code::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.section-code::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.section-code::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 3px;
+}
+
+.section-code::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.5);
 }
 
 /* Empty State */
