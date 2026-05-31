@@ -82,9 +82,9 @@ function CodeEditor({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fontSize, setFontSize] = useState(() => {
     try {
-      return Number(localStorage.getItem("editorFontSize")) || 14;
+      return Number(localStorage.getItem("editorFontSize")) || 32;
     } catch {
-      return 14;
+      return 32;
     }
   });
   const optionRef = useRef(null);
@@ -319,6 +319,9 @@ function CodeEditor({
               <option value={16}>16px</option>
               <option value={18}>18px</option>
               <option value={20}>20px</option>
+              <option value={24}>24px</option>
+              <option value={28}>28px</option>
+              <option value={32}>32px</option>
             </select>
           </div>
         </div>
