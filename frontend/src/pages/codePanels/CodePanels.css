@@ -305,10 +305,14 @@ body,
 
 .skeleton-line {
   height: clamp(0.875rem, 1.5vw, 1rem);
-  background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+  background: linear-gradient(90deg, var(--border) 0%, var(--bg-secondary) 50%, var(--border) 100%);
   background-size: 200% 100%;
   border-radius: clamp(0.2rem, 0.5vw, 0.3rem);
   animation: shimmer 2s infinite;
+}
+
+[data-theme="dark"] .skeleton-line {
+  background: linear-gradient(90deg, #374151 0%, #4b5563 50%, #374151 100%);
 }
 
 @keyframes shimmer {

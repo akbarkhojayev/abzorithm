@@ -36,7 +36,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #333;
+  color: var(--text-dark);
+}
+
+[data-theme="dark"] .loadingEffect p {
+  color: #e2e8f0;
 }
 
 .loadingEffect p span {
