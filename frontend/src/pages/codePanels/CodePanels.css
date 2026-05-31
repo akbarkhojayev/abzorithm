@@ -60,6 +60,7 @@ body,
   border-right: 1px solid #e2e8f0;
   overflow: hidden;
   flex-shrink: 0;
+  min-width: 0;
 }
 
 [data-theme="dark"] .panel-left {
@@ -356,6 +357,7 @@ body,
   flex: 1;
   overflow: hidden;
   background: #ffffff;
+  min-width: 0;
 }
 
 [data-theme="dark"] .panel-right {
@@ -373,6 +375,7 @@ body,
   flex: 1;
   overflow: hidden;
   background: #ffffff;
+  min-width: 0;
 }
 
 [data-theme="dark"] .editor-container {

@@ -90,7 +90,8 @@ function CodePanels({ profil, setProfil, setProblemData }) {
       if (isResizingVertical) {
         const delta = e.clientX - dragRef.current.startX;
         const newWidth = dragRef.current.startWidth + delta;
-        if (newWidth >= 250 && newWidth <= 900) {
+        const containerWidth = containerRef.current?.clientWidth || window.innerWidth;
+        if (newWidth >= 200 && newWidth <= containerWidth - 200) {
           setLeftWidth(newWidth);
         }
       }
