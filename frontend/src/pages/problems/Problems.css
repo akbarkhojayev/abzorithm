@@ -373,11 +373,13 @@
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 200px;
+  /* Ensure theme changes are reflected */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 [data-theme="dark"] .problems-table {
-  background: #1a1f3a;
-  border: 1px solid #374151;
+  background: #1a1f3a !important;
+  border: 1px solid #374151 !important;
 }
 
 .problems-table-body {
@@ -673,19 +675,38 @@
 .loader-list {
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 200px;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="dark"] .loader-list {
+  background: #1a1f3a !important;
 }
 
 .loader-item {
   height: 64px;
   background: linear-gradient(
     90deg,
-    var(--border) 0%,
-    var(--bg-secondary) 50%,
-    var(--border) 100%
-  );
+    #e2e8f0 0%,
+    #f1f5f9 50%,
+    #e2e8f0 100%
+  ) !important;
   background-size: 200% 100%;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #e2e8f0;
   animation: shimmer 2s infinite;
+}
+
+[data-theme="dark"] .loader-item {
+  background: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
+  ) !important;
+  border-bottom-color: #374151 !important;
 }
 
 .loader-item:last-child {
