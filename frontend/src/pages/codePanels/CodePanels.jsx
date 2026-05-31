@@ -318,7 +318,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                         <>
                       <div
                         className="status-box"
-                        style={{ borderLeftColor: output.color || "#3b82f6" }}
+                        style={output.color ? { borderLeftColor: output.color } : {}}
                       >
                         <p>
                           Status: <strong style={{ color: output.color }}>

@@ -694,7 +694,7 @@ body,
   padding: clamp(0.625rem, 1vw, 0.75rem);
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-left: clamp(2px, 0.5vw, 4px) solid #2563eb;
+  border-left: clamp(2px, 0.5vw, 4px) solid #e2e8f0;
   border-radius: 12px;
   flex-shrink: 0;
 }
@@ -702,6 +702,7 @@ body,
 [data-theme="dark"] .status-box {
   background: #1a1f3a;
   border-color: #374151;
+  border-left-color: #374151;
 }
 
 .status-box p {
