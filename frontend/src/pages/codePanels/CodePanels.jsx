@@ -311,16 +311,29 @@ function CodePanels({ profil, setProfil, setProblemData }) {
 
                       {output.failed_test && output.failed_test !== "-" && (
                         <div className="error-box">
-                          <p>❌ {output.failed_test}</p>
-                          {output.error_input && output.error_input !== "-" && (
-                            <p>📥 {output.error_input}</p>
-                          )}
-                          {output.error_expected && output.error_expected !== "-" && (
-                            <p>✓ {output.error_expected}</p>
-                          )}
-                          {output.error_output && output.error_output !== "-" && (
-                            <p>❌ {output.error_output}</p>
-                          )}
+                          <div className="error-title">
+                            <p>❌ {output.failed_test}</p>
+                          </div>
+                          <div className="error-details">
+                            {output.error_input && output.error_input !== "-" && (
+                              <div className="error-row">
+                                <span className="error-label">Kirish:</span>
+                                <span className="error-value">{output.error_input}</span>
+                              </div>
+                            )}
+                            {output.error_expected && output.error_expected !== "-" && (
+                              <div className="error-row">
+                                <span className="error-label">Kutilgan:</span>
+                                <span className="error-value">{output.error_expected}</span>
+                              </div>
+                            )}
+                            {output.error_output && output.error_output !== "-" && (
+                              <div className="error-row">
+                                <span className="error-label">Asl natija:</span>
+                                <span className="error-value error-wrong">{output.error_output}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
