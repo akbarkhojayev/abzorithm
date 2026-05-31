@@ -686,80 +686,6 @@ body,
   flex-shrink: 0;
 }
 
-/* Header */
-.judge-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px;
-  background: linear-gradient(135deg, #fef2f2, #fde8e8);
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  gap: 16px;
-}
-
-[data-theme="dark"] .judge-header {
-  background: linear-gradient(135deg, #7f1d1d, #5f1d1d);
-  border-color: #991b1b;
-}
-
-.judge-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.judge-status.wrong {
-  color: #dc2626;
-}
-
-[data-theme="dark"] .judge-status.wrong {
-  color: #f87171;
-}
-
-.judge-status.passed {
-  color: #16a34a;
-}
-
-[data-theme="dark"] .judge-status.passed {
-  color: #86efac;
-}
-
-.status-icon {
-  font-size: clamp(18px, 3vw, 24px);
-  font-weight: 900;
-}
-
-.status-text {
-  font-size: clamp(14px, 2.5vw, 18px);
-  font-weight: 800;
-  letter-spacing: -0.5px;
-}
-
-.judge-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: clamp(12px, 2vw, 14px);
-  color: #64748b;
-}
-
-[data-theme="dark"] .judge-meta {
-  color: #cbd5e1;
-}
-
-.test-case {
-  font-weight: 700;
-  color: #1e293b;
-}
-
-[data-theme="dark"] .test-case {
-  color: #e2e8f0;
-}
-
-.runtime {
-  font-size: clamp(11px, 1.8vw, 13px);
-}
 
 /* Sections */
 .judge-section {
@@ -825,41 +751,6 @@ body,
   border-color: #166534;
 }
 
-/* Explanation */
-.judge-explanation {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px;
-  background: #f0f9ff;
-  border-left: 3px solid #3b82f6;
-  border-radius: 4px;
-}
-
-[data-theme="dark"] .judge-explanation {
-  background: #0c2340;
-  border-left-color: #60a5fa;
-}
-
-.explanation-title {
-  font-size: clamp(13px, 2vw, 15px);
-  font-weight: 700;
-  color: #1e40af;
-}
-
-[data-theme="dark"] .explanation-title {
-  color: #93c5fd;
-}
-
-.explanation-text {
-  font-size: clamp(12px, 1.8vw, 14px);
-  color: #0c4a6e;
-  line-height: 1.7;
-}
-
-[data-theme="dark"] .explanation-text {
-  color: #bfdbfe;
-}
 
 /* Scrollbar Styling */
 .section-code::-webkit-scrollbar {

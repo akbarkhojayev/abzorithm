@@ -330,18 +330,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
 
                       {output.failed_test && output.failed_test !== "-" && (
                         <div className="judge-result">
-                          {/* Header */}
-                          <div className="judge-header">
-                            <div className="judge-status wrong">
-                              <span className="status-icon">✗</span>
-                              <span className="status-text">Xato</span>
-                            </div>
-                            <div className="judge-meta">
-                              <span className="test-case">{output.failed_test}</span>
-                              <span className="runtime">⏱ {output.time}s</span>
-                            </div>
-                          </div>
-
                           {/* Input Section */}
                           <div className="judge-section">
                             <div className="section-label">Input:</div>
@@ -371,15 +359,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                               {output.error_expected && output.error_expected !== "-" && (
                                 output.error_expected
                               )}
-                            </div>
-                          </div>
-
-                          {/* Explanation */}
-                          <div className="judge-explanation">
-                            <div className="explanation-title">📝 Tushuntirish:</div>
-                            <div className="explanation-text">
-                              Sizning kodingiz to'g'ri natija bermadi. Yuborgan natijangiz bilan kutilgan natija mos kelmadi.
-                              Masalaning shartini qayta o'qib, algoritmingizni tekshirib ko'ring.
                             </div>
                           </div>
                         </div>
