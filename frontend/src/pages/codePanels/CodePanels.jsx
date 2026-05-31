@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./CodePanels.css";
-import { FaNoteSticky } from "react-icons/fa6";
 import { GiSandsOfTime } from "react-icons/gi";
 import CodeEditor from "../../components/codeEditor/CodeEditor.jsx";
 import { useCodePanel } from "../../hooks/useCodePanel.js";
@@ -238,8 +237,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   setRunTimeWatch(false);
                 }}
               >
-                <FaNoteSticky />
-                Test Cases
+                Testlar
               </button>
               <button
                 className={`tab ${runTimeWatch ? "active" : ""}`}
