@@ -254,11 +254,11 @@ body,
 }
 
 .example-row pre {
-  background: #1e293b;
-  color: #38bdf8;
+  background: #f8fafc;
+  color: #0f172a;
   padding: 14px;
   border-radius: 4px;
-  border: 1px solid #334155;
+  border: 1px solid #e2e8f0;
   overflow-x: auto;
   margin: 0;
   font-family: "Monaco", "Fira Code", monospace;
@@ -267,6 +267,12 @@ body,
   line-height: 1.7;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+[data-theme="dark"] .example-row pre {
+  background: #1e293b;
+  color: #38bdf8;
+  border-color: #334155;
 }
 
 /* Skeleton Loader */
@@ -560,8 +566,8 @@ body,
   flex-direction: column;
   gap: 10px;
   padding: 10px;
-  background: #1e293b;
-  border: 1px solid #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -580,7 +586,7 @@ body,
 .test-row strong {
   font-size: clamp(10px, 1.5vw, 11px);
   font-weight: 600;
-  color: #cbd5e1;
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -590,10 +596,10 @@ body,
 }
 
 .test-row code {
-  background: #0f172a;
-  color: #38bdf8;
+  background: #f0f4f8;
+  color: #0f172a;
   padding: 8px;
-  border: 1px solid #0ea5e9;
+  border: 1px solid #cbd5e1;
   border-radius: 2px;
   font-family: "Monaco", "Fira Code", monospace;
   font-size: clamp(11px, 1.5vw, 13px);
@@ -603,6 +609,12 @@ body,
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   display: block;
+}
+
+[data-theme="dark"] .test-row code {
+  background: #0f172a;
+  color: #38bdf8;
+  border-color: #0ea5e9;
 }
 
 /* Output Panel */
@@ -662,7 +674,7 @@ body,
 .status-box p {
   margin: 0 0 6px 0;
   font-size: clamp(11px, 1.5vw, 12px);
-  color: #cbd5e1;
+  color: #1e293b;
   font-weight: 500;
 }
 
