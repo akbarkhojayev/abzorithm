@@ -10,9 +10,9 @@ import "./CodeEditor.css";
 const LANGUAGES = ["python", "javascript", "dart"];
 
 const LANGUAGE_LOGOS = {
-  python: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+  python: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original-wordmark.svg",
   javascript: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
-  dart: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg",
+  dart: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original-wordmark.svg",
 };
 
 const getLanguageIcon = (lang) => {
@@ -23,7 +23,7 @@ const getLanguageIcon = (lang) => {
     <img
       src={logoUrl}
       alt={`${lang} logo`}
-      style={{ width: "16px", height: "16px", objectFit: "contain" }}
+      style={{ width: "28px", height: "28px", objectFit: "contain" }}
     />
   );
 };
