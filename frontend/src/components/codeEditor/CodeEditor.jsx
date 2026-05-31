@@ -4,23 +4,28 @@ import { getMasala, getProfilMe } from "../../pages/services/app.js";
 import { getToken } from "../../pages/services/token.js";
 import { baseUrl } from "../../pages/services/config.js";
 import { FiRotateCcw, FiRotateCw, FiRefreshCw } from "react-icons/fi";
-import { SiPython, SiJavascript, SiDart } from "react-icons/si";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import "./CodeEditor.css";
 
 const LANGUAGES = ["python", "javascript", "dart"];
 
+const LANGUAGE_LOGOS = {
+  python: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+  javascript: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+  dart: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg",
+};
+
 const getLanguageIcon = (lang) => {
-  switch (lang) {
-    case "python":
-      return <SiPython />;
-    case "javascript":
-      return <SiJavascript />;
-    case "dart":
-      return <SiDart />;
-    default:
-      return null;
-  }
+  const logoUrl = LANGUAGE_LOGOS[lang];
+  if (!logoUrl) return null;
+
+  return (
+    <img
+      src={logoUrl}
+      alt={`${lang} logo`}
+      style={{ width: "16px", height: "16px", objectFit: "contain" }}
+    />
+  );
 };
 
 function formatSubmissionOutput(response) {
@@ -229,6 +234,7 @@ function CodeEditor({
           <div ref={optionRef} className="language-selector">
             <button
               className={`language-button ${isSelectionOpen ? "open" : ""}`}
+              data-lang={language}
               onClick={() => setIsSelectionOpen(!isSelectionOpen)}
               aria-label="Til tanglash"
               aria-expanded={isSelectionOpen}
@@ -247,6 +253,7 @@ function CodeEditor({
                     className={`language-option ${
                       language === lang ? "active" : ""
                     }`}
+                    data-lang={lang}
                     onClick={() => handleLanguageChange(lang)}
                     role="option"
                     aria-selected={language === lang}
@@ -319,7 +326,7 @@ function CodeEditor({
 
       <Editor
         width="100%"
-        height="400px"
+        height="100%"
         language={language}
         theme={isDark ? "darkCustomTheme" : "lightCustomTheme"}
         beforeMount={(monaco) => {

@@ -25,17 +25,15 @@ function CodePanels({ profil, setProfil, setProblemData }) {
   const [runTimeWatch, setRunTimeWatch] = useState(false);
   const [loaderRunTime, setLoaderRunTime] = useState(false);
 
-  // Layout state - using pixel values that respond to window resize
-  const [leftWidth, setLeftWidth] = useState(() => {
-    const saved = localStorage.getItem("leftWidth");
-    if (saved) return parseInt(saved);
-    return Math.max(300, Math.min(window.innerWidth * 0.35, 600));
+  // Layout state - percentage-based, zoom-safe
+  const [leftWidthPercent, setLeftWidthPercent] = useState(() => {
+    const saved = localStorage.getItem("leftWidthPercent");
+    return saved ? parseFloat(saved) : 33; // Default: 33% for left panel
   });
 
-  const [topHeight, setTopHeight] = useState(() => {
-    const saved = localStorage.getItem("topHeight");
-    if (saved) return parseInt(saved);
-    return Math.max(200, Math.min(window.innerHeight * 0.5, 700));
+  const [topHeightPercent, setTopHeightPercent] = useState(() => {
+    const saved = localStorage.getItem("topHeightPercent");
+    return saved ? parseFloat(saved) : 50; // Default: 50% for editor
   });
 
   const [isResizingVertical, setIsResizingVertical] = useState(false);
@@ -46,26 +44,18 @@ function CodePanels({ profil, setProfil, setProblemData }) {
 
   // Save to localStorage
   useEffect(() => {
-    localStorage.setItem("leftWidth", leftWidth);
-  }, [leftWidth]);
+    localStorage.setItem("leftWidthPercent", leftWidthPercent.toFixed(2));
+  }, [leftWidthPercent]);
 
   useEffect(() => {
-    localStorage.setItem("topHeight", topHeight);
-  }, [topHeight]);
+    localStorage.setItem("topHeightPercent", topHeightPercent.toFixed(2));
+  }, [topHeightPercent]);
 
-  // Window resize handler
+  // Window resize handler - percentages are zoom-immune
   useEffect(() => {
     const handleWindowResize = () => {
-      // Recalculate sizes as percentage of new window
-      setLeftWidth((prev) => {
-        const ratio = prev / window.innerWidth;
-        return Math.max(300, Math.min(window.innerWidth * Math.min(ratio, 0.6), 900));
-      });
-
-      setTopHeight((prev) => {
-        const ratio = prev / window.innerHeight;
-        return Math.max(200, Math.min(window.innerHeight * Math.min(ratio, 0.7), 900));
-      });
+      // With percentage-based layout, no action needed on window resize
+      // Percentages automatically scale with zoom changes
     };
 
     window.addEventListener("resize", handleWindowResize);
@@ -75,32 +65,41 @@ function CodePanels({ profil, setProfil, setProblemData }) {
   // Vertical resize
   const handleMouseDownVertical = useCallback((e) => {
     setIsResizingVertical(true);
-    dragRef.current = { startX: e.clientX, startWidth: leftWidth };
-  }, [leftWidth]);
+    dragRef.current = { startX: e.clientX, startPercent: leftWidthPercent };
+  }, [leftWidthPercent]);
 
   // Horizontal resize
   const handleMouseDownHorizontal = useCallback((e) => {
     setIsResizingHorizontal(true);
-    dragRef.current = { startY: e.clientY, startHeight: topHeight };
-  }, [topHeight]);
+    dragRef.current = { startY: e.clientY, startPercent: topHeightPercent };
+  }, [topHeightPercent]);
 
-  // Global mouse events
+  // Global mouse events - percentage-based
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (isResizingVertical) {
+      if (isResizingVertical && containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
         const delta = e.clientX - dragRef.current.startX;
-        const newWidth = dragRef.current.startWidth + delta;
-        const containerWidth = containerRef.current?.clientWidth || window.innerWidth;
-        if (newWidth >= 200 && newWidth <= containerWidth - 200) {
-          setLeftWidth(newWidth);
-        }
+        const deltaPercent = (delta / containerWidth) * 100;
+        const newPercent = dragRef.current.startPercent + deltaPercent;
+
+        // Constraints: left panel between 20-70% of container
+        const clampedPercent = Math.max(20, Math.min(newPercent, 70));
+        setLeftWidthPercent(clampedPercent);
       }
 
-      if (isResizingHorizontal) {
-        const delta = e.clientY - dragRef.current.startY;
-        const newHeight = dragRef.current.startHeight + delta;
-        if (newHeight >= 150 && newHeight <= 900) {
-          setTopHeight(newHeight);
+      if (isResizingHorizontal && containerRef.current) {
+        const panelTop = containerRef.current.querySelector(".panel-top");
+        const panelRight = containerRef.current.querySelector(".panel-right");
+        if (panelRight) {
+          const containerHeight = panelRight.clientHeight;
+          const delta = e.clientY - dragRef.current.startY;
+          const deltaPercent = (delta / containerHeight) * 100;
+          const newPercent = dragRef.current.startPercent + deltaPercent;
+
+          // Constraints: editor between 30-70% of right panel
+          const clampedPercent = Math.max(30, Math.min(newPercent, 70));
+          setTopHeightPercent(clampedPercent);
         }
       }
     };
@@ -140,7 +139,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
     <div className="app-root">
       <div className="app-container" ref={containerRef}>
         {/* LEFT PANEL - PROBLEM DESCRIPTION */}
-        <div className="panel-left" style={{ width: `${leftWidth}px` }}>
+        <div className="panel-left" style={{ width: `${leftWidthPercent}%` }}>
           {loadingCoding ? (
             <div className="skeleton-container">
               {[...Array(10)].map((_, i) => (
@@ -206,7 +205,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
         {/* RIGHT PANEL */}
         <div className="panel-right">
           {/* TOP: CODE EDITOR */}
-          <div className="panel-top" style={{ height: `${topHeight}px` }}>
+          <div className="panel-top" style={{ height: `${topHeightPercent}%` }}>
             <div className="editor-container">
               <CodeEditor
                 codeBy={codeBy}
