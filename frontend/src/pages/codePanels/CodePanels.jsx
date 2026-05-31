@@ -21,100 +21,98 @@ function CodePanels({ profil, setProfil, setProblemData }) {
     error,
   } = useCodePanel();
 
-  // UI State
   const [testCaseWatch, setTestCaseWatch] = useState(true);
   const [runTimeWatch, setRunTimeWatch] = useState(false);
   const [loaderRunTime, setLoaderRunTime] = useState(false);
 
-  // Layout State - Percentage based for responsiveness
-  const [panelRatio, setPanelRatio] = useState(() => {
-    const saved = localStorage.getItem("panelRatio");
-    return saved ? parseFloat(saved) : 0.35; // 35% default for left panel
+  // Layout state - using pixel values that respond to window resize
+  const [leftWidth, setLeftWidth] = useState(() => {
+    const saved = localStorage.getItem("leftWidth");
+    if (saved) return parseInt(saved);
+    return Math.max(300, Math.min(window.innerWidth * 0.35, 600));
   });
 
-  const [editorRatio, setEditorRatio] = useState(() => {
-    const saved = localStorage.getItem("editorRatio");
-    return saved ? parseFloat(saved) : 0.5; // 50% default for editor
+  const [topHeight, setTopHeight] = useState(() => {
+    const saved = localStorage.getItem("topHeight");
+    if (saved) return parseInt(saved);
+    return Math.max(200, Math.min(window.innerHeight * 0.5, 700));
   });
 
-  // Resize State
-  const [isResizingPanels, setIsResizingPanels] = useState(false);
-  const [isResizingEditor, setIsResizingEditor] = useState(false);
+  const [isResizingVertical, setIsResizingVertical] = useState(false);
+  const [isResizingHorizontal, setIsResizingHorizontal] = useState(false);
 
-  // Refs
   const containerRef = useRef(null);
-  const dragStartRef = useRef({ x: 0, y: 0, ratio: 0 });
+  const dragRef = useRef({ startX: 0, startY: 0, startWidth: 0, startHeight: 0 });
 
-  // Persist layout preferences
+  // Save to localStorage
   useEffect(() => {
-    localStorage.setItem("panelRatio", panelRatio.toFixed(2));
-  }, [panelRatio]);
+    localStorage.setItem("leftWidth", leftWidth);
+  }, [leftWidth]);
 
   useEffect(() => {
-    localStorage.setItem("editorRatio", editorRatio.toFixed(2));
-  }, [editorRatio]);
+    localStorage.setItem("topHeight", topHeight);
+  }, [topHeight]);
 
-  // Handle vertical divider resize (left panel width)
+  // Window resize handler
+  useEffect(() => {
+    const handleWindowResize = () => {
+      // Recalculate sizes as percentage of new window
+      setLeftWidth((prev) => {
+        const ratio = prev / window.innerWidth;
+        return Math.max(300, Math.min(window.innerWidth * Math.min(ratio, 0.6), 900));
+      });
+
+      setTopHeight((prev) => {
+        const ratio = prev / window.innerHeight;
+        return Math.max(200, Math.min(window.innerHeight * Math.min(ratio, 0.7), 900));
+      });
+    };
+
+    window.addEventListener("resize", handleWindowResize);
+    return () => window.removeEventListener("resize", handleWindowResize);
+  }, []);
+
+  // Vertical resize
   const handleMouseDownVertical = useCallback((e) => {
-    setIsResizingPanels(true);
-    dragStartRef.current = {
-      x: e.clientX,
-      ratio: panelRatio,
-    };
-  }, [panelRatio]);
+    setIsResizingVertical(true);
+    dragRef.current = { startX: e.clientX, startWidth: leftWidth };
+  }, [leftWidth]);
 
-  // Handle horizontal divider resize (editor height)
+  // Horizontal resize
   const handleMouseDownHorizontal = useCallback((e) => {
-    setIsResizingEditor(true);
-    dragStartRef.current = {
-      y: e.clientY,
-      ratio: editorRatio,
-    };
-  }, [editorRatio]);
+    setIsResizingHorizontal(true);
+    dragRef.current = { startY: e.clientY, startHeight: topHeight };
+  }, [topHeight]);
 
-  // Global mouse move and up events
+  // Global mouse events
   useEffect(() => {
-    if (!containerRef.current) return;
-
     const handleMouseMove = (e) => {
-      if (!isResizingPanels && !isResizingEditor) return;
-
-      if (isResizingPanels) {
-        const container = containerRef.current;
-        const rect = container.getBoundingClientRect();
-        const delta = e.clientX - dragStartRef.current.x;
-        const deltaRatio = delta / rect.width;
-        const newRatio = dragStartRef.current.ratio + deltaRatio;
-
-        // Constrain between 25% and 60%
-        if (newRatio >= 0.25 && newRatio <= 0.6) {
-          setPanelRatio(newRatio);
+      if (isResizingVertical) {
+        const delta = e.clientX - dragRef.current.startX;
+        const newWidth = dragRef.current.startWidth + delta;
+        if (newWidth >= 250 && newWidth <= 900) {
+          setLeftWidth(newWidth);
         }
       }
 
-      if (isResizingEditor) {
-        const container = containerRef.current;
-        const rect = container.getBoundingClientRect();
-        const delta = e.clientY - dragStartRef.current.y;
-        const deltaRatio = delta / (rect.height / 2); // Only apply to right panel height
-        const newRatio = dragStartRef.current.ratio + deltaRatio;
-
-        // Constrain between 30% and 70%
-        if (newRatio >= 0.3 && newRatio <= 0.7) {
-          setEditorRatio(newRatio);
+      if (isResizingHorizontal) {
+        const delta = e.clientY - dragRef.current.startY;
+        const newHeight = dragRef.current.startHeight + delta;
+        if (newHeight >= 150 && newHeight <= 900) {
+          setTopHeight(newHeight);
         }
       }
     };
 
     const handleMouseUp = () => {
-      setIsResizingPanels(false);
-      setIsResizingEditor(false);
+      setIsResizingVertical(false);
+      setIsResizingHorizontal(false);
     };
 
-    if (isResizingPanels || isResizingEditor) {
+    if (isResizingVertical || isResizingHorizontal) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = isResizingEditor ? "row-resize" : "col-resize";
+      document.body.style.cursor = isResizingHorizontal ? "row-resize" : "col-resize";
       document.body.style.userSelect = "none";
 
       return () => {
@@ -124,113 +122,91 @@ function CodePanels({ profil, setProfil, setProblemData }) {
         document.body.style.userSelect = "auto";
       };
     }
-  }, [isResizingPanels, isResizingEditor]);
+  }, [isResizingVertical, isResizingHorizontal]);
 
   if (error) {
     return (
-      <div className="code-panels">
-        <div className="error-container">
-          <div className="error-message" role="alert">
-            <span className="error-icon">❌</span>
-            <p>{error}</p>
-            <button onClick={() => window.location.reload()}>
-              Qayta yukla
-            </button>
-          </div>
+      <div className="app-error">
+        <div className="error-box">
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()}>Qayta yukla</button>
         </div>
       </div>
     );
   }
 
-  // Calculate pixel widths/heights from ratios
-  const containerHeight = typeof window !== "undefined" ? window.innerHeight : 600;
-  const editorHeight = containerHeight * editorRatio;
-  const resultsHeight = containerHeight * (1 - editorRatio);
-
   return (
-    <div className="code-panels">
-      <div
-        className="container"
-        ref={containerRef}
-        style={{
-          gridTemplateColumns: `${panelRatio}fr 6px ${1 - panelRatio}fr`,
-          gridTemplateRows: `${editorHeight}px 6px ${resultsHeight}px`,
-        }}
-      >
-        {/* ========== LEFT PANEL: PROBLEM DESCRIPTION ========== */}
-        <div className="problem-panel">
+    <div className="app-root">
+      <div className="app-container" ref={containerRef}>
+        {/* LEFT PANEL - PROBLEM DESCRIPTION */}
+        <div className="panel-left" style={{ width: `${leftWidth}px` }}>
           {loadingCoding ? (
-            <div className="skeleton-loader" aria-busy="true">
-              {[...Array(8)].map((_, i) => (
+            <div className="skeleton-container">
+              {[...Array(10)].map((_, i) => (
                 <div key={i} className="skeleton-line" />
               ))}
             </div>
           ) : (
-            <div className="problem-content">
-              {/* Problem Header */}
-              <div className="problem-header">
-                <h1 className="problem-title">
-                  <span className="problem-number">{index}</span>
-                  <span>{details?.title}</span>
-                </h1>
-
-                <div className="problem-meta">
-                  <span
-                    className={`difficulty-badge difficulty-${
-                      details?.difficulty?.toLowerCase() || "easy"
-                    }`}
-                  >
-                    {details?.difficulty}
-                  </span>
+            <div className="problem-scroll">
+              <div className="problem-inner">
+                {/* Title */}
+                <div className="problem-header">
+                  <h1>
+                    <span className="problem-index">{index}</span>
+                    {details?.title}
+                  </h1>
+                  {details?.difficulty && (
+                    <span className={`badge badge-${details.difficulty.toLowerCase()}`}>
+                      {details.difficulty}
+                    </span>
+                  )}
                 </div>
+
+                {/* Description */}
+                {details?.description && (
+                  <div className="section">
+                    <h2>Tavsif</h2>
+                    <p>{details.description}</p>
+                  </div>
+                )}
+
+                {/* Examples */}
+                {details?.examples && details.examples.length > 0 && (
+                  <div className="section">
+                    <h2>Misollar</h2>
+                    {details.examples.map((ex, idx) => (
+                      <div key={idx} className="example-box">
+                        <h3>Misol {idx + 1}</h3>
+                        <div className="example-row">
+                          <div>
+                            <strong>Kirish:</strong>
+                            <pre>{ex.ex_input}</pre>
+                          </div>
+                          <div>
+                            <strong>Chiqish:</strong>
+                            <pre>{ex.ex_output}</pre>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-
-              {/* Problem Description */}
-              {details?.description && (
-                <div className="description-box">
-                  <p>{details.description}</p>
-                </div>
-              )}
-
-              {/* Examples */}
-              {details?.examples && details.examples.length > 0 && (
-                <div className="examples-section">
-                  <h3 className="examples-title">Misollar</h3>
-                  {details.examples.map((example, idx) => (
-                    <div key={idx} className="example-item">
-                      <div className="example-label">
-                        Misol <span>{idx + 1}</span>
-                      </div>
-                      <div className="example-data">
-                        <div className="example-input">
-                          <strong>Input:</strong>
-                          <code>{example?.ex_input}</code>
-                        </div>
-                        <div className="example-output">
-                          <strong>Output:</strong>
-                          <code>{example?.ex_output}</code>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
           )}
         </div>
 
-        {/* ========== VERTICAL DIVIDER ========== */}
+        {/* VERTICAL DIVIDER */}
         <div
-          className={`divider divider-vertical ${isResizingPanels ? "active" : ""}`}
+          className={`divider-v ${isResizingVertical ? "active" : ""}`}
           onMouseDown={handleMouseDownVertical}
-          title="Kenglikni o'zgartirish uchun surish"
         />
 
-        {/* ========== RIGHT PANEL: CODE EDITOR + RESULTS ========== */}
-        <div className="right-panel">
-          {/* CODE EDITOR SECTION */}
-          <div className="editor-section">
-            <div className="editor-wrapper">
+        {/* RIGHT PANEL */}
+        <div className="panel-right">
+          {/* TOP: CODE EDITOR */}
+          <div className="panel-top" style={{ height: `${topHeight}px` }}>
+            <div className="editor-container">
               <CodeEditor
                 codeBy={codeBy}
                 setCodeBy={setCodeBy}
@@ -245,26 +221,24 @@ function CodePanels({ profil, setProfil, setProblemData }) {
             </div>
           </div>
 
-          {/* ========== HORIZONTAL DIVIDER ========== */}
+          {/* HORIZONTAL DIVIDER */}
           <div
-            className={`divider divider-horizontal ${isResizingEditor ? "active" : ""}`}
+            className={`divider-h ${isResizingHorizontal ? "active" : ""}`}
             onMouseDown={handleMouseDownHorizontal}
-            title="Balandligini o'zgartirish uchun surish"
           />
 
-          {/* RESULTS SECTION */}
-          <div className="results-section">
+          {/* BOTTOM: RESULTS */}
+          <div className="panel-bottom">
             {/* Tabs */}
-            <div className="results-tabs">
+            <div className="tabs">
               <button
                 className={`tab ${testCaseWatch ? "active" : ""}`}
                 onClick={() => {
                   setTestCaseWatch(true);
                   setRunTimeWatch(false);
                 }}
-                aria-selected={testCaseWatch}
               >
-                <FaNoteSticky className="tab-icon" />
+                <FaNoteSticky />
                 Test Cases
               </button>
               <button
@@ -273,96 +247,89 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   setRunTimeWatch(true);
                   setTestCaseWatch(false);
                 }}
-                aria-selected={runTimeWatch}
               >
-                <GiSandsOfTime className="tab-icon" />
+                <GiSandsOfTime />
                 Natija
               </button>
             </div>
 
-            {/* Test Cases Panel */}
-            {testCaseWatch && (
-              <div className="tab-content">
-                <div className="test-cases-list">
-                  {filteredCases && filteredCases.length > 0 ? (
-                    filteredCases.map((testCase, idx) => (
-                      <button
-                        key={testCase.id}
-                        className={`test-button ${
-                          activeCaseId === testCase.id ? "active" : ""
-                        }`}
-                        onClick={() => changeTestCase(testCase.id)}
-                      >
-                        Test {idx + 1}
-                      </button>
-                    ))
-                  ) : (
-                    <div className="empty-state">Test case yoq</div>
-                  )}
-                </div>
-
-                {activeCase && (
-                  <div className="test-details">
-                    <div className="test-item">
-                      <label>Input:</label>
-                      <code>{activeCase.input_data}</code>
-                    </div>
-                    <div className="test-item">
-                      <label>Kutilgan Natija:</label>
-                      <code>{activeCase.expected_output}</code>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Output Panel */}
-            {runTimeWatch && (
-              <div className="tab-content">
-                {loaderRunTime ? (
-                  <div className="output-loader">
-                    <div className="spinner" />
-                    <p>Yuborilmoqda...</p>
-                  </div>
-                ) : output && Object.keys(output).length > 0 ? (
-                  <div className="output-result">
-                    <div
-                      className="result-status"
-                      style={{ borderLeftColor: output.color || "#3b82f6" }}
-                    >
-                      <p className="status-text">
-                        Status:{" "}
-                        <strong style={{ color: output.color || "#3b82f6" }}>
-                          {output.status || "Unknown"}
-                        </strong>
-                      </p>
-                      <p className="execution-time">⏱ Vaqt: {output.time || "0"}s</p>
-                    </div>
-
-                    {output.failed_test && output.failed_test !== "-" && (
-                      <div className="error-box">
-                        <p>❌ Xato test: {output.failed_test}</p>
-                        {output.error_input && output.error_input !== "-" && (
-                          <p>📥 Input: <code>{output.error_input}</code></p>
-                        )}
-                        {output.error_expected &&
-                          output.error_expected !== "-" && (
-                            <p>✓ Kutilgan: <code>{output.error_expected}</code></p>
-                          )}
-                        {output.error_output &&
-                          output.error_output !== "-" && (
-                            <p>❌ Olingan: <code>{output.error_output}</code></p>
-                          )}
-                      </div>
+            {/* Content */}
+            <div className="results-content">
+              {testCaseWatch && (
+                <div className="test-panel">
+                  <div className="test-buttons">
+                    {filteredCases && filteredCases.length > 0 ? (
+                      filteredCases.map((tc, idx) => (
+                        <button
+                          key={tc.id}
+                          className={`test-btn ${activeCaseId === tc.id ? "active" : ""}`}
+                          onClick={() => changeTestCase(tc.id)}
+                        >
+                          Test {idx + 1}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="empty">Test yoq</div>
                     )}
                   </div>
-                ) : (
-                  <div className="empty-state">
-                    📝 Kodni yuborish uchun "YUBORISH" tugmasini bosing
-                  </div>
-                )}
-              </div>
-            )}
+
+                  {activeCase && (
+                    <div className="test-details">
+                      <div className="test-row">
+                        <strong>Input:</strong>
+                        <code>{activeCase.input_data}</code>
+                      </div>
+                      <div className="test-row">
+                        <strong>Expected:</strong>
+                        <code>{activeCase.expected_output}</code>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {runTimeWatch && (
+                <div className="output-panel">
+                  {loaderRunTime ? (
+                    <div className="loading">
+                      <div className="spinner" />
+                      <p>Yuborilmoqda...</p>
+                    </div>
+                  ) : output && Object.keys(output).length > 0 ? (
+                    <div className="output-content">
+                      <div
+                        className="status-box"
+                        style={{ borderLeftColor: output.color || "#3b82f6" }}
+                      >
+                        <p>
+                          Status: <strong style={{ color: output.color }}>
+                            {output.status}
+                          </strong>
+                        </p>
+                        <p>⏱ {output.time}s</p>
+                      </div>
+
+                      {output.failed_test && output.failed_test !== "-" && (
+                        <div className="error-box">
+                          <p>❌ {output.failed_test}</p>
+                          {output.error_input && output.error_input !== "-" && (
+                            <p>📥 {output.error_input}</p>
+                          )}
+                          {output.error_expected && output.error_expected !== "-" && (
+                            <p>✓ {output.error_expected}</p>
+                          )}
+                          {output.error_output && output.error_output !== "-" && (
+                            <p>❌ {output.error_output}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="empty">Kod yuboring</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
