@@ -297,6 +297,25 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                     </div>
                   ) : output && Object.keys(output).length > 0 ? (
                     <div className="output-content">
+                      {/* Passed/Accepted State */}
+                      {output.status === "Accepted" || output.status === "Passed" ? (
+                        <div className="judge-result">
+                          <div className="judge-header">
+                            <div className="judge-status passed">
+                              <span className="status-icon">✓</span>
+                              <span className="status-text">To'g'ri javob</span>
+                            </div>
+                            <div className="judge-meta">
+                              <span className="test-case">Barcha testlar o'tdi</span>
+                              <span className="runtime">⏱ {output.time}s</span>
+                            </div>
+                          </div>
+                          <div className="judge-celebration">
+                            <p>🎉 Tabriklaymiz! Sizning yechimingiz to'g'ri!</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
                       <div
                         className="status-box"
                         style={{ borderLeftColor: output.color || "#3b82f6" }}
@@ -364,6 +383,8 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                             </div>
                           </div>
                         </div>
+                      )}
+                      </>
                       )}
                     </div>
                   ) : (

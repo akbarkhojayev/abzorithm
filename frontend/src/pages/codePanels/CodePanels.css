@@ -880,6 +880,31 @@ body,
   background: rgba(100, 116, 139, 0.5);
 }
 
+/* Celebration Message */
+.judge-celebration {
+  padding: 16px;
+  background: linear-gradient(135deg, #f0fdf4, #dbeafe);
+  border: 1px solid #86efac;
+  border-radius: 6px;
+  text-align: center;
+}
+
+[data-theme="dark"] .judge-celebration {
+  background: linear-gradient(135deg, #052e16, #0c2340);
+  border-color: #166534;
+}
+
+.judge-celebration p {
+  margin: 0;
+  font-size: clamp(14px, 2.5vw, 18px);
+  font-weight: 700;
+  color: #16a34a;
+}
+
+[data-theme="dark"] .judge-celebration p {
+  color: #86efac;
+}
+
 /* Empty State */
 .empty {
   display: flex;
