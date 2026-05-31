@@ -1,0 +1,292 @@
+/* ============================================
+   SKELETON LOADERS - PRODUCTION READY
+   ============================================ */
+
+/* Base Skeleton Line */
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #f1f5f9 50%,
+    #e2e8f0 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 2s infinite;
+  margin-bottom: 12px;
+}
+
+[data-theme="dark"] .skeleton-line {
+  background: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
+  );
+}
+
+.skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-short {
+  width: 60%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================
+   TABLE SKELETON
+   ============================================ */
+
+.skeleton-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .skeleton-table {
+  background: #1a1f3a;
+  border-color: #374151;
+}
+
+.skeleton-table-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  align-items: center;
+  min-height: 64px;
+}
+
+[data-theme="dark"] .skeleton-table-row {
+  border-bottom-color: #374151;
+}
+
+.skeleton-table-row:last-child {
+  border-bottom: none;
+}
+
+.skeleton-cell {
+  height: 20px;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #f1f5f9 50%,
+    #e2e8f0 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+  animation: shimmer 2s infinite;
+}
+
+[data-theme="dark"] .skeleton-cell {
+  background: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
+  );
+}
+
+/* ============================================
+   LIST SKELETON
+   ============================================ */
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-list-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  align-items: flex-start;
+}
+
+[data-theme="dark"] .skeleton-list-item {
+  background: #1a1f3a;
+  border-color: #374151;
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #f1f5f9 50%,
+    #e2e8f0 100%
+  );
+  background-size: 200% 100%;
+  border-radius: 50%;
+  animation: shimmer 2s infinite;
+}
+
+[data-theme="dark"] .skeleton-avatar {
+  background: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
+  );
+}
+
+.skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.skeleton-title {
+  height: 18px;
+  width: 70%;
+}
+
+.skeleton-subtitle {
+  height: 14px;
+  width: 50%;
+  margin-bottom: 0;
+}
+
+/* ============================================
+   CARD SKELETON
+   ============================================ */
+
+.skeleton-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.skeleton-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .skeleton-card {
+  background: #1a1f3a;
+  border-color: #374151;
+}
+
+.skeleton-card-header {
+  height: 160px;
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #f1f5f9 50%,
+    #e2e8f0 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+[data-theme="dark"] .skeleton-card-header {
+  background: linear-gradient(
+    90deg,
+    #374151 0%,
+    #4b5563 50%,
+    #374151 100%
+  );
+}
+
+.skeleton-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-card-body .skeleton-line {
+  margin-bottom: 8px;
+}
+
+.skeleton-card-body .skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   TEXT BLOCK SKELETON
+   ============================================ */
+
+.skeleton-text-block {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+[data-theme="dark"] .skeleton-text-block {
+  background: #1a1f3a;
+  border-color: #374151;
+}
+
+.skeleton-text-block .skeleton-line {
+  height: 18px;
+}
+
+.skeleton-text-block .skeleton-short {
+  width: 40%;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .skeleton-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-table-row {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line,
+  .skeleton-cell,
+  .skeleton-avatar,
+  .skeleton-card-header {
+    animation: none;
+    background: var(--bg-secondary);
+  }
+}
