@@ -182,6 +182,7 @@
   margin-left: auto;
   position: relative;
   z-index: 100;
+  pointer-events: auto;
 }
 
 /* ============================================
@@ -263,7 +264,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 /* ============================================

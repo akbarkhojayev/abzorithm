@@ -122,7 +122,14 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
                 className="userIcon"
                 ref={buttonRef}
                 onClick={() => setShowModal(!showModal)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setShowModal(!showModal);
+                  }
+                }}
                 title="Profil Menyu"
+                role="button"
+                tabIndex="0"
               >
                 <img src={profilMe?.avatar || "/imgs/icons.png"} alt="User" />
               </div>
