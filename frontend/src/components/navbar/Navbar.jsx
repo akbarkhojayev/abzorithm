@@ -121,9 +121,13 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
               <div
                 className="userIcon"
                 ref={buttonRef}
-                onClick={() => setShowModal(!showModal)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowModal(!showModal);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation();
                     setShowModal(!showModal);
                   }
                 }}
