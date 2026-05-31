@@ -43,10 +43,18 @@ class ProblemSerializer(serializers.ModelSerializer):
     is_solved = serializers.SerializerMethodField()
     examples = ExampleSerializer(many=True, read_only=True)
     categories = CategorySerializer(many=True, read_only=True)
+    languages = serializers.SerializerMethodField()
+    testcase_count = serializers.SerializerMethodField()
+    example_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Problem
-        fields = '__all__'
+        fields = [
+            'id', 'title', 'slug', 'description', 'difficulty',
+            'input_example', 'output_example', 'function_name',
+            'tags', 'created_at', 'is_solved', 'examples',
+            'categories', 'languages', 'testcase_count', 'example_count'
+        ]
 
     def get_is_solved(self, obj):
         request = self.context.get('request')
@@ -56,6 +64,15 @@ class ProblemSerializer(serializers.ModelSerializer):
                 status='Accepted'
             ).exists()
         return False
+
+    def get_languages(self, obj):
+        return ['python', 'javascript', 'dart']
+
+    def get_testcase_count(self, obj):
+        return obj.testcases.count()
+
+    def get_example_count(self, obj):
+        return obj.examples.count()
 
 
 class TestCaseSerializer(serializers.ModelSerializer):
