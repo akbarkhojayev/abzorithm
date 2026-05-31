@@ -688,13 +688,13 @@ body,
 }
 
 .error-title {
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #fecaca;
+  margin-bottom: 14px;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 [data-theme="dark"] .error-title {
-  border-bottom-color: #991b1b;
+  border-bottom-color: transparent;
 }
 
 .error-title p {
@@ -711,55 +711,41 @@ body,
 .error-details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.error-row {
+.error-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .error-label {
-  font-size: clamp(11px, 1.5vw, 12px);
-  font-weight: 700;
+  font-size: clamp(12px, 1.8vw, 14px);
+  font-weight: 600;
   color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
 }
 
 [data-theme="dark"] .error-label {
   color: #cbd5e1;
 }
 
-.error-value {
+.error-code {
   font-size: clamp(12px, 2vw, 14px);
   color: #1e293b;
   font-family: "Monaco", "Fira Code", monospace;
-  background: #faf5f5;
-  padding: 8px;
-  border-radius: 3px;
-  border: 1px solid #fecaca;
+  background: #f1f5f9;
+  padding: 10px 12px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
   word-break: break-all;
   font-weight: 500;
 }
 
-[data-theme="dark"] .error-value {
+[data-theme="dark"] .error-code {
   color: #e2e8f0;
-  background: #3f1717;
-  border-color: #7f2c2c;
-}
-
-.error-value.error-wrong {
-  background: #fee2e2;
-  border-color: #fca5a5;
-  color: #991b1b;
-}
-
-[data-theme="dark"] .error-value.error-wrong {
-  background: #7f1d1d;
-  border-color: #ef4444;
-  color: #fca5a5;
+  background: #252d45;
+  border-color: #374151;
 }
 
 /* Empty State */

@@ -316,21 +316,21 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                           </div>
                           <div className="error-details">
                             {output.error_input && output.error_input !== "-" && (
-                              <div className="error-row">
+                              <div className="error-item">
                                 <span className="error-label">Kirish:</span>
-                                <span className="error-value">{output.error_input}</span>
+                                <span className="error-code">{output.error_input}</span>
                               </div>
                             )}
                             {output.error_expected && output.error_expected !== "-" && (
-                              <div className="error-row">
+                              <div className="error-item">
                                 <span className="error-label">Kutilgan:</span>
-                                <span className="error-value">{output.error_expected}</span>
+                                <span className="error-code">{output.error_expected}</span>
                               </div>
                             )}
                             {output.error_output && output.error_output !== "-" && (
-                              <div className="error-row">
+                              <div className="error-item">
                                 <span className="error-label">Sizning javob:</span>
-                                <span className="error-value error-wrong">
+                                <span className="error-code">
                                   {output.error_output.includes("Got:")
                                     ? output.error_output.split("Got:")[1].trim()
                                     : output.error_output}
