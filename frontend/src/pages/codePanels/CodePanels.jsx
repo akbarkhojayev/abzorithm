@@ -330,7 +330,11 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                             {output.error_output && output.error_output !== "-" && (
                               <div className="error-row">
                                 <span className="error-label">Asl natija:</span>
-                                <span className="error-value error-wrong">{output.error_output}</span>
+                                <span className="error-value error-wrong">
+                                  {output.error_output.includes("Got:")
+                                    ? output.error_output.split("Got:")[1].trim()
+                                    : output.error_output}
+                                </span>
                               </div>
                             )}
                           </div>
