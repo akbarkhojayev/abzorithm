@@ -20,10 +20,15 @@ import time
 import os
 
 
-def run_python_function(user_code: str, func_name: str, test_input: str, expected_output: str, timeout: int = 2):
+def run_python_function(user_code: str, func_name: str, test_input: str, expected_output: str, timeout: int = 2, language: str = 'python'):
     """
-    Bitta test case ni tekshiradi
+    Bitta test case ni tekshiradi - Python, JavaScript, Dart qo'llab-quvvatlanadi
     """
+    if language == 'javascript':
+        return run_javascript_function(user_code, test_input, expected_output, timeout)
+    elif language == 'dart':
+        return run_dart_function(user_code, test_input, expected_output, timeout)
+    # Python executor continues below
     input_lines = test_input.replace('\r', '').strip().split("\n")
     args = []
 
@@ -120,7 +125,14 @@ if __name__ == "__main__":
         exec_time = round(time.time() - start_time, 4)
 
         if result.returncode != 0:
-            return False, "RuntimeError", result.stderr.strip(), exec_time
+            error_msg = result.stderr.strip()
+            # Parse error message to make it more readable
+            if error_msg:
+                # Show only relevant part of error
+                lines = error_msg.split('\n')
+                readable_error = lines[-1] if lines else error_msg
+                return False, "RuntimeError", readable_error[:500], exec_time
+            return False, "RuntimeError", "Code execution failed", exec_time
 
         output = result.stdout.replace('\r', '').strip()
         expected_output_clean = expected_output.replace('\r', '').strip()
@@ -146,7 +158,11 @@ if __name__ == "__main__":
         if is_equal:
             return True, "Accepted", output, exec_time
         else:
-            return False, "Wrong Answer", f"Output: {output}", exec_time
+            # Show both expected and actual output for debugging
+            exp_display = str(expected_output_clean)[:100]
+            out_display = str(output)[:100]
+            error_detail = f"Expected: {exp_display}\nGot: {out_display}"
+            return False, "Wrong Answer", error_detail, exec_time
 
     except subprocess.TimeoutExpired:
         return False, "TimeLimit", "⏰ Time Limit Exceeded", timeout
@@ -200,6 +216,249 @@ def create_submission_json(code: str, func_name: str, test_input: str, expected_
         "problem": problem_id
     }
     return submission_json
+
+def run_javascript_function(user_code: str, test_input: str, expected_output: str, timeout: int = 2):
+    """JavaScript kodini Node.js orqali bajarish"""
+    import time
+    input_lines = test_input.replace('\r', '').strip().split("\n")
+    args = []
+
+    for x in input_lines:
+        x = x.strip()
+        if not x:
+            continue
+        try:
+            parsed = json.loads(x)
+            args.append(parsed)
+        except json.JSONDecodeError:
+            try:
+                if '.' in x:
+                    args.append(float(x))
+                else:
+                    args.append(int(x))
+            except ValueError:
+                args.append(x)
+
+    code_wrapper = f"""
+{user_code}
+
+try {{
+    const solution = new Solution();
+    const args = {json.dumps(args)};
+    const result = solution.solve(...args);
+    console.log(JSON.stringify(result));
+}} catch (error) {{
+    if (error instanceof SyntaxError) {{
+        console.error('SyntaxError: ' + error.message);
+    }} else if (error instanceof TypeError) {{
+        console.error('TypeError: ' + error.message);
+    }} else {{
+        console.error(error.message);
+    }}
+    process.exit(1);
+}}
+"""
+
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.js', delete=False) as f:
+            f.write(code_wrapper)
+            temp_path = f.name
+
+        os.chmod(temp_path, 0o600)
+
+        start_time = time.time()
+        result = subprocess.run(
+            ['node', temp_path],
+            capture_output=True,
+            text=True,
+            timeout=timeout
+        )
+        exec_time = round(time.time() - start_time, 4)
+
+        if result.returncode != 0:
+            error_msg = result.stderr.strip()
+            if error_msg:
+                lines = error_msg.split('\n')
+                # Find the most relevant error line (skip empty, version info, and pointer symbols)
+                for line in reversed(lines):
+                    line = line.strip()
+                    if line and 'Node.js' not in line and not line.startswith('^') and not line.startswith('|'):
+                        error_msg = line
+                        break
+                return False, "RuntimeError", error_msg[:300], exec_time
+            return False, "RuntimeError", "Code execution failed", exec_time
+
+        output = result.stdout.strip()
+
+        try:
+            expected_json = json.loads(expected_output)
+        except json.JSONDecodeError:
+            expected_json = expected_output
+
+        try:
+            actual_json = json.loads(output) if output else None
+        except json.JSONDecodeError:
+            actual_json = output
+
+        if actual_json == expected_json:
+            return True, "Accepted", "Test passed", exec_time
+        else:
+            expected_str = json.dumps(expected_json, ensure_ascii=False) if expected_json is not None else "None"
+            actual_str = json.dumps(actual_json, ensure_ascii=False) if actual_json is not None else "None"
+            if len(expected_str) > 50:
+                expected_str = expected_str[:47] + "..."
+            if len(actual_str) > 50:
+                actual_str = actual_str[:47] + "..."
+            error_detail = f"Expected: {expected_str}\nGot: {actual_str}"
+            return False, "Wrong Answer", error_detail, exec_time
+
+    except subprocess.TimeoutExpired:
+        return False, "TimeLimit", f"Execution time exceeded {timeout}s", timeout
+    except Exception as e:
+        error_msg = str(e).replace('\n', ' ').replace('\r', ' ')[:200]
+        return False, "RuntimeError", f"Execution error: {error_msg}", 0
+    finally:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except:
+            pass
+
+
+def run_dart_function(user_code: str, test_input: str, expected_output: str, timeout: int = 2):
+    """Dart kodini bajarish"""
+    import time
+
+    def parse_arguments(test_input: str):
+        raw = test_input.strip()
+        if raw == "":
+            return []
+        try:
+            parsed = json.loads(raw)
+            if isinstance(parsed, list):
+                return parsed
+            return [parsed]
+        except:
+            pass
+
+        if "\n" not in raw:
+            x = raw.strip()
+            try:
+                if '.' in x:
+                    return [float(x)]
+                return [int(x)]
+            except:
+                return [x]
+
+        args = []
+        for x in raw.split("\n"):
+            x = x.strip()
+            if not x:
+                continue
+            try:
+                parsed = json.loads(x)
+                args.append(parsed)
+            except:
+                try:
+                    if '.' in x:
+                        args.append(float(x))
+                    else:
+                        args.append(int(x))
+                except:
+                    args.append(x)
+        return args
+
+    args = parse_arguments(test_input)
+
+    # Generate argument spreading code for Dart
+    args_str = ', '.join(json.dumps(arg) for arg in args)
+
+    code_wrapper = f"""
+import 'dart:convert';
+import 'dart:io';
+
+{user_code}
+
+void main() {{
+  try {{
+    final solution = Solution();
+    final result = solution.solve({args_str});
+    print(jsonEncode(result));
+  }} catch (e) {{
+    String errorMsg = e.toString();
+    // Extract just the error message, not the stack trace
+    if (errorMsg.contains(':')) {{
+      errorMsg = errorMsg.split(':').skip(1).join(':').trim();
+    }}
+    stderr.writeln(errorMsg);
+    exit(1);
+  }}
+}}
+"""
+
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.dart', delete=False) as f:
+            f.write(code_wrapper)
+            temp_path = f.name
+
+        start_time = time.time()
+        result = subprocess.run(
+            ['dart', temp_path],
+            capture_output=True,
+            text=True,
+            timeout=timeout
+        )
+        exec_time = round(time.time() - start_time, 4)
+
+        if result.returncode != 0:
+            error_msg = result.stderr.strip()
+            if error_msg:
+                lines = error_msg.split('\n')
+                # Find the most relevant error line (skip empty, version info, and pointer symbols)
+                for line in reversed(lines):
+                    line = line.strip()
+                    if line and 'Node.js' not in line and not line.startswith('^') and not line.startswith('|'):
+                        error_msg = line
+                        break
+                return False, "RuntimeError", error_msg[:300], exec_time
+            return False, "RuntimeError", "Code execution failed", exec_time
+
+        output = result.stdout.strip()
+
+        try:
+            expected_json = json.loads(expected_output)
+        except json.JSONDecodeError:
+            expected_json = expected_output
+
+        try:
+            actual_json = json.loads(output) if output else None
+        except json.JSONDecodeError:
+            actual_json = output
+
+        if actual_json == expected_json:
+            return True, "Accepted", "Test passed", exec_time
+        else:
+            expected_str = json.dumps(expected_json, ensure_ascii=False) if expected_json is not None else "None"
+            actual_str = json.dumps(actual_json, ensure_ascii=False) if actual_json is not None else "None"
+            if len(expected_str) > 50:
+                expected_str = expected_str[:47] + "..."
+            if len(actual_str) > 50:
+                actual_str = actual_str[:47] + "..."
+            error_detail = f"Expected: {expected_str}\nGot: {actual_str}"
+            return False, "Wrong Answer", error_detail, exec_time
+
+    except subprocess.TimeoutExpired:
+        return False, "TimeLimit", f"Execution time exceeded {timeout}s", timeout
+    except Exception as e:
+        error_msg = str(e).replace('\n', ' ').replace('\r', ' ')[:200]
+        return False, "RuntimeError", f"Execution error: {error_msg}", 0
+    finally:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except:
+            pass
+
 
 import json
 import ast

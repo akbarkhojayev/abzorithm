@@ -2,6 +2,17 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.text import slugify
 
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
+    def __str__(self):
+        return self.name
+
 class User(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
@@ -23,6 +34,7 @@ class Problem(models.Model):
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_CHOICES)
     input_example = models.TextField()
     output_example = models.TextField()
+    categories = models.ManyToManyField(Category, related_name="problems")
     tags = models.CharField(max_length=255, blank=True)
     function_name = models.CharField(max_length=50, default="Solution().solve")
     created_at = models.DateTimeField(auto_now_add=True)

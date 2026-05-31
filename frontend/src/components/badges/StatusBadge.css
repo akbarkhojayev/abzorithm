@@ -1,0 +1,24 @@
+.status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+}
+
+.status-badge .checkmark {
+  width: 18px;
+  height: 18px;
+  color: #00b341;
+  stroke-width: 2.5;
+}
+
+.status-badge .empty {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  background-color: transparent;
+}

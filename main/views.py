@@ -6,8 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from drf_yasg import openapi
 from main.models import *
 from main.serializers import *
-from main.utils_docker import run_python_function_docker as run_python_function
-from main.utils import generate_javascript_template, generate_dart_template
+from main.utils import run_python_function, generate_javascript_template, generate_dart_template
 from rest_framework.parsers import FormParser,MultiPartParser
 from django_filters.rest_framework import DjangoFilterBackend
 from main.filters import *
@@ -262,6 +261,7 @@ class SubmissionCreateView(generics.CreateAPIView):
 
 class SubmissionTemplateView(generics.RetrieveAPIView):
     queryset = Problem.objects.all()
+    serializer_class = ProblemSerializer
     permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, *args, **kwargs):

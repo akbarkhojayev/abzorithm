@@ -29,6 +29,11 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         fields = ("id", "username", "email", "bio", "avatar", "country")
         read_only_fields = ("id", "username", "email")
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'description']
+
 class ExampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Example
@@ -37,6 +42,7 @@ class ExampleSerializer(serializers.ModelSerializer):
 class ProblemSerializer(serializers.ModelSerializer):
     is_solved = serializers.SerializerMethodField()
     examples = ExampleSerializer(many=True, read_only=True)
+    categories = CategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Problem
