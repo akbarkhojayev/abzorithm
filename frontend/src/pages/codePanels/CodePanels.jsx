@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./CodePanels.css";
-import { GiSandsOfTime } from "react-icons/gi";
 import CodeEditor from "../../components/codeEditor/CodeEditor.jsx";
 import { useCodePanel } from "../../hooks/useCodePanel.js";
 
@@ -246,7 +245,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   setTestCaseWatch(false);
                 }}
               >
-                <GiSandsOfTime />
                 Natija
               </button>
             </div>
