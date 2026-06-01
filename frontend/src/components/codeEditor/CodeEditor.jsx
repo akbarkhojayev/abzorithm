@@ -10,9 +10,9 @@ import "./CodeEditor.css";
 const LANGUAGES = ["python", "javascript", "dart"];
 
 const LANGUAGE_LOGOS = {
-  python: "https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/python.svg",
-  javascript: "https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/javascript.svg",
-  dart: "https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/dart.svg",
+  python: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+  javascript: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
+  dart: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg",
 };
 
 const getLanguageIcon = (lang) => {
