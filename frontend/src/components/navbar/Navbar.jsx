@@ -11,6 +11,7 @@ import { useTheme } from "../../context/ThemeContext.jsx";
 function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
@@ -21,6 +22,17 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
 
   const panelRef = useRef(null);
   const buttonRef = useRef(null);
+
+  const handleProfileClick = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right
+      });
+    }
+    setShowModal(!showModal);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -34,11 +46,13 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
       }
     };
 
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
+    if (showModal) {
+      document.addEventListener("click", handleClickOutside);
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }
+  }, [showModal]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -117,18 +131,15 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
 
           {/* USER PROFILE DROPDOWN */}
           {tokens && (
-            <>
+            <div className="profile-wrapper">
               <div
                 className="userIcon"
                 ref={buttonRef}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowModal(!showModal);
-                }}
+                onClick={handleProfileClick}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
-                    e.stopPropagation();
-                    setShowModal(!showModal);
+                    e.preventDefault();
+                    handleProfileClick();
                   }
                 }}
                 title="Profil Menyu"
@@ -139,48 +150,55 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
               </div>
 
               {/* DROPDOWN MENU */}
-              <div
-                ref={panelRef}
-                className={`modal ${showModal ? "active" : ""}`}
-              >
-                <button
-                  className="xmark"
-                  onClick={() => setShowModal(false)}
-                  aria-label="Menyuni yopish"
+              {showModal && (
+                <div
+                  ref={panelRef}
+                  className="profile-dropdown"
+                  style={{
+                    top: `${dropdownPos.top}px`,
+                    right: `${dropdownPos.right}px`
+                  }}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <FaXmark />
-                </button>
+                  <button
+                    className="dropdown-close"
+                    onClick={() => setShowModal(false)}
+                    aria-label="Menyuni yopish"
+                  >
+                    <FaXmark />
+                  </button>
 
-                {/* USER INFO */}
-                <div className="user-profil-status">
-                  <div className="status-img">
-                    <img
-                      src={profilMe?.avatar || "/imgs/icons.png"}
-                      alt="User Avatar"
-                    />
+                  {/* USER INFO */}
+                  <div className="dropdown-user-info">
+                    <div className="dropdown-user-avatar">
+                      <img
+                        src={profilMe?.avatar || "/imgs/icons.png"}
+                        alt="User Avatar"
+                      />
+                    </div>
+                    <h3>{profilMe?.username || "User"}</h3>
                   </div>
-                  <h2>{profilMe?.username || "User"}</h2>
+
+                  {/* MENU ITEMS */}
+                  <Link
+                    to="/profil"
+                    className="dropdown-item"
+                    onClick={() => setShowModal(false)}
+                  >
+                    <FaUserShield />
+                    <span>Shaxsiy Ma'lumotlar</span>
+                  </Link>
+
+                  <button
+                    className="dropdown-item logout-btn"
+                    onClick={handleLogout}
+                  >
+                    <IoExitOutline />
+                    <span>Chiqish</span>
+                  </button>
                 </div>
-
-                {/* MENU ITEMS */}
-                <Link
-                  to="/profil"
-                  className="list-profil"
-                  onClick={() => setShowModal(false)}
-                >
-                  <FaUserShield />
-                  Shaxsiy Ma'lumotlar
-                </Link>
-
-                <button
-                  className="list-profil"
-                  onClick={handleLogout}
-                >
-                  <IoExitOutline />
-                  Chiqish
-                </button>
-              </div>
-            </>
+              )}
+            </div>
           )}
         </div>
       </div>
