@@ -2,6 +2,8 @@
   min-height: 100vh;
   padding: 40px 0;
   background: #f9fafb;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 [data-theme="dark"] .statistics {
@@ -12,6 +14,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+  overflow: visible;
 }
 
 /* Header */
