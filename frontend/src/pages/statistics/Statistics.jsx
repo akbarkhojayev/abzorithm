@@ -3,6 +3,8 @@ import "./Statistics.css";
 import { baseUrl } from "../services/config.js";
 import { getToken } from "../services/token.js";
 import { getProfilMe } from "../services/app.js";
+import { FaChartBar, FaCheckCircle, FaFire, FaStar } from "react-icons/fa";
+import { MdErrorOutline, MdAccessTime, MdPublic } from "react-icons/md";
 
 function Statistics() {
   const [stats, setStats] = useState(null);
@@ -27,6 +29,10 @@ function Statistics() {
         }),
       ]);
 
+      if (!profilRes.ok || !submissionsRes.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
       const profil = await profilRes.json();
       const submissions = await submissionsRes.json();
 
@@ -34,6 +40,7 @@ function Statistics() {
       setSubmissions(Array.isArray(submissions) ? submissions : []);
     } catch (error) {
       console.error("Error:", error);
+      setSubmissions([]);
     } finally {
       setLoading(false);
     }
@@ -167,7 +174,7 @@ function Statistics() {
             <div className="main-stats-grid">
               <div className="stat-card large">
                 <div className="stat-header">
-                  <span className="stat-icon">📊</span>
+                  <span className="stat-icon"><FaChartBar /></span>
                   <span className="stat-title">Jami Yechimlar</span>
                 </div>
                 <div className="stat-content">
@@ -178,7 +185,7 @@ function Statistics() {
 
               <div className="stat-card large success">
                 <div className="stat-header">
-                  <span className="stat-icon">✅</span>
+                  <span className="stat-icon"><FaCheckCircle /></span>
                   <span className="stat-title">Qabul Qilingan</span>
                 </div>
                 <div className="stat-content">
@@ -191,7 +198,7 @@ function Statistics() {
 
               <div className="stat-card large">
                 <div className="stat-header">
-                  <span className="stat-icon">🔥</span>
+                  <span className="stat-icon"><FaFire /></span>
                   <span className="stat-title">Streyk</span>
                 </div>
                 <div className="stat-content">
@@ -202,7 +209,7 @@ function Statistics() {
 
               <div className="stat-card large">
                 <div className="stat-header">
-                  <span className="stat-icon">⭐</span>
+                  <span className="stat-icon"><FaStar /></span>
                   <span className="stat-title">Ball</span>
                 </div>
                 <div className="stat-content">
@@ -216,7 +223,7 @@ function Statistics() {
             <div className="secondary-stats-grid">
               <div className="stat-card">
                 <div className="stat-header">
-                  <span className="stat-icon">❌</span>
+                  <span className="stat-icon"><MdErrorOutline /></span>
                   <span className="stat-title">Xato Javob</span>
                 </div>
                 <div className="stat-value">{stats_.wrong}</div>
@@ -224,7 +231,7 @@ function Statistics() {
 
               <div className="stat-card">
                 <div className="stat-header">
-                  <span className="stat-icon">⚠️</span>
+                  <span className="stat-icon"><MdErrorOutline /></span>
                   <span className="stat-title">Runtime Xatosi</span>
                 </div>
                 <div className="stat-value">{stats_.runtime}</div>
@@ -232,7 +239,7 @@ function Statistics() {
 
               <div className="stat-card">
                 <div className="stat-header">
-                  <span className="stat-icon">⏱️</span>
+                  <span className="stat-icon"><MdAccessTime /></span>
                   <span className="stat-title">Vaqt Limiti</span>
                 </div>
                 <div className="stat-value">{stats_.tle}</div>
@@ -240,7 +247,7 @@ function Statistics() {
 
               <div className="stat-card">
                 <div className="stat-header">
-                  <span className="stat-icon">🌍</span>
+                  <span className="stat-icon"><MdPublic /></span>
                   <span className="stat-title">Mamlakat</span>
                 </div>
                 <div className="stat-value">{stats?.country || "-"}</div>

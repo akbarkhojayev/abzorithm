@@ -14,8 +14,8 @@ import { getToken } from "../services/token.js";
 import ProfilMe from "../profilMe/ProfilMe.jsx";
 import LeaderBoard from "../leaderboard/LeaderBoard.jsx";
 import Error from "../error/Error.jsx";
-import SolutionsHistory from "../solutionsHistory/SolutionsHistory.jsx";
 import Statistics from "../statistics/Statistics.jsx";
+import SolutionsHistory from "../solutionsHistory/SolutionsHistory.jsx";
 
 function Routers() {
   const [profil, setProfil] = useState(null);
@@ -98,30 +98,8 @@ function Routers() {
               </>
             }
           />
-          <Route
-            path="/solutions-history"
-            element={
-              tokens ? (
-                <SolutionsHistory />
-              ) : (
-                <>
-                  <Error />
-                </>
-              )
-            }
-          />
-          <Route
-            path="/statistics"
-            element={
-              tokens ? (
-                <Statistics />
-              ) : (
-                <>
-                  <Error />
-                </>
-              )
-            }
-          />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/solutions-history" element={<SolutionsHistory />} />
           {/* 404 error page */}
           <Route path="*" element={<Error />} />
         </Routes>

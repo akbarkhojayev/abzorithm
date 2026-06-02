@@ -7,8 +7,7 @@
   padding: 20px;
   background: #f9fafb;
   position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 [data-theme="dark"] .signin-container {

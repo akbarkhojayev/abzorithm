@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./SolutionsHistory.css";
 import { baseUrl } from "../services/config.js";
 import { getToken } from "../services/token.js";
+import { FaList, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 function SolutionsHistory() {
   const [submissions, setSubmissions] = useState([]);
@@ -23,7 +24,12 @@ function SolutionsHistory() {
         "Content-Type": "application/json",
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch submissions");
+        }
+        return res.json();
+      })
       .then((data) => {
         const sortedData = Array.isArray(data)
           ? data.sort(
@@ -33,7 +39,10 @@ function SolutionsHistory() {
           : [];
         setSubmissions(sortedData);
       })
-      .catch((error) => console.error("Error:", error))
+      .catch((error) => {
+        console.error("Error:", error);
+        setSubmissions([]);
+      })
       .finally(() => setLoading(false));
   };
 
@@ -126,7 +135,7 @@ function SolutionsHistory() {
           </div>
         ) : filteredSubmissions.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📝</div>
+            <div className="empty-icon"><FaList /></div>
             <h2>Hali yechim yo'q</h2>
             <p>Masalalarni yechib, yechimlar tarixini to'ldiring</p>
           </div>

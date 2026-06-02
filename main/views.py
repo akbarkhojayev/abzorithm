@@ -156,12 +156,13 @@ class SubmissionDetailView(generics.RetrieveAPIView):
 class SubmissionListView(generics.ListAPIView):
     serializer_class = SubmissionListSerializer
     permission_classes = (IsAuthenticated,)
-    
+
     def get_queryset(self):
-        queryset = Submission.objects.all().order_by('-submitted_at')
         user_id = self.request.query_params.get('user', None)
         if user_id is not None:
-            queryset = queryset.filter(user_id=user_id)
+            queryset = Submission.objects.filter(user_id=user_id).order_by('-submitted_at')
+        else:
+            queryset = Submission.objects.filter(user=self.request.user).order_by('-submitted_at')
         return queryset
 
 class SubmissionCreateView(generics.CreateAPIView):

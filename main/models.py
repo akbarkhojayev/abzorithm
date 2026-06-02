@@ -75,8 +75,8 @@ class Submission(models.Model):
     STATUS_CHOICES = [
         ('Accepted', 'Accepted'),
         ('Wrong Answer', 'Wrong Answer'),
-        ('RuntimeError', 'RuntimeError'),
-        ('TimeLimit', 'TimeLimit'),
+        ('Runtime Error', 'Runtime Error'),
+        ('Time Limit Exceeded', 'Time Limit Exceeded'),
     ]
 
     LANGUAGE_CHOICES = [

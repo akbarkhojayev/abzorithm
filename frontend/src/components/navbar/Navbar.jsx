@@ -86,10 +86,10 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
           {tokens && (
             <>
               <li>
-                <NavLink to="/solutions-history">Yechimlar Tarixi</NavLink>
+                <NavLink to="/statistics">Statistika</NavLink>
               </li>
               <li>
-                <NavLink to="/statistics">Statistika</NavLink>
+                <NavLink to="/solutions-history">Yechimlar Tarixi</NavLink>
               </li>
             </>
           )}
@@ -197,24 +197,6 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
                   >
                     <FaUserShield />
                     <span>Shaxsiy Ma'lumotlar</span>
-                  </Link>
-
-                  <Link
-                    to="/solutions-history"
-                    className="dropdown-item"
-                    onClick={() => setShowModal(false)}
-                  >
-                    <span>📝</span>
-                    <span>Yechimlar Tarixi</span>
-                  </Link>
-
-                  <Link
-                    to="/statistics"
-                    className="dropdown-item"
-                    onClick={() => setShowModal(false)}
-                  >
-                    <span>📊</span>
-                    <span>Statistika</span>
                   </Link>
 
                   <button
