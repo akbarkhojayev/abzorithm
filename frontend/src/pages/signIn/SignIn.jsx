@@ -6,12 +6,13 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { getToken, setToken } from "../services/token.js";
 import { getProfilMe } from "../services/app.js";
+import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 
 function SignIn({ setTokens, setProfilMe }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const [loderSignIn, setLoaderSignIn] = useState(false);
 
   const signIn = () => {
@@ -63,42 +64,76 @@ function SignIn({ setTokens, setProfilMe }) {
           <span>g</span>
         </p>
       </div>
-      <div className="create-accaunt sign-in">
-        <div className="container">
+      <div className="signin-container">
+        <div className="signin-card">
+          <div className="signin-header">
+            <h1>Codial Algo</h1>
+            <p>Algoritmik masalalarni yechmni boshlang</p>
+          </div>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
               signIn();
             }}
-            className="accaunt-settings signin"
+            className="signin-form"
           >
-            <div className="settings">
-              <label htmlFor="">Username:</label>
-              <input
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                }}
-                type="text"
-                required
-                placeholder="Username"
-              />
+            <div className="form-group">
+              <label htmlFor="username">Foydalanuvchi Nomi</label>
+              <div className="input-wrapper">
+                <AiOutlineMail className="input-icon" />
+                <input
+                  id="username"
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                  }}
+                  type="text"
+                  required
+                  placeholder="Username kiriting"
+                  value={username}
+                />
+              </div>
             </div>
-            <div className="settings">
-              <label htmlFor="">Password</label>
-              <input
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                type="password"
-                required
-                placeholder="Password"
-              />
+
+            <div className="form-group">
+              <label htmlFor="password">Parol</label>
+              <div className="input-wrapper">
+                <AiOutlineLock className="input-icon" />
+                <input
+                  id="password"
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="Parol kiriting"
+                  value={password}
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                </button>
+              </div>
             </div>
-            <div className="but-btns">
-              <Button variant="contained" type="submmit">
-                Kirish
-              </Button>
-              <Link to={"/create-account"}>Create account</Link>
+
+            <Button
+              variant="contained"
+              type="submit"
+              fullWidth
+              className="signin-button"
+              disabled={loderSignIn}
+            >
+              {loderSignIn ? "Yuklanmoqda..." : "Kirish"}
+            </Button>
+
+            <div className="signin-footer">
+              <p>
+                Hali akkauntingiz yo'qmi?{" "}
+                <Link to={"/create-account"}>Yangi akkaunt yaratish</Link>
+              </p>
             </div>
           </form>
         </div>

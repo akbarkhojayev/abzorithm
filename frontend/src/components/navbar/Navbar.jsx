@@ -83,6 +83,16 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
           <li>
             <NavLink to="/leaderboard">Reyting Taxtasi</NavLink>
           </li>
+          {tokens && (
+            <>
+              <li>
+                <NavLink to="/solutions-history">Yechimlar Tarixi</NavLink>
+              </li>
+              <li>
+                <NavLink to="/statistics">Statistika</NavLink>
+              </li>
+            </>
+          )}
         </ul>
 
         {/* RIGHT SECTION */}
@@ -187,6 +197,24 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
                   >
                     <FaUserShield />
                     <span>Shaxsiy Ma'lumotlar</span>
+                  </Link>
+
+                  <Link
+                    to="/solutions-history"
+                    className="dropdown-item"
+                    onClick={() => setShowModal(false)}
+                  >
+                    <span>📝</span>
+                    <span>Yechimlar Tarixi</span>
+                  </Link>
+
+                  <Link
+                    to="/statistics"
+                    className="dropdown-item"
+                    onClick={() => setShowModal(false)}
+                  >
+                    <span>📊</span>
+                    <span>Statistika</span>
                   </Link>
 
                   <button
