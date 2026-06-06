@@ -14,21 +14,41 @@ function Problems({ problemData, setProblemData }) {
   const [selectedTag, setSelectedTag] = useState("");
   const [allTags, setAllTags] = useState([]);
   const [categoryCounts, setCategoryCounts] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalProblems, setTotalProblems] = useState(0);
+  const [pageSize] = useState(10);
 
   useEffect(() => {
     loadProblems();
   }, []);
 
-  const loadProblems = async () => {
+  const loadProblems = async (page = 1) => {
     setLoader(true);
     setError(null);
     try {
-      const data = await getProblems();
-      setProblemData(data);
-      extractTags(data);
+      const offset = (page - 1) * pageSize;
+      const token = getToken();
+
+      const response = await fetch(`${baseUrl}/problems/?limit=${pageSize}&offset=${offset}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to load problems");
+      }
+
+      const data = await response.json();
+      setProblemData(Array.isArray(data.results) ? data.results : []);
+      setTotalProblems(data.count || 0);
+      setCurrentPage(page);
+
+      if (page === 1) {
+        extractTags(Array.isArray(data.results) ? data.results : []);
+      }
     } catch (err) {
       setError("Masalalar yuklanishi uchun xatolik yuz berdi");
       console.error("Error loading problems:", err);
+      setProblemData([]);
     } finally {
       setLoader(false);
     }
@@ -51,20 +71,29 @@ function Problems({ problemData, setProblemData }) {
     setCategoryCounts(counts);
   };
 
-  const getFilterData = async () => {
+  const getFilterData = async (page = 1) => {
     setLoader(true);
     setError(null);
 
     try {
-      const params = new URLSearchParams({ search });
-      const response = await fetch(`${baseUrl}/problems/?${params.toString()}`);
+      const offset = (page - 1) * pageSize;
+      const token = getToken();
+      const params = new URLSearchParams({
+        search,
+        limit: pageSize,
+        offset
+      });
+
+      const response = await fetch(`${baseUrl}/problems/?${params.toString()}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
 
       if (!response.ok) {
         throw new Error("Filtrlash uchun xatolik yuz berdi");
       }
 
       const data = await response.json();
-      let filtered = data;
+      let filtered = Array.isArray(data.results) ? data.results : [];
 
       if (selectedTag) {
         filtered = filtered.filter((p) =>
@@ -73,9 +102,12 @@ function Problems({ problemData, setProblemData }) {
       }
 
       setProblemData(filtered);
+      setTotalProblems(data.count || 0);
+      setCurrentPage(page);
     } catch (err) {
       setError("Qidirish uchun xatolik yuz berdi");
       console.error("Error filtering problems:", err);
+      setProblemData([]);
     } finally {
       setLoader(false);
     }
@@ -83,10 +115,11 @@ function Problems({ problemData, setProblemData }) {
 
   useEffect(() => {
     const delay = setTimeout(() => {
+      setCurrentPage(1);
       if (search || selectedTag) {
-        getFilterData();
+        getFilterData(1);
       } else {
-        loadProblems();
+        loadProblems(1);
       }
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 300);
@@ -208,6 +241,43 @@ function Problems({ problemData, setProblemData }) {
               <div className="empty-state">
                 <h2>Hech qanday masala topilmadi</h2>
                 <p>Masalalar yuklanmayotgan bo'lsa, qayta urinib ko'ring</p>
+              </div>
+            )}
+
+            {problemData && problemData.length > 0 && totalProblems > pageSize && (
+              <div className="pagination-container">
+                <button
+                  className="pagination-btn"
+                  onClick={() => {
+                    if (search || selectedTag) {
+                      getFilterData(currentPage - 1);
+                    } else {
+                      loadProblems(currentPage - 1);
+                    }
+                  }}
+                  disabled={currentPage === 1}
+                >
+                  ← Oldingi
+                </button>
+
+                <div className="pagination-info">
+                  <span>Sahifa {currentPage} / {Math.ceil(totalProblems / pageSize)}</span>
+                  <span className="pagination-count">Jami: {totalProblems}</span>
+                </div>
+
+                <button
+                  className="pagination-btn"
+                  onClick={() => {
+                    if (search || selectedTag) {
+                      getFilterData(currentPage + 1);
+                    } else {
+                      loadProblems(currentPage + 1);
+                    }
+                  }}
+                  disabled={currentPage >= Math.ceil(totalProblems / pageSize)}
+                >
+                  Keyingi →
+                </button>
               </div>
             )}
           </div>

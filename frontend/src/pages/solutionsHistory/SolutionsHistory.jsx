@@ -8,16 +8,20 @@ function SolutionsHistory() {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalSubmissions, setTotalSubmissions] = useState(0);
+  const [pageSize] = useState(20);
 
   useEffect(() => {
     fetchSubmissions();
   }, []);
 
-  const fetchSubmissions = () => {
+  const fetchSubmissions = (page = 1) => {
     setLoading(true);
     const token = getToken();
+    const offset = (page - 1) * pageSize;
 
-    fetch(`${baseUrl}/submissions/`, {
+    fetch(`${baseUrl}/submissions/?limit=${pageSize}&offset=${offset}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,13 +35,15 @@ function SolutionsHistory() {
         return res.json();
       })
       .then((data) => {
-        const sortedData = Array.isArray(data)
-          ? data.sort(
+        const sortedData = Array.isArray(data.results)
+          ? data.results.sort(
               (a, b) =>
                 new Date(b.submitted_at) - new Date(a.submitted_at)
             )
           : [];
         setSubmissions(sortedData);
+        setTotalSubmissions(data.count || 0);
+        setCurrentPage(page);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -177,6 +183,31 @@ function SolutionsHistory() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {submissions && submissions.length > 0 && totalSubmissions > pageSize && (
+          <div className="pagination-container">
+            <button
+              className="pagination-btn"
+              onClick={() => fetchSubmissions(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              ← Oldingi
+            </button>
+
+            <div className="pagination-info">
+              <span>Sahifa {currentPage} / {Math.ceil(totalSubmissions / pageSize)}</span>
+              <span className="pagination-count">Jami: {totalSubmissions}</span>
+            </div>
+
+            <button
+              className="pagination-btn"
+              onClick={() => fetchSubmissions(currentPage + 1)}
+              disabled={currentPage >= Math.ceil(totalSubmissions / pageSize)}
+            >
+              Keyingi →
+            </button>
           </div>
         )}
       </div>

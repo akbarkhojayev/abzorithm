@@ -3,7 +3,8 @@ import Editor from "@monaco-editor/react";
 import { getMasala, getProfilMe } from "../../pages/services/app.js";
 import { getToken } from "../../pages/services/token.js";
 import { baseUrl } from "../../pages/services/config.js";
-import { FiRotateCcw, FiRotateCw, FiRefreshCw } from "react-icons/fi";
+import { FiRotateCcw, FiRotateCw, FiRefreshCw, FiCode } from "react-icons/fi";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import "./CodeEditor.css";
 
@@ -227,6 +228,11 @@ function CodeEditor({
     loadTemplate(language);
   }, [language, loadTemplate]);
 
+  const formatCode = useCallback(() => {
+    if (!editorRef.current) return;
+    editorRef.current.getAction('editor.action.formatDocument').run();
+  }, []);
+
   return (
     <div className="code-editor">
       <div className="editor-controls">
@@ -290,7 +296,7 @@ function CodeEditor({
           <button
             onClick={undoCode}
             className="action-btn"
-            title="Orqaga qaytarish"
+            title="Orqaga qaytarish (Ctrl+Z)"
             aria-label="Orqaga qaytarish"
           >
             <FiRotateCcw />
@@ -299,10 +305,19 @@ function CodeEditor({
           <button
             onClick={redoCode}
             className="action-btn"
-            title="Oldinga qaytarish"
+            title="Oldinga qaytarish (Ctrl+Y)"
             aria-label="Oldinga qaytarish"
           >
             <FiRotateCw />
+          </button>
+
+          <button
+            onClick={formatCode}
+            className="action-btn"
+            title="Kodni formatlash (Shift+Alt+F)"
+            aria-label="Kodni formatlash"
+          >
+            <FiCode />
           </button>
 
           <div className="font-size-control">
@@ -324,6 +339,21 @@ function CodeEditor({
               <option value={32}>32px</option>
             </select>
           </div>
+
+          <button
+            className="theme-toggle-btn"
+            onClick={() => {
+              // Theme context'dan toggle function'ini call qilish
+              document.documentElement.setAttribute(
+                'data-theme',
+                isDark ? 'light' : 'dark'
+              );
+            }}
+            title={isDark ? "Ochiq rejim" : "Qorong'u rejim"}
+            aria-label={isDark ? "Ochiq rejim" : "Qorong'u rejim"}
+          >
+            {isDark ? <MdLightMode /> : <MdDarkMode />}
+          </button>
         </div>
       </div>
 

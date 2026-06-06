@@ -52,6 +52,7 @@ class ProblemList(generics.ListAPIView):
     filterset_fields = ['difficulty', 'tags']
     ordering = ['difficulty']
     search_fields = ['title', 'description']
+    pagination_class = None
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -61,9 +62,21 @@ class ProblemList(generics.ListAPIView):
                 type=openapi.TYPE_STRING,
                 description='Difficulty of the problem',
             ),
+            openapi.Parameter(
+                name='limit',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description='Number of results to return per page (default: 10)',
+            ),
+            openapi.Parameter(
+                name='offset',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description='The initial index from which to return the results (default: 0)',
+            ),
         ]
     )
-    def get(self,request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
     def get_serializer_context(self):
@@ -82,6 +95,26 @@ class ProblemList(generics.ListAPIView):
             )
         )
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        limit = int(request.query_params.get('limit', 10))
+        offset = int(request.query_params.get('offset', 0))
+
+        limit = min(limit, 100)
+        limit = max(limit, 1)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        total = queryset.count()
+
+        paginated_queryset = queryset[offset:offset + limit]
+        serializer = self.get_serializer(paginated_queryset, many=True)
+
+        return Response({
+            'count': total,
+            'limit': limit,
+            'offset': offset,
+            'results': serializer.data
+        })
 
 class ProblemDetail(generics.RetrieveAPIView):
     queryset = Problem.objects.all()
@@ -156,7 +189,24 @@ class SubmissionDetailView(generics.RetrieveAPIView):
 class SubmissionListView(generics.ListAPIView):
     serializer_class = SubmissionListSerializer
     permission_classes = (IsAuthenticated,)
+    pagination_class = None
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name='limit',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description='Number of results to return per page (default: 20)',
+            ),
+            openapi.Parameter(
+                name='offset',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description='The initial index from which to return the results (default: 0)',
+            ),
+        ]
+    )
     def get_queryset(self):
         user_id = self.request.query_params.get('user', None)
         if user_id is not None:
@@ -164,6 +214,26 @@ class SubmissionListView(generics.ListAPIView):
         else:
             queryset = Submission.objects.filter(user=self.request.user).order_by('-submitted_at')
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        limit = int(request.query_params.get('limit', 20))
+        offset = int(request.query_params.get('offset', 0))
+
+        limit = min(limit, 100)
+        limit = max(limit, 1)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        total = queryset.count()
+
+        paginated_queryset = queryset[offset:offset + limit]
+        serializer = self.get_serializer(paginated_queryset, many=True)
+
+        return Response({
+            'count': total,
+            'limit': limit,
+            'offset': offset,
+            'results': serializer.data
+        })
 
 class SubmissionCreateView(generics.CreateAPIView):
     queryset = Submission.objects.all()
