@@ -3,6 +3,7 @@ import "./CodePanels.css";
 import CodeEditor from "../../components/codeEditor/CodeEditor.jsx";
 import AISolution from "../../components/aiSolution/AISolution.jsx";
 import { useCodePanel } from "../../hooks/useCodePanel.js";
+import { FaFileAlt, FaCheckCircle, FaLightbulb, FaCheck, FaTimes } from "react-icons/fa";
 
 function CodePanels({ profil, setProfil, setProblemData }) {
   const {
@@ -242,7 +243,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   setRunTimeWatch(false);
                 }}
               >
-                <span className="tab-icon">📝</span>
+                <FaFileAlt className="tab-icon" />
                 <span>Testlar</span>
               </button>
               <button
@@ -252,7 +253,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   setTestCaseWatch(false);
                 }}
               >
-                <span className="tab-icon">✓</span>
+                <FaCheckCircle className="tab-icon" />
                 <span>Natija</span>
               </button>
               <button
@@ -260,7 +261,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                 onClick={() => setShowAISolution(true)}
                 title="AI yordamchisidan yechim so'rab ko'ring"
               >
-                <span className="tab-icon">✨</span>
+                <FaLightbulb className="tab-icon" />
                 <span>AI Yechim</span>
               </button>
             </div>
@@ -320,7 +321,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                       {(output.status === "Accepted" || output.status === "Passed") ? (
                         <div className="success-state">
                           <div className="success-header">
-                            <div className="success-icon">✓</div>
+                            <div className="success-icon"><FaCheck /></div>
                             <div className="success-text">
                               <h3>To'g'ri Javob!</h3>
                               <p>Barcha testlar muvaffaqiyatli o'tdi</p>
@@ -333,7 +334,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                             </div>
                           </div>
                           <div className="success-celebration">
-                            🎉 Tabriklaymiz! Sizning yechimingiz to'g'ri!
+                            Tabriklaymiz! Sizning yechimingiz to'g'ri!
                           </div>
                         </div>
                       ) : (
@@ -341,7 +342,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                           {/* Error State */}
                           <div className="error-state">
                             <div className="error-header">
-                              <div className="error-icon">✗</div>
+                              <div className="error-icon"><FaTimes /></div>
                               <div className="error-text">
                                 <h3>Test Muvaffaq Olmadi</h3>
                                 <p className="error-status">Status: {output.status}</p>
