@@ -149,46 +149,50 @@ function CodePanels({ profil, setProfil, setProblemData }) {
           ) : (
             <div className="problem-scroll">
               <div className="problem-inner">
-                {/* Title */}
+                {/* Title Section */}
                 <div className="problem-header">
-                  <h1>
+                  <div className="title-wrapper">
                     <span className="problem-index">{index}</span>
-                    {details?.title}
-                  </h1>
-                  {details?.difficulty && (
-                    <span className={`badge badge-${details.difficulty.toLowerCase()}`}>
-                      {details.difficulty}
-                    </span>
-                  )}
+                    <div className="title-content">
+                      <h1>{details?.title}</h1>
+                      {details?.difficulty && (
+                        <span className={`badge badge-${details.difficulty.toLowerCase()}`}>
+                          {details.difficulty}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Description */}
                 {details?.description && (
                   <div className="section">
-                    <h2>Tavsif</h2>
-                    <p>{details.description}</p>
+                    <h2 className="section-title">Tavsif</h2>
+                    <p className="description-text">{details.description}</p>
                   </div>
                 )}
 
                 {/* Examples */}
                 {details?.examples && details.examples.length > 0 && (
                   <div className="section">
-                    <h2>Misollar</h2>
-                    {details.examples.map((ex, idx) => (
-                      <div key={idx} className="example-box">
-                        <h3>Misol {idx + 1}</h3>
-                        <div className="example-row">
-                          <div>
-                            <strong>Kirish:</strong>
-                            <pre>{ex.ex_input}</pre>
-                          </div>
-                          <div>
-                            <strong>Chiqish:</strong>
-                            <pre>{ex.ex_output}</pre>
+                    <h2 className="section-title">Misollar</h2>
+                    <div className="examples-grid">
+                      {details.examples.map((ex, idx) => (
+                        <div key={idx} className="example-box">
+                          <div className="example-title">Misol {idx + 1}</div>
+                          <div className="example-content">
+                            <div className="example-item">
+                              <div className="example-label">Kirish</div>
+                              <pre className="example-code">{ex.ex_input}</pre>
+                            </div>
+                            <div className="example-item">
+                              <div className="example-label">Chiqish</div>
+                              <pre className="example-code">{ex.ex_output}</pre>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -227,152 +231,167 @@ function CodePanels({ profil, setProfil, setProblemData }) {
             onMouseDown={handleMouseDownHorizontal}
           />
 
-          {/* BOTTOM: RESULTS */}
+          {/* BOTTOM: RESULTS PANEL */}
           <div className="panel-bottom">
-            {/* Tabs */}
-            <div className="tabs">
+            {/* Tab Navigation */}
+            <div className="bottom-tabs">
               <button
-                className={`tab ${testCaseWatch ? "active" : ""}`}
+                className={`tab-item ${testCaseWatch ? "active" : ""}`}
                 onClick={() => {
                   setTestCaseWatch(true);
                   setRunTimeWatch(false);
                 }}
               >
-                Testlar
+                <span className="tab-icon">📝</span>
+                <span>Testlar</span>
               </button>
               <button
-                className={`tab ${runTimeWatch ? "active" : ""}`}
+                className={`tab-item ${runTimeWatch ? "active" : ""}`}
                 onClick={() => {
                   setRunTimeWatch(true);
                   setTestCaseWatch(false);
                 }}
               >
-                Natija
+                <span className="tab-icon">✓</span>
+                <span>Natija</span>
               </button>
               <button
-                className="tab ai-tab"
+                className="tab-item ai-tab"
                 onClick={() => setShowAISolution(true)}
                 title="AI yordamchisidan yechim so'rab ko'ring"
               >
-                ✨ AI Yechim
+                <span className="tab-icon">✨</span>
+                <span>AI Yechim</span>
               </button>
             </div>
 
-            {/* Content */}
-            <div className="results-content">
+            {/* Tab Content */}
+            <div className="tab-content">
+              {/* Tests Tab */}
               {testCaseWatch && (
-                <div className="test-panel">
-                  <div className="test-buttons">
+                <div className="test-section">
+                  <div className="test-list">
                     {filteredCases && filteredCases.length > 0 ? (
                       filteredCases.map((tc, idx) => (
                         <button
                           key={tc.id}
-                          className={`test-btn ${activeCaseId === tc.id ? "active" : ""}`}
+                          className={`test-item ${activeCaseId === tc.id ? "active" : ""}`}
                           onClick={() => changeTestCase(tc.id)}
                         >
-                          Test {idx + 1}
+                          <span className="test-number">Test {idx + 1}</span>
                         </button>
                       ))
                     ) : (
-                      <div className="empty">Test yoq</div>
+                      <div className="empty-state">Test mavjud emas</div>
                     )}
                   </div>
 
                   {activeCase && (
-                    <div className="test-details">
-                      <div className="test-row">
-                        <strong>Input:</strong>
-                        <code>{activeCase.input_data}</code>
+                    <div className="test-viewer">
+                      <div className="test-content-block">
+                        <div className="content-header">
+                          <h3>Kirish</h3>
+                        </div>
+                        <pre className="content-code">{activeCase.input_data}</pre>
                       </div>
-                      <div className="test-row">
-                        <strong>Expected:</strong>
-                        <code>{activeCase.expected_output}</code>
+
+                      <div className="test-content-block">
+                        <div className="content-header">
+                          <h3>Kutilgan Natija</h3>
+                        </div>
+                        <pre className="content-code">{activeCase.expected_output}</pre>
                       </div>
                     </div>
                   )}
                 </div>
               )}
 
+              {/* Results Tab */}
               {runTimeWatch && (
-                <div className="output-panel">
+                <div className="results-section">
                   {loaderRunTime ? (
-                    <div className="loading">
+                    <div className="loading-state">
                       <div className="spinner" />
-                      <p>Yuborilmoqda...</p>
+                      <p>Natija tayyorlanmoqda...</p>
                     </div>
                   ) : output && Object.keys(output).length > 0 ? (
-                    <div className="output-content">
-                      {/* Passed/Accepted State */}
-                      {output.status === "Accepted" || output.status === "Passed" ? (
-                        <div className="judge-result">
-                          <div className="judge-header">
-                            <div className="judge-status passed">
-                              <span className="status-icon">✓</span>
-                              <span className="status-text">To'g'ri javob</span>
-                            </div>
-                            <div className="judge-meta">
-                              <span className="test-case">Barcha testlar o'tdi</span>
-                              <span className="runtime">⏱ {output.time}s</span>
+                    <div className="result-display">
+                      {/* Success State */}
+                      {(output.status === "Accepted" || output.status === "Passed") ? (
+                        <div className="success-state">
+                          <div className="success-header">
+                            <div className="success-icon">✓</div>
+                            <div className="success-text">
+                              <h3>To'g'ri Javob!</h3>
+                              <p>Barcha testlar muvaffaqiyatli o'tdi</p>
                             </div>
                           </div>
-                          <div className="judge-celebration">
-                            <p>🎉 Tabriklaymiz! Sizning yechimingiz to'g'ri!</p>
+                          <div className="success-meta">
+                            <div className="meta-item">
+                              <span className="meta-label">Vaqt</span>
+                              <span className="meta-value">{output.time}s</span>
+                            </div>
+                          </div>
+                          <div className="success-celebration">
+                            🎉 Tabriklaymiz! Sizning yechimingiz to'g'ri!
                           </div>
                         </div>
                       ) : (
                         <>
-                      <div
-                        className="status-box"
-                        style={output.color ? { borderLeftColor: output.color } : {}}
-                      >
-                        <p>
-                          Status: <strong style={{ color: output.color }}>
-                            {output.status}
-                          </strong>
-                        </p>
-                        <p>⏱ {output.time}s</p>
-                      </div>
-
-                      {output.failed_test && output.failed_test !== "-" && (
-                        <div className="judge-result">
-                          {/* Input Section */}
-                          <div className="judge-section">
-                            <div className="section-label">Input:</div>
-                            <div className="section-code">
-                              {output.error_input && output.error_input !== "-" && (
-                                output.error_input
-                              )}
+                          {/* Error State */}
+                          <div className="error-state">
+                            <div className="error-header">
+                              <div className="error-icon">✗</div>
+                              <div className="error-text">
+                                <h3>Test Muvaffaq Olmadi</h3>
+                                <p className="error-status">Status: {output.status}</p>
+                              </div>
+                            </div>
+                            <div className="error-meta">
+                              <span className="meta-value">{output.time}s</span>
                             </div>
                           </div>
 
-                          {/* Your Output Section */}
-                          <div className="judge-section">
-                            <div className="section-label">Sizning natijangiz:</div>
-                            <div className="section-code your-output">
-                              {output.error_output && output.error_output !== "-" && (
-                                output.error_output.includes("Got:")
-                                  ? output.error_output.split("Got:")[1].trim()
-                                  : output.error_output
-                              )}
-                            </div>
-                          </div>
+                          {output.failed_test && output.failed_test !== "-" && (
+                            <div className="comparison-view">
+                              <div className="comparison-block input-block">
+                                <div className="block-header">Kirish</div>
+                                <pre className="block-content">
+                                  {output.error_input && output.error_input !== "-"
+                                    ? output.error_input
+                                    : "-"}
+                                </pre>
+                              </div>
 
-                          {/* Expected Output Section */}
-                          <div className="judge-section">
-                            <div className="section-label">Kutilgan natija:</div>
-                            <div className="section-code expected-output">
-                              {output.error_expected && output.error_expected !== "-" && (
-                                output.error_expected
-                              )}
+                              <div className="comparison-row">
+                                <div className="comparison-block wrong-block">
+                                  <div className="block-header">Sizning Natijangiz</div>
+                                  <pre className="block-content">
+                                    {output.error_output && output.error_output !== "-"
+                                      ? output.error_output.includes("Got:")
+                                        ? output.error_output.split("Got:")[1].trim()
+                                        : output.error_output
+                                      : "-"}
+                                  </pre>
+                                </div>
+
+                                <div className="comparison-block correct-block">
+                                  <div className="block-header">Kutilgan Natija</div>
+                                  <pre className="block-content">
+                                    {output.error_expected &&
+                                    output.error_expected !== "-"
+                                      ? output.error_expected
+                                      : "-"}
+                                  </pre>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      )}
-                      </>
+                          )}
+                        </>
                       )}
                     </div>
                   ) : (
-                    <div className="empty">Kod yuboring</div>
+                    <div className="empty-state">Kod yuborib natijani ko'ring</div>
                   )}
                 </div>
               )}
