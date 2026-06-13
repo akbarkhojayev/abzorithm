@@ -232,8 +232,8 @@ function ProfilMe({ profil, setProfil, setProfilMe }) {
             {activeTab === "info" && (
               <>
                 <div className={`info-section ${editInformation ? "hidden" : ""}`}>
-                  <div className="info-header">
-                    <h4>Asosiy Ma'lumotlar</h4>
+                  <div className="edit-header">
+                    <h4>Ma'lumotlarim</h4>
                     <button
                       className="btn-edit-profile"
                       onClick={() => setEditInformation(true)}
@@ -242,31 +242,26 @@ function ProfilMe({ profil, setProfil, setProfilMe }) {
                     </button>
                   </div>
 
-                  <div className="info-cards-grid">
-                    <div className="info-card">
+                  <div className="edit-info-cards">
+                    <div className="info-card-static">
                       <div className="card-label">Foydalanuvchi Nomi</div>
-                      <div className="card-value">{profil?.username}</div>
-                      <div className="card-icon">👤</div>
+                      <div className="card-value-static">{profil?.username}</div>
                     </div>
 
-                    <div className="info-card">
+                    <div className="info-card-static">
                       <div className="card-label">Elektron Pochta</div>
-                      <div className="card-value email">{profil?.email}</div>
-                      <div className="card-icon">✉️</div>
+                      <div className="card-value-static">{profil?.email}</div>
                     </div>
 
-                    <div className="info-card highlight">
+                    <div className="info-card-static highlight-static">
                       <div className="card-label">Ball</div>
-                      <div className="card-value-large">{profil?.score || 0}</div>
-                      <div className="card-icon">⭐</div>
+                      <div className="card-value-large-static">{profil?.score || 0}</div>
                     </div>
                   </div>
 
-                  <div className="bio-card">
-                    <div className="bio-header">
-                      <h5>Biografiya</h5>
-                    </div>
-                    <div className="bio-content">
+                  <div className="form-group">
+                    <label>Biografiya</label>
+                    <div className="bio-display">
                       {bio ? bio : <span className="bio-empty">Hali biografiya yo'q</span>}
                     </div>
                   </div>

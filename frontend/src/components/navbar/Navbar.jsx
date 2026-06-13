@@ -88,12 +88,6 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
               <li>
                 <NavLink to="/exams">Imtixonlar</NavLink>
               </li>
-              <li>
-                <NavLink to="/statistics">Statistika</NavLink>
-              </li>
-              <li>
-                <NavLink to="/solutions-history">Yechimlar Tarixi</NavLink>
-              </li>
             </>
           )}
         </ul>
