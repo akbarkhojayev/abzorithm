@@ -381,9 +381,9 @@ function ExamDetail() {
         <div className="exam-info">
           <h1>{exam?.title}</h1>
           <span className="exam-lang">
-            {exam?.language === 'python' && '🐍 Python'}
-            {exam?.language === 'javascript' && '⚡ JS'}
-            {exam?.language === 'dart' && '🎯 Dart'}
+            {exam?.language === 'python' && 'Python'}
+            {exam?.language === 'javascript' && 'JavaScript'}
+            {exam?.language === 'dart' && 'Dart'}
           </span>
         </div>
         <div className="exam-stats">
@@ -413,14 +413,14 @@ function ExamDetail() {
 
               {currentProblem?.input_example && (
                 <div className="example">
-                  <h4>📥 Kirish</h4>
+                  <h4>Kirish</h4>
                   <code>{currentProblem.input_example}</code>
                 </div>
               )}
 
               {currentProblem?.output_example && (
                 <div className="example">
-                  <h4>📤 Chiqish</h4>
+                  <h4>Chiqish</h4>
                   <code>{currentProblem.output_example}</code>
                 </div>
               )}
@@ -445,7 +445,6 @@ function ExamDetail() {
         <div className="editor-panel">
           <div className="editor-header">
             <div className="editor-title">
-              <span className="icon">📝</span>
               <span>Kod</span>
             </div>
             <div className="editor-tools">
