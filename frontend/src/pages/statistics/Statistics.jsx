@@ -5,8 +5,10 @@ import { getToken } from "../services/token.js";
 import { getProfilMe } from "../services/app.js";
 import { FaChartBar, FaCheckCircle, FaFire, FaStar } from "react-icons/fa";
 import { MdErrorOutline, MdAccessTime, MdPublic } from "react-icons/md";
+import { useTheme } from "../../context/ThemeContext";
 
 function Statistics() {
+  const { isDark } = useTheme();
   const [stats, setStats] = useState(null);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -184,7 +186,7 @@ function Statistics() {
       {
         name: "Easy",
         value: difficultyStats.easy,
-        color: "#3b82f6",
+        color: "#58a6ff",
       },
       {
         name: "Medium",
@@ -206,7 +208,7 @@ function Statistics() {
   };
 
   return (
-    <div className="statistics">
+    <div className={`statistics ${isDark ? "dark" : "light"}`}>
       <div className="container">
         <div className="stats-header">
           <div>

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./LeaderBoard.css";
 import { getLeaderBoard } from "../services/app.js";
+import { useTheme } from "../../context/ThemeContext";
+import { FaMedal } from "react-icons/fa6";
 
 function LeaderBoard({ ratingUser, setRatingUser }) {
   const [loaderLederboard, setLoaderLeaderboard] = useState(false);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     setLoaderLeaderboard(true);
@@ -14,15 +17,22 @@ function LeaderBoard({ ratingUser, setRatingUser }) {
       });
   }, []);
 
-  const getMedalIcon = (rank) => {
-    if (rank === 1) return "🥇";
-    if (rank === 2) return "🥈";
-    if (rank === 3) return "🥉";
+  const getMedalColor = (rank) => {
+    if (rank === 1) return "#fbbf24";
+    if (rank === 2) return "#9ca3af";
+    if (rank === 3) return "#f97316";
     return null;
   };
 
   return (
-    <div className="leaderboard">
+    <div className={`leaderboard ${isDark ? "dark" : "light"}`}>
+      <div className="page-header">
+        <div className="header-content">
+          <h1>Reyting Taxtasi</h1>
+          <p>Eng yaxshi o'quvchilarni ko'ring</p>
+        </div>
+      </div>
+
       <div className="container">
         {loaderLederboard ? (
           <div className="loader-leaderboard">
@@ -41,12 +51,17 @@ function LeaderBoard({ ratingUser, setRatingUser }) {
 
             <div className="table-body">
               {ratingUser?.map((item, index) => {
-                const medal = getMedalIcon(index + 1);
+                const medalColor = getMedalColor(index + 1);
+                const isMedal = index < 3;
                 return (
-                  <div key={item?.id} className={`table-row ${medal ? "top-rank" : ""}`}>
+                  <div key={item?.id} className={`table-row ${isMedal ? "top-rank" : ""}`}>
                     <div className="row-rank">
                       <div className={`rank-badge rank-${index + 1}`}>
-                        {medal ? <span className="medal">{medal}</span> : index + 1}
+                        {isMedal ? (
+                          <FaMedal className="medal-icon" style={{ color: medalColor }} />
+                        ) : (
+                          <span>{index + 1}</span>
+                        )}
                       </div>
                     </div>
 

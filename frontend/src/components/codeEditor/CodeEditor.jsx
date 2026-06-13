@@ -394,14 +394,14 @@ function CodeEditor({
               { token: "variable", foreground: "#a8d8ff" },
             ],
             colors: {
-              "editor.background": "#1a1f3a",
-              "editor.foreground": "#e2e8f0",
-              "editor.lineNumbersBackground": "#252d45",
-              "editor.lineNumbersForeground": "#9ca3af",
-              "editorCursor.foreground": "#3b82f6",
-              "editor.selectionBackground": "#374151",
-              "editor.lineHighlightBackground": "#252d45",
-              "editorWhitespace.foreground": "#4b5563",
+              "editor.background": "#0d1117",
+              "editor.foreground": "#e6edf3",
+              "editor.lineNumbersBackground": "#0d1117",
+              "editor.lineNumbersForeground": "#8b949e",
+              "editorCursor.foreground": "#58a6ff",
+              "editor.selectionBackground": "#30363d",
+              "editor.lineHighlightBackground": "#161b22",
+              "editorWhitespace.foreground": "#30363d",
             },
           });
         }}

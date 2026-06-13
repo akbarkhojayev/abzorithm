@@ -1,287 +1,235 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Problems.css";
-import { Link, useNavigate } from "react-router-dom";
-import { getProblems } from "../services/app.js";
-import { getToken } from "../services/token.js";
-import { FiSearch } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../services/config.js";
+import { getToken } from "../services/token.js";
+import { useTheme } from "../../context/ThemeContext";
 
-function Problems({ problemData, setProblemData }) {
-  const [loader, setLoader] = useState(false);
-  const [error, setError] = useState(null);
+function Problems() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [selectedTag, setSelectedTag] = useState("");
-  const [allTags, setAllTags] = useState([]);
-  const [categoryCounts, setCategoryCounts] = useState({});
+  const { isDark } = useTheme();
+
+  const [problems, setProblems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState(null);
+  const [sortBy, setSortBy] = useState("id");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalProblems, setTotalProblems] = useState(0);
-  const [pageSize] = useState(10);
+
+  const itemsPerPage = 20;
 
   useEffect(() => {
-    loadProblems();
+    const fetchProblems = async () => {
+      try {
+        const response = await fetch(`${baseUrl}/problems/?limit=1000`, {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setProblems(data.results || data);
+        }
+      } catch (err) {
+        console.error("Error loading problems:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProblems();
   }, []);
 
-  const loadProblems = async (page = 1) => {
-    setLoader(true);
-    setError(null);
-    try {
-      const offset = (page - 1) * pageSize;
-      const token = getToken();
+  // Filter masalalar
+  const filtered = problems.filter(p => {
+    const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchDifficulty = !selectedDifficulty || p.difficulty === selectedDifficulty;
+    return matchSearch && matchDifficulty;
+  });
 
-      const response = await fetch(`${baseUrl}/problems/?limit=${pageSize}&offset=${offset}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to load problems");
-      }
-
-      const data = await response.json();
-      setProblemData(Array.isArray(data.results) ? data.results : []);
-      setTotalProblems(data.count || 0);
-      setCurrentPage(page);
-
-      if (page === 1) {
-        extractTags(Array.isArray(data.results) ? data.results : []);
-      }
-    } catch (err) {
-      setError("Masalalar yuklanishi uchun xatolik yuz berdi");
-      console.error("Error loading problems:", err);
-      setProblemData([]);
-    } finally {
-      setLoader(false);
+  // Saralash
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortBy === "title") return a.title.localeCompare(b.title);
+    if (sortBy === "difficulty") {
+      const order = { "Easy": 0, "Medium": 1, "Hard": 2 };
+      return order[a.difficulty] - order[b.difficulty];
     }
+    return a.id - b.id;
+  });
+
+  // Pagination
+  const totalPages = Math.ceil(sorted.length / itemsPerPage);
+  const paginatedItems = sorted.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const getDifficultyColor = (difficulty) => {
+    const colors = {
+      "Easy": "#10b981",
+      "Medium": "#f59e0b",
+      "Hard": "#ef4444",
+    };
+    return colors[difficulty] || "#666";
   };
 
-  const extractTags = (problems) => {
-    const tagsSet = new Set();
-    const counts = {};
-    problems?.forEach((problem) => {
-      if (problem?.categories && Array.isArray(problem.categories)) {
-        problem.categories.forEach((category) => {
-          if (category?.name) {
-            tagsSet.add(category.name);
-            counts[category.name] = (counts[category.name] || 0) + 1;
-          }
-        });
-      }
-    });
-    setAllTags(Array.from(tagsSet).sort());
-    setCategoryCounts(counts);
-  };
-
-  const getFilterData = async (page = 1) => {
-    setLoader(true);
-    setError(null);
-
-    try {
-      const offset = (page - 1) * pageSize;
-      const token = getToken();
-      const params = new URLSearchParams({
-        search,
-        limit: pageSize,
-        offset
-      });
-
-      const response = await fetch(`${baseUrl}/problems/?${params.toString()}`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
-
-      if (!response.ok) {
-        throw new Error("Filtrlash uchun xatolik yuz berdi");
-      }
-
-      const data = await response.json();
-      let filtered = Array.isArray(data.results) ? data.results : [];
-
-      if (selectedTag) {
-        filtered = filtered.filter((p) =>
-          p.categories?.some((cat) => cat.name === selectedTag)
-        );
-      }
-
-      setProblemData(filtered);
-      setTotalProblems(data.count || 0);
-      setCurrentPage(page);
-    } catch (err) {
-      setError("Qidirish uchun xatolik yuz berdi");
-      console.error("Error filtering problems:", err);
-      setProblemData([]);
-    } finally {
-      setLoader(false);
-    }
-  };
-
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      setCurrentPage(1);
-      if (search || selectedTag) {
-        getFilterData(1);
-      } else {
-        loadProblems(1);
-      }
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 300);
-
-    return () => clearTimeout(delay);
-  }, [search, selectedTag]);
+  if (loading) {
+    return (
+      <div className={`problems-page ${isDark ? "dark" : "light"}`}>
+        <div className="loading-state">
+          <div className="spinner"></div>
+          <p>Masalalar yuklanmoqda...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="problems-page">
-      <div className="problems-header-section">
-        <div className="problems-header-content">
-          <h1>Masalalar</h1>
-          <p>Algoritmik masalalarni yechish orqali o'zingizni sinab ko'ring</p>
+    <div className={`problems-page ${isDark ? "dark" : "light"}`}>
+      {/* Header */}
+      <div className="page-header">
+        <div className="header-wrapper">
+          <div className="header-left">
+            <h1>Masalalar</h1>
+            <p className="count-badge">{sorted.length} ta</p>
+          </div>
+
+          <div className="header-right">
+            <input
+              type="text"
+              placeholder="Qidirish..."
+              className="search-input"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+            <select
+              className="select-control"
+              value={selectedDifficulty || "all"}
+              onChange={(e) => {
+                setSelectedDifficulty(e.target.value === "all" ? null : e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="all">Qiyinlik</option>
+              <option value="Easy">Oson</option>
+              <option value="Medium">O'rtacha</option>
+              <option value="Hard">Qiyin</option>
+            </select>
+            <select
+              className="select-control"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="id">ID</option>
+              <option value="title">Nomi</option>
+              <option value="difficulty">Qiyinlik</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div className="problems-container">
-        <div className="problems-filters-section">
-          <div className="search-box">
-            <FiSearch className="search-icon" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              type="text"
-              placeholder="Masala qidirish..."
-              className="search-input"
-              aria-label="Masalalar bo'yicha qidirish"
-            />
+      {/* Content Area */}
+      <div className="content-wrapper">
+        {loading ? (
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <p>Yuklanmoqda...</p>
           </div>
-        </div>
-
-        <div className="problems-main">
-          {allTags.length > 0 && (
-            <div className="categories-sidebar">
-              <h2 className="categories-title">Mavzular</h2>
-              <div className="categories-grid">
-                {allTags.map((tag) => (
-                  <button
-                    key={tag}
-                    className={`category-item ${selectedTag === tag ? "active" : ""}`}
-                    onClick={() => setSelectedTag(selectedTag === tag ? "" : tag)}
-                    title={`${tag} - ${categoryCounts[tag] || 0} masalalar`}
+        ) : paginatedItems.length > 0 ? (
+          <>
+            <div className="problems-list">
+              {paginatedItems.map((problem) => (
+                <div
+                  key={problem.id}
+                  className="list-item"
+                  onClick={() => navigate(`/codepanels/${problem.slug}`)}
+                >
+                  <div className="item-number">{problem.id}</div>
+                  <div className="item-content">
+                    <h3 className="item-name">{problem.title}</h3>
+                    {problem.categories && problem.categories.length > 0 && (
+                      <div className="item-cats">
+                        {problem.categories.slice(0, 2).map((cat) => (
+                          <span key={cat.id} className="cat-label">{cat.name}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className="item-diff"
+                    style={{
+                      backgroundColor: getDifficultyColor(problem.difficulty),
+                      color: 'white'
+                    }}
                   >
-                    <span className="category-name">{tag}</span>
-                    <span className="category-count">{categoryCounts[tag] || 0}</span>
-                  </button>
-                ))}
-              </div>
+                    {problem.difficulty}
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
 
-          <div className="problems-content">
-            {error && (
-              <div className="error-banner" role="alert">
-                <p>{error}</p>
-                <button onClick={loadProblems} className="error-retry-btn">
-                  Qayta urinish
-                </button>
-              </div>
-            )}
-
-            {loader ? (
-              <div className="problems-loader">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="problems-loader-row"></div>
-                ))}
-              </div>
-            ) : problemData && problemData.length > 0 ? (
-              <div className="problems-table-wrapper">
-                <div className="problems-table">
-                  <div className="table-header">
-                    <div className="header-status">Status</div>
-                    <div className="header-title">Masala</div>
-                    <div className="header-category">Mavzu</div>
-                    <div className="header-difficulty">Qiyinlik</div>
-                  </div>
-
-                  <div className="table-body">
-                    {problemData.map((item) => (
-                      <Link
-                        className={`table-row ${item?.is_solved ? "solved" : ""}`}
-                        key={item?.id}
-                        to={`/codepanels/${item?.slug}`}
-                        onClick={(e) => {
-                          if (!getToken()) {
-                            e.preventDefault();
-                            navigate("/create-account");
-                          }
-                        }}
-                      >
-                        <div className="row-status">
-                          {item?.is_solved ? (
-                            <span className="status-icon solved" title="Yechilgan">✓</span>
-                          ) : (
-                            <span className="status-icon unsolved" title="Yechilmagan"></span>
-                          )}
-                        </div>
-                        <div className="row-title">
-                          <span className="problem-title">{item?.title}</span>
-                        </div>
-                        <div className="row-category">
-                          {item?.categories && item?.categories.length > 0 && (
-                            <span className="category-badge">{item?.categories[0].name}</span>
-                          )}
-                        </div>
-                        <div className="row-difficulty">
-                          {item?.difficulty && (
-                            <span className={`difficulty-badge difficulty-${item?.difficulty?.toLowerCase()}`}>
-                              {item?.difficulty}
-                            </span>
-                          )}
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="empty-state">
-                <h2>Hech qanday masala topilmadi</h2>
-                <p>Masalalar yuklanmayotgan bo'lsa, qayta urinib ko'ring</p>
-              </div>
-            )}
-
-            {problemData && problemData.length > 0 && totalProblems > pageSize && (
-              <div className="pagination-container">
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="pagination-compact">
                 <button
-                  className="pagination-btn"
-                  onClick={() => {
-                    if (search || selectedTag) {
-                      getFilterData(currentPage - 1);
-                    } else {
-                      loadProblems(currentPage - 1);
-                    }
-                  }}
                   disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(1)}
+                  className="pg-btn"
                 >
-                  ← Oldingi
+                  ⟨⟨
+                </button>
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  className="pg-btn"
+                >
+                  ⟨
                 </button>
 
-                <div className="pagination-info">
-                  <span>Sahifa {currentPage} / {Math.ceil(totalProblems / pageSize)}</span>
-                  <span className="pagination-count">Jami: {totalProblems}</span>
-                </div>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(
+                    (p) =>
+                      p === 1 ||
+                      p === totalPages ||
+                      (p >= currentPage - 1 && p <= currentPage + 1)
+                  )
+                  .map((page, idx, arr) => (
+                    <React.Fragment key={page}>
+                      {idx > 0 && arr[idx - 1] !== page - 1 && (
+                        <span className="pg-dots">...</span>
+                      )}
+                      <button
+                        onClick={() => setCurrentPage(page)}
+                        className={`pg-btn ${currentPage === page ? "active" : ""}`}
+                      >
+                        {page}
+                      </button>
+                    </React.Fragment>
+                  ))}
 
                 <button
-                  className="pagination-btn"
-                  onClick={() => {
-                    if (search || selectedTag) {
-                      getFilterData(currentPage + 1);
-                    } else {
-                      loadProblems(currentPage + 1);
-                    }
-                  }}
-                  disabled={currentPage >= Math.ceil(totalProblems / pageSize)}
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  className="pg-btn"
                 >
-                  Keyingi →
+                  ⟩
+                </button>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(totalPages)}
+                  className="pg-btn"
+                >
+                  ⟩⟩
                 </button>
               </div>
             )}
+          </>
+        ) : (
+          <div className="empty-state">
+            <p>Masala topilmadi</p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

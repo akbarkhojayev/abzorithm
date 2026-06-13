@@ -23,7 +23,7 @@ body,
 .code-panels {
   width: 100%;
   height: 100%;
-  background: #ffffff;
+  background: #fafbfc;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -49,7 +49,7 @@ body,
 .problem-description {
   grid-column: 1 / 2;
   grid-row: 1 / -1;
-  background: #ffffff;
+  background: #fafbfc;
   border: none;
   border-radius: 0;
   padding: 0;
@@ -96,7 +96,7 @@ body,
 
 .skeleton-line {
   height: 14px;
-  background: linear-gradient(90deg, #e2e8f0 0%, #f1f5f9 50%, #e2e8f0 100%);
+  background: linear-gradient(90deg, #d0d7de 0%, #f1f5f9 50%, #d0d7de 100%);
   background-size: 200% 100%;
   border-radius: 3px;
   animation: shimmer 2s infinite;
@@ -115,7 +115,7 @@ body,
   font-size: clamp(20px, 5vw, 28px);
   font-weight: 800;
   margin: 0 0 8px 0;
-  color: #1e293b;
+  color: #24292f;
   display: flex;
   align-items: baseline;
   gap: 10px;
@@ -133,7 +133,7 @@ body,
   justify-content: center;
   min-width: 32px;
   min-height: 32px;
-  background: #2563eb;
+  background: #58a6ff;
   border-radius: 4px;
   flex-shrink: 0;
 }
@@ -182,7 +182,7 @@ body,
   margin: 0;
   padding: 12px;
   background: #f1f5f9;
-  border-left: 2px solid #2563eb;
+  border-left: 2px solid #58a6ff;
   border-radius: 2px;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -196,7 +196,7 @@ body,
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #d0d7de;
   padding-top: 8px;
   flex-shrink: 0;
 }
@@ -213,7 +213,7 @@ body,
   font-size: clamp(11px, 1.5vw, 13px);
   font-weight: 600;
   margin: 0 0 6px 0;
-  color: #1e293b;
+  color: #24292f;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -227,7 +227,7 @@ body,
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: linear-gradient(135deg, #58a6ff, #58a6ff);
   color: white;
   border-radius: 50%;
   font-size: 10px;
@@ -236,11 +236,11 @@ body,
 }
 
 .example-content {
-  background: #1e293b;
+  background: #24292f;
   padding: 8px;
   border-radius: 2px;
   border: 1px solid #334155;
-  border-left: 2px solid #3b82f6;
+  border-left: 2px solid #58a6ff;
   font-family: "Monaco", "Fira Code", monospace;
   transition: all 0.2s ease;
 }
@@ -248,7 +248,7 @@ body,
 .example-content p {
   margin: 0 0 6px 0;
   font-size: clamp(11px, 1.5vw, 13px);
-  color: #cbd5e1;
+  color: #d0d7de;
   font-weight: 400;
   font-family: "Monaco", "Fira Code", monospace;
 }
@@ -262,7 +262,7 @@ body,
   padding: 2px 4px;
   border-radius: 2px;
   font-family: "Monaco", "Fira Code", monospace;
-  color: #60a5fa;
+  color: #79c0ff;
   font-size: clamp(10px, 1.5vw, 12px);
   word-break: break-word;
 }
@@ -281,7 +281,7 @@ body,
   grid-row: 1 / -1;
   width: 6px;
   cursor: col-resize;
-  background: linear-gradient(to right, transparent 20%, #cbd5e1 50%, transparent 80%);
+  background: linear-gradient(to right, transparent 20%, #d0d7de 50%, transparent 80%);
   position: relative;
   transition: background 0.2s ease;
   z-index: 50;
@@ -295,11 +295,11 @@ body,
 }
 
 .resize-divider:hover {
-  background: linear-gradient(to right, transparent 10%, #3b82f6 50%, transparent 90%);
+  background: linear-gradient(to right, transparent 10%, #58a6ff 50%, transparent 90%);
 }
 
 .resize-divider.active {
-  background: #3b82f6;
+  background: #58a6ff;
 }
 
 .resize-handle {
@@ -340,7 +340,7 @@ body,
 }
 
 .editor-wrapper {
-  background: #ffffff;
+  background: #fafbfc;
   border: none;
   border-radius: 0;
   overflow: hidden;
@@ -369,17 +369,17 @@ body,
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  background: linear-gradient(to bottom, transparent 20%, #cbd5e1 50%, transparent 80%);
+  background: linear-gradient(to bottom, transparent 20%, #d0d7de 50%, transparent 80%);
   transition: background 0.2s ease;
   z-index: 50;
 }
 
 .resize-divider.horizontal:hover {
-  background: linear-gradient(to bottom, transparent 10%, #3b82f6 50%, transparent 90%);
+  background: linear-gradient(to bottom, transparent 10%, #58a6ff 50%, transparent 90%);
 }
 
 .resize-divider.horizontal.active {
-  background: #3b82f6;
+  background: #58a6ff;
 }
 
 /* ============================================
@@ -389,7 +389,7 @@ body,
 .results-panel {
   grid-column: 3 / 4;
   grid-row: 3 / 4;
-  background: #ffffff;
+  background: #fafbfc;
   border: none;
   border-radius: 0;
   overflow: hidden;
@@ -408,7 +408,7 @@ body,
 .results-tabs {
   display: flex;
   background: linear-gradient(135deg, #f8fafc, #f0f4f8);
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #d0d7de;
   padding: 10px 12px;
   gap: 8px;
   flex-shrink: 0;
@@ -438,14 +438,14 @@ body,
 
 .tab:hover {
   background: linear-gradient(135deg, #f0f7ff, #e0f2fe);
-  color: #2563eb;
-  border-color: #2563eb;
+  color: #58a6ff;
+  border-color: #58a6ff;
 }
 
 .tab.active {
   color: white;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  border: 1px solid #2563eb;
+  background: linear-gradient(135deg, #58a6ff, #58a6ff);
+  border: 1px solid #58a6ff;
 }
 
 .tab-icon {
@@ -494,7 +494,7 @@ body,
 
 .test-case-button {
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #d0d7de;
   border-radius: 4px;
   background: #f8fafc;
   cursor: pointer;
@@ -510,21 +510,21 @@ body,
 
 .test-case-button:hover {
   background: linear-gradient(135deg, #f0f7ff, #e0f2fe);
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: #58a6ff;
+  color: #58a6ff;
 }
 
 .test-case-button.active {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: linear-gradient(135deg, #58a6ff, #58a6ff);
   color: white;
-  border-color: #2563eb;
+  border-color: #58a6ff;
 }
 
 .test-case-details {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: #1e293b;
+  background: #24292f;
   padding: 12px;
   border-radius: 2px;
   border: 1px solid #334155;
@@ -545,7 +545,7 @@ body,
 
 .test-detail strong {
   font-size: clamp(10px, 1.5vw, 11px);
-  color: #cbd5e1;
+  color: #d0d7de;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -556,7 +556,7 @@ body,
 
 .test-detail strong::before {
   content: "▸";
-  color: #2563eb;
+  color: #58a6ff;
   font-size: 12px;
   flex-shrink: 0;
 }
@@ -639,8 +639,8 @@ body,
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #e2e8f0;
-  border-top-color: #2563eb;
+  border: 4px solid #d0d7de;
+  border-top-color: #58a6ff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -652,7 +652,7 @@ body,
 .empty-output {
   padding: 24px;
   text-align: center;
-  color: #cbd5e1;
+  color: #d0d7de;
   font-size: clamp(12px, 2vw, 13px);
   font-weight: 500;
   flex: 1;
@@ -673,7 +673,7 @@ body,
 
 .result-status {
   padding: 10px;
-  background: #1e293b;
+  background: #24292f;
   border-radius: 2px;
   border-left: 3px solid;
   border: 1px solid #334155;
@@ -686,7 +686,7 @@ body,
   margin: 0 0 6px 0;
   font-size: clamp(10px, 1.5vw, 12px);
   font-weight: 600;
-  color: #cbd5e1;
+  color: #d0d7de;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -723,7 +723,7 @@ body,
 .error-details p {
   margin: 0 0 8px 0;
   font-size: clamp(11px, 1.5vw, 13px);
-  color: #1e293b;
+  color: #24292f;
   font-weight: 600;
   display: flex;
   align-items: flex-start;
@@ -735,7 +735,7 @@ body,
 }
 
 .error-details code {
-  background: #ffffff;
+  background: #fafbfc;
   padding: 4px 8px;
   border-radius: 2px;
   font-family: "Monaco", "Fira Code", monospace;
@@ -790,93 +790,93 @@ body,
    ============================================ */
 
 [data-theme="dark"] .code-panels {
-  background: #0a0e27;
+  background: #0d1117;
 }
 
 [data-theme="dark"] .problem-description {
-  background: #1a1f3a;
+  background: #0d1117;
 }
 
 [data-theme="dark"] .problem-title {
-  color: #e2e8f0;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .problem-description-text {
   background: #252d45;
-  color: #cbd5e1;
-  border-left-color: #3b82f6;
+  color: #d0d7de;
+  border-left-color: #58a6ff;
 }
 
 [data-theme="dark"] .example-block h3 {
-  color: #e2e8f0;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .examples-section {
-  border-top-color: #374151;
+  border-top-color: #24292f;
 }
 
 [data-theme="dark"] .example-content {
-  background: #1e293b;
+  background: #24292f;
   border-color: #334155;
 }
 
 [data-theme="dark"] .example-content p {
-  color: #cbd5e1;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .results-tabs {
-  background: linear-gradient(135deg, #252d45, #1a1f3a);
-  border-bottom-color: #374151;
+  background: linear-gradient(135deg, #252d45, #0d1117);
+  border-bottom-color: #24292f;
 }
 
 [data-theme="dark"] .tab {
-  color: #cbd5e1;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .tab.active {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  border-color: #58a6ff;
 }
 
 [data-theme="dark"] .test-cases-panel {
-  background: linear-gradient(135deg, #252d45, #1a1f3a);
+  background: linear-gradient(135deg, #252d45, #0d1117);
 }
 
 [data-theme="dark"] .test-case-button {
   background: #252d45;
-  border-color: #374151;
-  color: #cbd5e1;
+  border-color: #24292f;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .test-case-button.active {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  border-color: #3b82f6;
+  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  border-color: #58a6ff;
 }
 
 [data-theme="dark"] .test-case-details {
-  background: #1e293b;
+  background: #24292f;
   border-color: #334155;
 }
 
 [data-theme="dark"] .test-detail strong {
-  color: #e2e8f0;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .output-panel {
-  background: linear-gradient(135deg, #252d45, #1a1f3a);
+  background: linear-gradient(135deg, #252d45, #0d1117);
 }
 
 [data-theme="dark"] .result-status {
-  background: #1e293b;
+  background: #24292f;
   border-color: #334155;
 }
 
 [data-theme="dark"] .status-text {
-  color: #e2e8f0;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .execution-time {
-  color: #cbd5e1;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .error-details {
@@ -886,11 +886,11 @@ body,
 }
 
 [data-theme="dark"] .error-details p {
-  color: #e2e8f0;
+  color: #d0d7de;
 }
 
 [data-theme="dark"] .error-details code {
-  background: #1e293b;
+  background: #24292f;
   color: #ef4444;
   border-color: #7f2c2c;
 }

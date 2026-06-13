@@ -62,7 +62,7 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
   };
 
   return (
-    <div className="navbar">
+    <div className={`navbar ${isDark ? "dark" : "light"}`}>
       <div className="container">
         {/* LOGO */}
         <Link to="/" className="logo">
@@ -85,6 +85,9 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
           </li>
           {tokens && (
             <>
+              <li>
+                <NavLink to="/exams">Imtixonlar</NavLink>
+              </li>
               <li>
                 <NavLink to="/statistics">Statistika</NavLink>
               </li>

@@ -724,7 +724,8 @@ class Command(BaseCommand):
                     problem=problem,
                     input_data=inp,
                     expected_output=out,
-                    order=j
+                    order=j,
+                    is_hidden=False
                 )
 
             self.stdout.write(f'✅ {i}. {problem.title} [{cat_names}]')

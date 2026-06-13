@@ -16,6 +16,8 @@ import LeaderBoard from "../leaderboard/LeaderBoard.jsx";
 import Error from "../error/Error.jsx";
 import Statistics from "../statistics/Statistics.jsx";
 import SolutionsHistory from "../solutionsHistory/SolutionsHistory.jsx";
+import ExamList from "../exams/ExamList.jsx";
+import ExamDetail from "../exams/ExamDetail.jsx";
 
 function Routers() {
   const [profil, setProfil] = useState(null);
@@ -100,6 +102,8 @@ function Routers() {
           />
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/solutions-history" element={<SolutionsHistory />} />
+          <Route path="/exams" element={<ExamList />} />
+          <Route path="/exam/:examId" element={<ExamDetail />} />
           {/* 404 error page */}
           <Route path="*" element={<Error />} />
         </Routes>

@@ -3,8 +3,10 @@ import "./SolutionsHistory.css";
 import { baseUrl } from "../services/config.js";
 import { getToken } from "../services/token.js";
 import { FaList, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { useTheme } from "../../context/ThemeContext";
 
 function SolutionsHistory() {
+  const { isDark } = useTheme();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("all");
@@ -91,7 +93,7 @@ function SolutionsHistory() {
         );
 
   return (
-    <div className="solutions-history">
+    <div className={`solutions-history ${isDark ? "dark" : "light"}`}>
       <div className="container">
         <div className="history-header">
           <div>

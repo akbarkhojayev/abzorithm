@@ -599,9 +599,26 @@ def generate_code_template(function_name: str, input_example: str, output_exampl
         f"{n}: {t}" for n, t in zip(param_names, param_types)
     )
 
+    # Clean up parameter names for exam templates
+    clean_params = []
+    for name, ptype in zip(param_names, param_types):
+        # Use more meaningful names
+        if name in ['a', 'arg', 'x'] and ptype == 'int':
+            clean_params.append(f"num: {ptype}")
+        elif name in ['a', 'arg'] and ptype == 'list[int]':
+            clean_params.append(f"arr: {ptype}")
+        elif name in ['b', 'arg'] and ptype == 'int':
+            clean_params.append(f"target: {ptype}")
+        else:
+            clean_params.append(f"{name}: {ptype}")
+
+    params_str = ", ".join(clean_params)
+
     template = f'''class Solution:
     def {method_name}(self, {params_str}) -> {return_type}:
-        # Kodingizni shu yerda yozing
+        """
+        Masalani yechish uchun bu funksiyani to'ldiring
+        """
         pass
 '''
     return template
@@ -677,14 +694,26 @@ def generate_javascript_template(function_name: str, input_example: str, output_
         for i in range(len(lines)):
             param_names.append(string.ascii_lowercase[i])
 
-    params_str = ", ".join(param_names) if param_names else "a, b"
+    # Clean up parameter names for exam templates
+    clean_params = []
+    for name in param_names:
+        if name in ['a', 'arg', 'x']:
+            clean_params.append("num")
+        elif name in ['b', 'arg']:
+            clean_params.append("target")
+        else:
+            clean_params.append(name)
 
-    template = f'''class Solution {{
-    {method_name}({params_str}) {{
-        // Kodingizni shu yerda yozing
-        return 0;
-    }}
-}}
+    params_str = ", ".join(clean_params) if clean_params else "num, target"
+
+    template = f'''/**
+ * @param {{{", ".join(f"{{{p}}}" for p in clean_params)} }}
+ * @return {{number}}
+ */
+var {method_name} = function({params_str}) {{
+    // Kodingizni shu yerda yozing
+    return 0;
+}};
 '''
     return template
 
@@ -803,11 +832,21 @@ def generate_dart_template(function_name: str, input_example: str, output_exampl
             param_types.append("dynamic")
 
     if not param_names:
-        param_names = ["a", "b"]
-        param_types = ["dynamic", "dynamic"]
+        param_names = ["num", "target"]
+        param_types = ["int", "int"]
+
+    # Clean up parameter names for exam templates
+    clean_params = []
+    for i, name in enumerate(param_names):
+        if name in ['a', 'arg', 'x']:
+            clean_params.append("num")
+        elif name in ['b', 'arg']:
+            clean_params.append("target")
+        else:
+            clean_params.append(name)
 
     params_str = ", ".join(
-        f"{t} {n}" for n, t in zip(param_names, param_types)
+        f"{t} {n}" for n, t in zip(clean_params, param_types)
     )
 
     # Output type

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./CodePanels.css";
 import CodeEditor from "../../components/codeEditor/CodeEditor.jsx";
+import AISolution from "../../components/aiSolution/AISolution.jsx";
 import { useCodePanel } from "../../hooks/useCodePanel.js";
 
 function CodePanels({ profil, setProfil, setProblemData }) {
@@ -22,6 +23,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
   const [testCaseWatch, setTestCaseWatch] = useState(true);
   const [runTimeWatch, setRunTimeWatch] = useState(false);
   const [loaderRunTime, setLoaderRunTime] = useState(false);
+  const [showAISolution, setShowAISolution] = useState(false);
 
   // Layout state - percentage-based, zoom-safe
   const [leftWidthPercent, setLeftWidthPercent] = useState(() => {
@@ -247,6 +249,13 @@ function CodePanels({ profil, setProfil, setProblemData }) {
               >
                 Natija
               </button>
+              <button
+                className="tab ai-tab"
+                onClick={() => setShowAISolution(true)}
+                title="AI yordamchisidan yechim so'rab ko'ring"
+              >
+                ✨ AI Yechim
+              </button>
             </div>
 
             {/* Content */}
@@ -371,6 +380,14 @@ function CodePanels({ profil, setProfil, setProblemData }) {
           </div>
         </div>
       </div>
+
+      {/* AI Solution Modal */}
+      <AISolution
+        problemId={details?.id}
+        problemTitle={details?.title}
+        isOpen={showAISolution}
+        onClose={() => setShowAISolution(false)}
+      />
     </div>
   );
 }

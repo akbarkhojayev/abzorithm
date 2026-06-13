@@ -7,9 +7,9 @@
   height: 16px;
   background: linear-gradient(
     90deg,
-    #e2e8f0 0%,
+    #d0d7de 0%,
     #f1f5f9 50%,
-    #e2e8f0 100%
+    #d0d7de 100%
   );
   background-size: 200% 100%;
   border-radius: 4px;
@@ -20,9 +20,9 @@
 [data-theme="dark"] .skeleton-line {
   background: linear-gradient(
     90deg,
-    #374151 0%,
-    #4b5563 50%,
-    #374151 100%
+    #30363d 0%,
+    #30363d 50%,
+    #30363d 100%
   );
 }
 
@@ -51,15 +51,15 @@
   display: flex;
   flex-direction: column;
   gap: 0;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #fafbfc;
+  border: 1px solid #d0d7de;
   border-radius: 8px;
   overflow: hidden;
 }
 
 [data-theme="dark"] .skeleton-table {
-  background: #1a1f3a;
-  border-color: #374151;
+  background: #0d1117;
+  border-color: #30363d;
 }
 
 .skeleton-table-row {
@@ -67,13 +67,13 @@
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: 16px;
   padding: 16px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #d0d7de;
   align-items: center;
   min-height: 64px;
 }
 
 [data-theme="dark"] .skeleton-table-row {
-  border-bottom-color: #374151;
+  border-bottom-color: #30363d;
 }
 
 .skeleton-table-row:last-child {
@@ -84,9 +84,9 @@
   height: 20px;
   background: linear-gradient(
     90deg,
-    #e2e8f0 0%,
+    #d0d7de 0%,
     #f1f5f9 50%,
-    #e2e8f0 100%
+    #d0d7de 100%
   );
   background-size: 200% 100%;
   border-radius: 4px;
@@ -96,9 +96,9 @@
 [data-theme="dark"] .skeleton-cell {
   background: linear-gradient(
     90deg,
-    #374151 0%,
-    #4b5563 50%,
-    #374151 100%
+    #30363d 0%,
+    #30363d 50%,
+    #30363d 100%
   );
 }
 
@@ -116,15 +116,15 @@
   display: flex;
   gap: 16px;
   padding: 16px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #fafbfc;
+  border: 1px solid #d0d7de;
   border-radius: 8px;
   align-items: flex-start;
 }
 
 [data-theme="dark"] .skeleton-list-item {
-  background: #1a1f3a;
-  border-color: #374151;
+  background: #0d1117;
+  border-color: #30363d;
 }
 
 .skeleton-avatar {
@@ -133,9 +133,9 @@
   min-width: 48px;
   background: linear-gradient(
     90deg,
-    #e2e8f0 0%,
+    #d0d7de 0%,
     #f1f5f9 50%,
-    #e2e8f0 100%
+    #d0d7de 100%
   );
   background-size: 200% 100%;
   border-radius: 50%;
@@ -145,9 +145,9 @@
 [data-theme="dark"] .skeleton-avatar {
   background: linear-gradient(
     90deg,
-    #374151 0%,
-    #4b5563 50%,
-    #374151 100%
+    #30363d 0%,
+    #30363d 50%,
+    #30363d 100%
   );
 }
 
@@ -181,24 +181,24 @@
 }
 
 .skeleton-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #fafbfc;
+  border: 1px solid #d0d7de;
   border-radius: 8px;
   overflow: hidden;
 }
 
 [data-theme="dark"] .skeleton-card {
-  background: #1a1f3a;
-  border-color: #374151;
+  background: #0d1117;
+  border-color: #30363d;
 }
 
 .skeleton-card-header {
   height: 160px;
   background: linear-gradient(
     90deg,
-    #e2e8f0 0%,
+    #d0d7de 0%,
     #f1f5f9 50%,
-    #e2e8f0 100%
+    #d0d7de 100%
   );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
@@ -207,9 +207,9 @@
 [data-theme="dark"] .skeleton-card-header {
   background: linear-gradient(
     90deg,
-    #374151 0%,
-    #4b5563 50%,
-    #374151 100%
+    #30363d 0%,
+    #30363d 50%,
+    #30363d 100%
   );
 }
 
@@ -233,15 +233,15 @@
    ============================================ */
 
 .skeleton-text-block {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #fafbfc;
+  border: 1px solid #d0d7de;
   border-radius: 8px;
   padding: 24px;
 }
 
 [data-theme="dark"] .skeleton-text-block {
-  background: #1a1f3a;
-  border-color: #374151;
+  background: #0d1117;
+  border-color: #30363d;
 }
 
 .skeleton-text-block .skeleton-line {
