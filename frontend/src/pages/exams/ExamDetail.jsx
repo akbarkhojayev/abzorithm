@@ -586,40 +586,27 @@ function ExamResultsPage({ exam, statistics, isDark }) {
     <div className={`results-page ${isDark ? "dark" : "light"}`}>
       <div className="results-wrapper">
         <div className="results-box">
-          <div className="result-header">
-            <h1>Natijalari</h1>
-            <div className={`result-badge ${percent >= 50 ? 'pass' : 'fail'}`}>
-              {percent >= 80 && '🌟 Ajoyib!'}
-              {percent >= 50 && percent < 80 && '👍 Yaxshi!'}
-              {percent < 50 && '💪 Ko\'ring!'}
-            </div>
-          </div>
+          <h1>Natijalari</h1>
 
-          <div className="score-display">
-            <div className={`score-circle ${percent >= 50 ? 'pass' : 'fail'}`}>
-              <span className="score-value">{score}</span>
-              <span className="score-max">/ 500</span>
+          <div className="results-stats">
+            <div className="result-stat">
+              <span className="result-label">Ball</span>
+              <span className="result-value">{score} / 500</span>
             </div>
-          </div>
 
-          <div className="result-stats">
-            <div className="stat-row">
-              <span className="stat-name">✅ Yechilgan</span>
-              <span className="stat-value">{solved} / {total}</span>
+            <div className="result-stat">
+              <span className="result-label">Yechilgan</span>
+              <span className="result-value">{solved} / {total}</span>
             </div>
-            <div className="stat-row">
-              <span className="stat-name">📊 Foiz</span>
-              <span className="stat-value">{percent.toFixed(0)}%</span>
-            </div>
-            <div className="stat-row">
-              <span className="stat-name">Status</span>
-              <span className="stat-value">{getStatus()}</span>
-            </div>
-          </div>
 
-          <div className="progress-bar-container">
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${percent}%` }} />
+            <div className="result-stat">
+              <span className="result-label">Foiz</span>
+              <span className="result-value">{percent.toFixed(0)}%</span>
+            </div>
+
+            <div className="result-stat">
+              <span className="result-label">Status</span>
+              <span className="result-value">{getStatus()}</span>
             </div>
           </div>
 

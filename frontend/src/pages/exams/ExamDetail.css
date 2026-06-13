@@ -555,15 +555,13 @@ body {
   align-items: center;
   height: 100vh;
   padding: 2rem;
-  transition: background 0.3s ease;
-}
-
-.results-page.light {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #fafbfc;
+  color: #24292f;
 }
 
 .results-page.dark {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+  background: #0d1117;
+  color: #e6edf3;
 }
 
 .results-wrapper {
@@ -575,141 +573,72 @@ body {
   background: white;
   border-radius: 12px;
   padding: 2.5rem 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid #d0d7de;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
 .results-page.dark .results-box {
-  background: #252526;
-  color: #e0e0e0;
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #e6edf3;
 }
 
-.result-header {
+.results-box h1 {
+  margin: 0 0 2rem 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.results-stats {
+  display: grid;
+  gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
-.result-header h1 {
-  margin: 0 0 1rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.result-badge {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: rgba(102, 126, 234, 0.1);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  border-radius: 6px;
-  font-weight: 600;
-  color: #667eea;
-}
-
-.result-badge.pass {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.3);
-  color: #10b981;
-}
-
-.result-badge.fail {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
-}
-
-.score-display {
-  margin: 2rem 0;
-  display: flex;
-  justify-content: center;
-}
-
-.score-circle {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-}
-
-.score-circle.pass {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-}
-
-.score-circle.fail {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
-}
-
-.score-value {
-  font-size: 2.2rem;
-  font-weight: 700;
-}
-
-.score-max {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.result-stats {
-  margin: 2rem 0;
-  text-align: left;
-}
-
-.stat-row {
+.result-stat {
   display: flex;
   justify-content: space-between;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
-.results-page.dark .stat-row {
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+.results-page.dark .result-stat {
+  background: #0d1117;
+  border-color: #30363d;
 }
 
-.stat-name {
+.result-label {
   font-size: 0.9rem;
-  opacity: 0.7;
   font-weight: 600;
+  color: #6b7280;
 }
 
-.stat-value {
+.results-page.dark .result-label {
+  color: #9ca3af;
+}
+
+.result-value {
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #667eea;
+  color: #58a6ff;
 }
 
-.progress-bar-container {
-  margin: 2rem 0;
-}
-
-.progress-bar {
-  height: 6px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.results-page.dark .progress-bar {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-  transition: width 0.5s ease;
+.results-page.dark .result-value {
+  color: #79c0ff;
 }
 
 .back-btn {
   width: 100%;
   padding: 0.9rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #58a6ff;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -717,8 +646,9 @@ body {
 }
 
 .back-btn:hover {
+  background: #3b9aff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
 }
 
 /* ==================== SCROLLBARS ====================*/
