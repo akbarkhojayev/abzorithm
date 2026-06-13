@@ -232,31 +232,44 @@ function ProfilMe({ profil, setProfil, setProfilMe }) {
             {activeTab === "info" && (
               <>
                 <div className={`info-section ${editInformation ? "hidden" : ""}`}>
-                  <h4>Asosiy Ma'lumotlar</h4>
-                  <div className="info-grid">
-                    <div className="info-item">
-                      <span className="label">Username:</span>
-                      <span className="value">{profil?.username}</span>
+                  <div className="info-header">
+                    <h4>Asosiy Ma'lumotlar</h4>
+                    <button
+                      className="btn-edit-profile"
+                      onClick={() => setEditInformation(true)}
+                    >
+                      <AiOutlineEdit /> Tahrirlash
+                    </button>
+                  </div>
+
+                  <div className="info-cards-grid">
+                    <div className="info-card">
+                      <div className="card-label">Foydalanuvchi Nomi</div>
+                      <div className="card-value">{profil?.username}</div>
+                      <div className="card-icon">👤</div>
                     </div>
-                    <div className="info-item">
-                      <span className="label">Email:</span>
-                      <span className="value">{profil?.email}</span>
+
+                    <div className="info-card">
+                      <div className="card-label">Elektron Pochta</div>
+                      <div className="card-value email">{profil?.email}</div>
+                      <div className="card-icon">✉️</div>
                     </div>
-                    <div className="info-item">
-                      <span className="label">Ball:</span>
-                      <span className="value score">{profil?.score || 0}</span>
-                    </div>
-                    <div className="info-item full">
-                      <span className="label">Bio:</span>
-                      <span className="value">{bio || "Hali bio yo'q"}</span>
+
+                    <div className="info-card highlight">
+                      <div className="card-label">Ball</div>
+                      <div className="card-value-large">{profil?.score || 0}</div>
+                      <div className="card-icon">⭐</div>
                     </div>
                   </div>
-                  <button
-                    className="btn-edit-profile"
-                    onClick={() => setEditInformation(true)}
-                  >
-                    <AiOutlineEdit /> Tahrirlash
-                  </button>
+
+                  <div className="bio-card">
+                    <div className="bio-header">
+                      <h5>Biografiya</h5>
+                    </div>
+                    <div className="bio-content">
+                      {bio ? bio : <span className="bio-empty">Hali biografiya yo'q</span>}
+                    </div>
+                  </div>
                 </div>
 
                 {editInformation && (
@@ -267,23 +280,34 @@ function ProfilMe({ profil, setProfil, setProfilMe }) {
                     }}
                     className="edit-section"
                   >
-                    <h4>Ma'lumotlarni Tahrirlash</h4>
-                    <div className="form-group">
-                      <label>Username:</label>
-                      <span className="static">{profil?.username}</span>
+                    <div className="edit-header">
+                      <h4>Ma'lumotlarni Tahrirlash</h4>
+                      <p>Faqat biografiyangizni o'zgartirishingiz mumkin</p>
                     </div>
-                    <div className="form-group">
-                      <label>Email:</label>
-                      <span className="static">{profil?.email}</span>
+
+                    <div className="edit-info-cards">
+                      <div className="info-card-static">
+                        <div className="card-label">Foydalanuvchi Nomi</div>
+                        <div className="card-value-static">{profil?.username}</div>
+                      </div>
+
+                      <div className="info-card-static">
+                        <div className="card-label">Elektron Pochta</div>
+                        <div className="card-value-static">{profil?.email}</div>
+                      </div>
                     </div>
+
                     <div className="form-group">
-                      <label>Bio:</label>
+                      <label>Biografiya</label>
                       <textarea
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
-                        placeholder="O'zingiz haqida yozing..."
+                        placeholder="O'zingiz haqida yozing... (maksimal 500 belgi)"
+                        maxLength="500"
                       ></textarea>
+                      <div className="char-count">{bio.length}/500</div>
                     </div>
+
                     <div className="form-buttons">
                       <button
                         type="button"
