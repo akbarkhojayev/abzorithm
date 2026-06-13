@@ -142,24 +142,6 @@ function ExamList() {
                     </div>
                   </div>
 
-                  {stat && stat.status !== 'not_started' && (
-                    <div className="exam-progress-section">
-                      <div className="progress-header">
-                        <span className="progress-label">Taraqqiyot</span>
-                        <span className="progress-value">{stat.solved_problems}/{stat.total_problems}</span>
-                      </div>
-                      <div className="progress-bar">
-                        <div
-                          className="progress-fill"
-                          style={{ width: `${stat.progress_percentage}%` }}
-                        ></div>
-                      </div>
-                      <div className="progress-stats">
-                        <span className="stat-item">Foiz: {stat.success_rate.toFixed(0)}%</span>
-                        <span className="stat-item">Ball: {stat.score} / 500</span>
-                      </div>
-                    </div>
-                  )}
 
                   <div className="exam-dates">
                     <FaCalendar className="date-icon" />

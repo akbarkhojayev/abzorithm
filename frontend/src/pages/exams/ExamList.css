@@ -1,5 +1,5 @@
 /* ============================================
-   EXAM LIST - MODERN DESIGN
+   EXAM LIST - CLEAN & SIMPLE DESIGN
    ============================================ */
 
 * {
@@ -13,9 +13,6 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-}
-
-.exam-list-container.light {
   background: #fafbfc;
   color: #24292f;
 }
@@ -36,7 +33,7 @@
 }
 
 .exam-list-header h1 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.5rem 0;
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -82,7 +79,7 @@
 }
 
 .empty-state h2 {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.5rem 0;
   font-size: 1.5rem;
 }
 
@@ -113,14 +110,10 @@
   flex-direction: column;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid;
+  border: 1px solid #d0d7de;
+  background: white;
   transition: all 0.2s ease;
   cursor: pointer;
-}
-
-.exam-list-container.light .exam-card {
-  background: white;
-  border-color: #d0d7de;
 }
 
 .exam-list-container.dark .exam-card {
@@ -129,13 +122,13 @@
 }
 
 .exam-card:hover {
-  transform: translateY(-4px);
   border-color: #58a6ff;
-  box-shadow: 0 8px 24px rgba(88, 166, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .exam-list-container.dark .exam-card:hover {
-  box-shadow: 0 8px 24px rgba(88, 166, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.2);
 }
 
 /* Card Header */
@@ -189,28 +182,33 @@
   font-weight: 600;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-.exam-status-badge.not_started {
-  background: rgba(107, 114, 128, 0.1);
+  background: transparent;
   color: #6b7280;
 }
 
+.exam-list-container.dark .exam-status-badge {
+  color: #d0d7de;
+}
+
+.exam-status-badge.not_started {
+  opacity: 0.7;
+}
+
 .exam-status-badge.in_progress {
-  background: rgba(59, 130, 246, 0.1);
   color: #58a6ff;
+  font-weight: 700;
 }
 
 .exam-status-badge.completed {
-  background: rgba(16, 185, 129, 0.1);
   color: #10b981;
+  font-weight: 700;
 }
 
 /* Card Body */
 .exam-card-body {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
   padding: 1.5rem;
   flex: 1;
 }
@@ -226,6 +224,7 @@
 .exam-info {
   display: flex;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .info-item {
@@ -237,70 +236,16 @@
 
 .info-icon {
   font-size: 1rem;
-  color: #58a6ff;
+  color: #6b7280;
   flex-shrink: 0;
+}
+
+.exam-list-container.dark .info-icon {
+  color: #9ca3af;
 }
 
 .info-value {
   font-weight: 600;
-}
-
-/* Progress Section */
-.exam-progress-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  padding: 1rem;
-  background: rgba(88, 166, 255, 0.05);
-  border-radius: 8px;
-}
-
-.exam-list-container.dark .exam-progress-section {
-  background: rgba(88, 166, 255, 0.08);
-}
-
-.progress-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.progress-label {
-  opacity: 0.7;
-}
-
-.progress-value {
-  color: #58a6ff;
-}
-
-.progress-bar {
-  height: 6px;
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.exam-list-container.dark .progress-bar {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #58a6ff, #79c0ff);
-  transition: width 0.3s ease;
-}
-
-.progress-stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-.stat-item {
-  font-weight: 500;
 }
 
 /* Exam Dates */
@@ -310,11 +255,16 @@
   gap: 0.5rem;
   font-size: 0.85rem;
   opacity: 0.6;
+  margin-top: 0.5rem;
 }
 
 .date-icon {
   font-size: 0.85rem;
-  color: #58a6ff;
+  color: #6b7280;
+}
+
+.exam-list-container.dark .date-icon {
+  color: #9ca3af;
 }
 
 /* Card Footer */
@@ -331,7 +281,7 @@
   border-top-color: #30363d;
 }
 
-/* Take Exam Button */
+/* Button */
 .btn-take-exam {
   width: 100%;
   padding: 0.8rem 1.2rem;
@@ -345,26 +295,22 @@
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-}
-
-.btn-take-exam.not_started {
-  background: linear-gradient(135deg, #58a6ff, #79c0ff);
+  background: #58a6ff;
   color: white;
 }
 
-.btn-take-exam.not_started:hover {
+.btn-take-exam:hover {
+  background: #3b9aff;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
 }
 
 .btn-take-exam.in_progress {
-  background: linear-gradient(135deg, #3b82f6, #58a6ff);
-  color: white;
+  background: #3b82f6;
 }
 
 .btn-take-exam.in_progress:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: #1d4ed8;
 }
 
 .btn-take-exam.completed {
@@ -374,8 +320,7 @@
 }
 
 .btn-take-exam.completed:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.2);
 }
 
 /* Loading */
@@ -434,5 +379,9 @@
 
   .exam-title-section h3 {
     font-size: 1.1rem;
+  }
+
+  .exam-card-body {
+    gap: 1rem;
   }
 }
