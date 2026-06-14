@@ -109,12 +109,28 @@ function ExamDetail() {
 
   useEffect(() => {
     if (!exam) return;
+
+    const startKey = `exam_${examId}_start`;
+    const startTime = localStorage.getItem(startKey);
+
+    if (!startTime) {
+      localStorage.setItem(startKey, Date.now().toString());
+    }
+
     const timer = setInterval(() => {
-      const start = parseInt(localStorage.getItem(`exam_${examId}_start`) || Date.now());
+      const start = parseInt(localStorage.getItem(startKey) || Date.now());
       const elapsed = Math.floor((Date.now() - start) / 1000);
       const total = (exam.duration_minutes || 60) * 60;
-      setTimeLeft(Math.max(0, total - elapsed));
+      const remaining = Math.max(0, total - elapsed);
+
+      setTimeLeft(remaining);
+
+      if (remaining === 0) {
+        clearInterval(timer);
+        handleAutoFinish();
+      }
     }, 1000);
+
     return () => clearInterval(timer);
   }, [exam, examId]);
 
@@ -193,9 +209,24 @@ function ExamDetail() {
     }
   };
 
+  const handleAutoFinish = async () => {
+    try {
+      await fetch(`${baseUrl}/exams/${examId}/complete/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (err) {
+      console.error("Auto-finish error:", err);
+    }
+    navigate("/exams");
+  };
+
   const handleFinishExam = () => {
     if (confirm("Imtixonni tugatishga ishonchingiz komilmi?")) {
-      navigate("/exams");
+      handleAutoFinish();
     }
   };
 
@@ -259,10 +290,11 @@ function ExamDetail() {
           </div>
           <button
             onClick={handleSubmit}
-            disabled={submitting}
+            disabled={submitting || timeLeft === 0}
             className="btn-submit"
+            title={timeLeft === 0 ? "Vaqt tugadi" : "Kodni yuborish"}
           >
-            {submitting ? "Yuborilmoqda..." : "Yuborish"}
+            {submitting ? "Yuborilmoqda..." : timeLeft === 0 ? "Vaqt tugadi" : "Yuborish"}
           </button>
           <button
             onClick={handleFinishExam}
