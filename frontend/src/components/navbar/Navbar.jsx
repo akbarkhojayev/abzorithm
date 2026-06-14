@@ -11,6 +11,7 @@ import { useTheme } from "../../context/ThemeContext.jsx";
 function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [showCoinDialog, setShowCoinDialog] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
   const { isDark, toggleTheme } = useTheme();
 
@@ -59,6 +60,16 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
     setTokens(null);
     setShowModal(false);
     navigate("/");
+  };
+
+  const handleCoinDisplay = () => {
+    const code = prompt("Codial login kiriting:");
+    if (code) {
+      // API call bo'ladi
+      console.log("Code submitted:", code);
+      // Hozir faqat console ga output, backend endpoint tayyor bo'lsa API call qo'shiladi
+      alert("Code yuborildi!");
+    }
   };
 
   return (
@@ -124,15 +135,38 @@ function Navbar({ tokens, setTokens, profilMe, setProfilMe }) {
 
           {/* COINS */}
           {tokens && (
-            <div className="coins" title="Sizning Ballari">
-              <span className="coins-count">
-                {profilMe && !isNaN(profilMe?.score)
-                  ? profilMe?.score * 10
-                  : "0"}
-              </span>
-              <p className="coin_svg">
-                <FaCoins />
-              </p>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <div className="coins" title="Sizning Ballari">
+                <span className="coins-count">
+                  {profilMe && !isNaN(profilMe?.score)
+                    ? profilMe?.score * 10
+                    : "0"}
+                </span>
+                <p className="coin_svg">
+                  <FaCoins />
+                </p>
+              </div>
+              <button
+                onClick={handleCoinDisplay}
+                style={{
+                  background: "none",
+                  border: "1px solid",
+                  borderRadius: "6px",
+                  width: "32px",
+                  height: "32px",
+                  cursor: "pointer",
+                  fontSize: "18px",
+                  fontWeight: "700",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.2s ease",
+                }}
+                className={isDark ? "coin-btn-dark" : "coin-btn-light"}
+                title="Coins asosiy sahifada ko'rsatish"
+              >
+                +
+              </button>
             </div>
           )}
 

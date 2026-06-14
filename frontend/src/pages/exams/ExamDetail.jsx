@@ -254,7 +254,7 @@ function ExamDetail() {
 
     try {
       // First, complete the exam on backend
-      const completeResponse = await fetch(`${baseUrl}/exams/${examId}/complete/`, {
+      const completeResponse = await fetch(`${baseUrl}/exams/${examId}/complete/?t=${Date.now()}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -274,20 +274,23 @@ function ExamDetail() {
       console.error("Exam complete error (continuing anyway):", err);
     }
 
-    // Clear local data to force fresh fetch
+    // Clear ALL exam-related localStorage
     localStorage.removeItem(`exam_${examId}_solved`);
     localStorage.removeItem(`exam_${examId}_currentIndex`);
+    localStorage.removeItem(`exam_${examId}_start`);
+    localStorage.removeItem('examCodeFontSize');
+    localStorage.removeItem('examLeftPanelWidth');
     Object.keys(localStorage).forEach(key => {
       if (key.startsWith(`exam_${examId}_problem_`)) {
         localStorage.removeItem(key);
       }
     });
 
-    // Wait a bit for backend to process, then navigate
+    // Wait for backend to process, then navigate with cache buster
     setTimeout(() => {
-      // Force page reload to get fresh data
-      window.location.href = "/exams";
-    }, 800);
+      const timestamp = Date.now();
+      window.location.href = `/exams?t=${timestamp}`;
+    }, 1200);
   };
 
   const handleFinishExam = () => {

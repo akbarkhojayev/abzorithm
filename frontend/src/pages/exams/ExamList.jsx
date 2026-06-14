@@ -16,7 +16,8 @@ function ExamList() {
 
   const fetchExamsAndStats = async () => {
     try {
-      const examResponse = await fetch(`${baseUrl}/exams/`, {
+      const timestamp = Date.now();
+      const examResponse = await fetch(`${baseUrl}/exams/?t=${timestamp}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
         cache: 'no-store',
       });
@@ -27,7 +28,7 @@ function ExamList() {
       setExams(examData);
 
       // Always fetch fresh stats, don't use cache
-      const statsResponse = await fetch(`${baseUrl}/exam-statistics/user/`, {
+      const statsResponse = await fetch(`${baseUrl}/exam-statistics/user/?t=${timestamp}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
         cache: 'no-store',
       }).catch(() => null);
