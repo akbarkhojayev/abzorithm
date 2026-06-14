@@ -26,24 +26,22 @@ function CodePanels({ profil, setProfil, setProblemData }) {
   const [loaderRunTime, setLoaderRunTime] = useState(false);
   const [showAISolution, setShowAISolution] = useState(false);
 
-  // Layout state - percentage-based, zoom-safe
   const [leftWidthPercent, setLeftWidthPercent] = useState(() => {
     const saved = localStorage.getItem("leftWidthPercent");
-    return saved ? parseFloat(saved) : 33; // Default: 33% for left panel
+    return saved ? parseFloat(saved) : 35;
   });
 
   const [topHeightPercent, setTopHeightPercent] = useState(() => {
     const saved = localStorage.getItem("topHeightPercent");
-    return saved ? parseFloat(saved) : 50; // Default: 50% for editor
+    return saved ? parseFloat(saved) : 55;
   });
 
   const [isResizingVertical, setIsResizingVertical] = useState(false);
   const [isResizingHorizontal, setIsResizingHorizontal] = useState(false);
 
   const containerRef = useRef(null);
-  const dragRef = useRef({ startX: 0, startY: 0, startWidth: 0, startHeight: 0 });
+  const dragRef = useRef({ startX: 0, startY: 0, startPercent: 0 });
 
-  // Save to localStorage
   useEffect(() => {
     localStorage.setItem("leftWidthPercent", leftWidthPercent.toFixed(2));
   }, [leftWidthPercent]);
@@ -52,30 +50,16 @@ function CodePanels({ profil, setProfil, setProblemData }) {
     localStorage.setItem("topHeightPercent", topHeightPercent.toFixed(2));
   }, [topHeightPercent]);
 
-  // Window resize handler - percentages are zoom-immune
-  useEffect(() => {
-    const handleWindowResize = () => {
-      // With percentage-based layout, no action needed on window resize
-      // Percentages automatically scale with zoom changes
-    };
-
-    window.addEventListener("resize", handleWindowResize);
-    return () => window.removeEventListener("resize", handleWindowResize);
-  }, []);
-
-  // Vertical resize
   const handleMouseDownVertical = useCallback((e) => {
     setIsResizingVertical(true);
     dragRef.current = { startX: e.clientX, startPercent: leftWidthPercent };
   }, [leftWidthPercent]);
 
-  // Horizontal resize
   const handleMouseDownHorizontal = useCallback((e) => {
     setIsResizingHorizontal(true);
     dragRef.current = { startY: e.clientY, startPercent: topHeightPercent };
   }, [topHeightPercent]);
 
-  // Global mouse events - percentage-based
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isResizingVertical && containerRef.current) {
@@ -83,22 +67,17 @@ function CodePanels({ profil, setProfil, setProblemData }) {
         const delta = e.clientX - dragRef.current.startX;
         const deltaPercent = (delta / containerWidth) * 100;
         const newPercent = dragRef.current.startPercent + deltaPercent;
-
-        // Constraints: left panel between 20-70% of container
         const clampedPercent = Math.max(20, Math.min(newPercent, 70));
         setLeftWidthPercent(clampedPercent);
       }
 
       if (isResizingHorizontal && containerRef.current) {
-        const panelTop = containerRef.current.querySelector(".panel-top");
         const panelRight = containerRef.current.querySelector(".panel-right");
         if (panelRight) {
           const containerHeight = panelRight.clientHeight;
           const delta = e.clientY - dragRef.current.startY;
           const deltaPercent = (delta / containerHeight) * 100;
           const newPercent = dragRef.current.startPercent + deltaPercent;
-
-          // Constraints: editor between 30-70% of right panel
           const clampedPercent = Math.max(30, Math.min(newPercent, 70));
           setTopHeightPercent(clampedPercent);
         }
@@ -139,7 +118,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
   return (
     <div className="app-root">
       <div className="app-container" ref={containerRef}>
-        {/* LEFT PANEL - PROBLEM DESCRIPTION */}
+        {/* LEFT PANEL */}
         <div className="panel-left" style={{ width: `${leftWidthPercent}%` }}>
           {loadingCoding ? (
             <div className="skeleton-container">
@@ -150,7 +129,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
           ) : (
             <div className="problem-scroll">
               <div className="problem-inner">
-                {/* Title Section */}
                 <div className="problem-header">
                   <div className="title-wrapper">
                     <span className="problem-index">{index}</span>
@@ -165,7 +143,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   </div>
                 </div>
 
-                {/* Description */}
                 {details?.description && (
                   <div className="section">
                     <h2 className="section-title">Tavsif</h2>
@@ -173,7 +150,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   </div>
                 )}
 
-                {/* Examples */}
                 {details?.examples && details.examples.length > 0 && (
                   <div className="section">
                     <h2 className="section-title">Misollar</h2>
@@ -268,7 +244,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
 
             {/* Tab Content */}
             <div className="tab-content">
-              {/* Tests Tab */}
               {testCaseWatch && (
                 <div className="test-section">
                   <div className="test-list">
@@ -290,16 +265,12 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                   {activeCase && (
                     <div className="test-viewer">
                       <div className="test-content-block">
-                        <div className="content-header">
-                          <h3>Kirish</h3>
-                        </div>
+                        <div className="content-header"><h3>Kirish</h3></div>
                         <pre className="content-code">{activeCase.input_data}</pre>
                       </div>
 
                       <div className="test-content-block">
-                        <div className="content-header">
-                          <h3>Kutilgan Natija</h3>
-                        </div>
+                        <div className="content-header"><h3>Kutilgan Natija</h3></div>
                         <pre className="content-code">{activeCase.expected_output}</pre>
                       </div>
                     </div>
@@ -307,7 +278,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                 </div>
               )}
 
-              {/* Results Tab */}
               {runTimeWatch && (
                 <div className="results-section">
                   {loaderRunTime ? (
@@ -317,7 +287,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                     </div>
                   ) : output && Object.keys(output).length > 0 ? (
                     <div className="result-display">
-                      {/* Success State */}
                       {(output.status === "Accepted" || output.status === "Passed") ? (
                         <div className="success-state">
                           <div className="success-header">
@@ -339,7 +308,6 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                         </div>
                       ) : (
                         <>
-                          {/* Error State */}
                           <div className="error-state">
                             <div className="error-header">
                               <div className="error-icon"><FaTimes /></div>
@@ -392,7 +360,7 @@ function CodePanels({ profil, setProfil, setProblemData }) {
                       )}
                     </div>
                   ) : (
-                    <div className="empty-state">Kod yuborib natijani ko'ring</div>
+                    <div className="empty-state">Kod yuborib natijasini ko'ring</div>
                   )}
                 </div>
               )}

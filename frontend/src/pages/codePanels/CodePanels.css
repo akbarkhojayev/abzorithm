@@ -327,53 +327,105 @@ body,
 .divider-v {
   width: 4px;
   cursor: col-resize;
-  background: linear-gradient(to right, transparent 30%, #d0d7de 50%, transparent 70%);
-  transition: all 0.2s ease;
+  background: #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   user-select: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider-v::before {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 40%;
+  background: linear-gradient(180deg, transparent, #38a169, transparent);
+  opacity: 0.3;
 }
 
 .divider-v:hover {
-  background: linear-gradient(to right, transparent 20%, #58a6ff 50%, transparent 80%);
+  background: #cbd5e0;
+}
+
+.divider-v:hover::before {
+  opacity: 0.6;
+  box-shadow: 0 0 8px rgba(56, 161, 105, 0.3);
 }
 
 .divider-v.active {
-  background: #58a6ff;
+  background: #38a169;
+}
+
+.divider-v.active::before {
+  opacity: 1;
+  box-shadow: 0 0 12px rgba(56, 161, 105, 0.4);
 }
 
 [data-theme="dark"] .divider-v {
-  background: linear-gradient(to right, transparent 30%, #30363d 50%, transparent 70%);
+  background: #4a5568;
 }
 
-[data-theme="dark"] .divider-v:hover,
+[data-theme="dark"] .divider-v:hover {
+  background: #718096;
+}
+
 [data-theme="dark"] .divider-v.active {
-  background: #58a6ff;
+  background: #38a169;
 }
 
 .divider-h {
   height: 4px;
   cursor: row-resize;
-  background: linear-gradient(to bottom, transparent 30%, #d0d7de 50%, transparent 70%);
-  transition: all 0.2s ease;
+  background: #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   user-select: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.divider-h::before {
+  content: '';
+  position: absolute;
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #38a169, transparent);
+  opacity: 0.3;
 }
 
 .divider-h:hover {
-  background: linear-gradient(to bottom, transparent 20%, #58a6ff 50%, transparent 80%);
+  background: #cbd5e0;
+}
+
+.divider-h:hover::before {
+  opacity: 0.6;
+  box-shadow: 0 0 8px rgba(56, 161, 105, 0.3);
 }
 
 .divider-h.active {
-  background: #58a6ff;
+  background: #38a169;
+}
+
+.divider-h.active::before {
+  opacity: 1;
+  box-shadow: 0 0 12px rgba(56, 161, 105, 0.4);
 }
 
 [data-theme="dark"] .divider-h {
-  background: linear-gradient(to bottom, transparent 30%, #30363d 50%, transparent 70%);
+  background: #4a5568;
 }
 
-[data-theme="dark"] .divider-h:hover,
+[data-theme="dark"] .divider-h:hover {
+  background: #718096;
+}
+
 [data-theme="dark"] .divider-h.active {
-  background: #58a6ff;
+  background: #38a169;
 }
 
 /* ============================================
