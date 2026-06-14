@@ -34,6 +34,7 @@ function ExamDetail() {
   );
 
   const [isResizingVertical, setIsResizingVertical] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
   const containerRef = useRef(null);
   const editorRef = useRef(null);
   const dragRef = useRef({ startX: 0, startPercent: 0 });
@@ -128,6 +129,7 @@ function ExamDetail() {
 
       if (remaining === 0) {
         clearInterval(timer);
+        setIsFinishing(true);
         handleAutoFinish();
       }
     }, 1000);
@@ -206,8 +208,9 @@ function ExamDetail() {
   };
 
   const handleSubmit = async () => {
-    if (!exam || !currentProblemId) return;
+    if (!exam || !currentProblemId || submitting) return;
     setSubmitting(true);
+    setLastResult(null);
 
     try {
       const response = await fetch(`${baseUrl}/exams/submit/`, {
@@ -236,28 +239,44 @@ function ExamDetail() {
         setSolvedProblems(prev => new Set([...prev, currentProblemId]));
       }
     } catch (err) {
-      setLastResult({ status: "error", message: "Yuborish xatosi" });
+      console.error("Submit error:", err);
+      setLastResult({
+        status: "error",
+        message: err.message || "Yuborish xatosi",
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleAutoFinish = async () => {
+    setIsFinishing(true);
+
     try {
-      await fetch(`${baseUrl}/exams/${examId}/complete/`, {
+      const completeResponse = await fetch(`${baseUrl}/exams/${examId}/complete/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
           "Content-Type": "application/json",
         },
       });
+
+      if (!completeResponse.ok) {
+        console.warn(`Complete endpoint returned ${completeResponse.status}, continuing anyway`);
+      }
     } catch (err) {
-      console.error("Auto-finish error:", err);
+      console.error("Exam complete error (continuing):", err);
     }
-    navigate("/exams");
+
+    // Delay slightly to ensure completion request is sent, then navigate
+    setTimeout(() => {
+      navigate("/exams");
+    }, 300);
   };
 
   const handleFinishExam = () => {
+    if (isFinishing) return;
+
     if (confirm("Imtixonni tugatishga ishonchingiz komilmi?")) {
       handleAutoFinish();
     }
@@ -296,8 +315,9 @@ function ExamDetail() {
               onClick={handleFinishExam}
               className="btn-finish"
               title="Imtixonni tugatish"
+              disabled={isFinishing}
             >
-              Tugatish
+              {isFinishing ? "Tugatilmoqda..." : "Tugatish"}
             </button>
           </div>
         </div>

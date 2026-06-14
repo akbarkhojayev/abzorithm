@@ -197,17 +197,25 @@ html, body, #root {
   color: #fc8181;
 }
 
-.btn-finish:hover {
+.btn-finish:hover:not(:disabled) {
   background: linear-gradient(135deg, #fed7d7 0%, #fcbdbd 100%);
   border-color: #c53030;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(197, 48, 48, 0.15);
 }
 
-[data-theme="dark"] .btn-finish:hover {
+[data-theme="dark"] .btn-finish:hover:not(:disabled) {
   background: #742a2a;
   border-color: #fc8181;
   box-shadow: 0 4px 12px rgba(252, 129, 129, 0.15);
+}
+
+.btn-finish:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+  border-color: #a0aec0;
+  color: #4a5568;
 }
 
 /* Bottom Navigation Bar */
