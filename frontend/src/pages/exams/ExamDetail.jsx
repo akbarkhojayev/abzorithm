@@ -55,7 +55,7 @@ function ExamDetail() {
         data.questions.forEach(q => {
           const saved = localStorage.getItem(`exam_${examId}_problem_${q.problem}`);
           initialSubmissions[q.problem] = {
-            code: saved || q.problem_detail?.template || "",
+            code: saved || q.template_code || "",
             language: data.language || "python",
           };
         });
