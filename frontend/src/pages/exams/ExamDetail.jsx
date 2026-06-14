@@ -253,35 +253,41 @@ function ExamDetail() {
     setIsFinishing(true);
 
     try {
+      // First, complete the exam on backend
       const completeResponse = await fetch(`${baseUrl}/exams/${examId}/complete/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          submissions: Object.entries(submissions).map(([problemId, data]) => ({
-            problem: parseInt(problemId),
-            code: data.code,
-            language: data.language,
-          })),
-        }),
       });
 
-      if (!completeResponse.ok) {
-        console.warn(`Complete endpoint returned ${completeResponse.status}, continuing anyway`);
-      } else {
+      console.log("Complete response status:", completeResponse.status);
+
+      if (completeResponse.ok) {
         const result = await completeResponse.json();
         console.log("Exam completed successfully:", result);
+      } else {
+        console.warn(`Complete endpoint returned ${completeResponse.status}, but continuing`);
       }
     } catch (err) {
-      console.error("Exam complete error (continuing):", err);
+      console.error("Exam complete error (continuing anyway):", err);
     }
 
-    // Delay slightly to ensure completion request is sent, then navigate
+    // Clear local data to force fresh fetch
+    localStorage.removeItem(`exam_${examId}_solved`);
+    localStorage.removeItem(`exam_${examId}_currentIndex`);
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith(`exam_${examId}_problem_`)) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    // Wait a bit for backend to process, then navigate
     setTimeout(() => {
-      navigate("/exams", { replace: true });
-    }, 500);
+      // Force page reload to get fresh data
+      window.location.href = "/exams";
+    }, 800);
   };
 
   const handleFinishExam = () => {

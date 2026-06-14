@@ -18,6 +18,7 @@ function ExamList() {
     try {
       const examResponse = await fetch(`${baseUrl}/exams/`, {
         headers: { Authorization: `Bearer ${getToken()}` },
+        cache: 'no-store',
       });
 
       if (!examResponse.ok) throw new Error("Imtixonlar yuklanmadi");
@@ -25,21 +26,32 @@ function ExamList() {
       const examData = await examResponse.json();
       setExams(examData);
 
+      // Always fetch fresh stats, don't use cache
       const statsResponse = await fetch(`${baseUrl}/exam-statistics/user/`, {
         headers: { Authorization: `Bearer ${getToken()}` },
+        cache: 'no-store',
       }).catch(() => null);
 
       if (statsResponse?.ok) {
         const statsData = await statsResponse.json();
         const statsMap = {};
-        statsData.forEach((stat) => {
-          statsMap[stat.exam] = stat;
-        });
+
+        if (Array.isArray(statsData)) {
+          statsData.forEach((stat) => {
+            statsMap[stat.exam] = stat;
+          });
+        }
+
         setStatistics(statsMap);
+        console.log("Updated statistics:", statsMap);
+      } else {
+        console.warn("Stats fetch failed:", statsResponse?.status);
+        setStatistics({});
       }
 
       setError(null);
     } catch (err) {
+      console.error("Fetch error:", err);
       setError(err.message);
       setExams([]);
     } finally {
