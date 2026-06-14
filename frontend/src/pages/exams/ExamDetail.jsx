@@ -272,18 +272,44 @@ function ExamDetail() {
     <div className="exam-layout">
       {/* HEADER */}
       <header className="exam-header">
-        <div className="header-left">
-          <h1 className="exam-title">{exam?.title}</h1>
-          <span className="exam-lang">{exam?.language?.toUpperCase()}</span>
+        {/* Top Bar */}
+        <div className="header-top">
+          <div className="header-left">
+            <h1 className="exam-title">{exam?.title}</h1>
+            <span className="exam-lang">{exam?.language?.toUpperCase()}</span>
+          </div>
+
+          <div className="header-right">
+            <div className={`timer ${timeLeft < 300 ? 'critical' : ''}`} style={{ color: timeColor }}>
+              <FaClock />
+              <span>{formatTime(timeLeft)}</span>
+            </div>
+            <button
+              onClick={handleSubmit}
+              disabled={submitting || timeLeft === 0}
+              className="btn-submit"
+              title={timeLeft === 0 ? "Vaqt tugadi" : "Kodni yuborish"}
+            >
+              {submitting ? "Yuborilmoqda..." : timeLeft === 0 ? "Vaqt tugadi" : "Yuborish"}
+            </button>
+            <button
+              onClick={handleFinishExam}
+              className="btn-finish"
+              title="Imtixonni tugatish"
+            >
+              Tugatish
+            </button>
+          </div>
         </div>
 
-        <div className="header-center">
+        {/* Bottom Navigation Bar */}
+        <div className="header-bottom">
           <div className="problem-nav">
             <button
               onClick={() => setCurrentProblemIndex(Math.max(0, currentProblemIndex - 1))}
               disabled={currentProblemIndex === 0}
               className="nav-btn"
-              title="Oldingi"
+              title="Oldingi masala"
             >
               <FaChevronLeft />
             </button>
@@ -309,32 +335,11 @@ function ExamDetail() {
               onClick={() => setCurrentProblemIndex(Math.min(exam.questions.length - 1, currentProblemIndex + 1))}
               disabled={currentProblemIndex === exam.questions.length - 1}
               className="nav-btn"
-              title="Keyingi"
+              title="Keyingi masala"
             >
               <FaChevronRight />
             </button>
           </div>
-        </div>
-
-        <div className="header-right">
-          <div className="timer" style={{ color: timeColor }}>
-            <FaClock />
-            <span>{formatTime(timeLeft)}</span>
-          </div>
-          <button
-            onClick={handleSubmit}
-            disabled={submitting || timeLeft === 0}
-            className="btn-submit"
-            title={timeLeft === 0 ? "Vaqt tugadi" : "Kodni yuborish"}
-          >
-            {submitting ? "Yuborilmoqda..." : timeLeft === 0 ? "Vaqt tugadi" : "Yuborish"}
-          </button>
-          <button
-            onClick={handleFinishExam}
-            className="btn-finish"
-          >
-            Tugatish
-          </button>
         </div>
       </header>
 
