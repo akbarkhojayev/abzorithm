@@ -125,10 +125,34 @@ html, body, #root {
 
 .exam-main-area {
   flex: 1;
-  display: grid;
-  grid-template-columns: 35% 65%;
+  display: flex;
   gap: 0;
   overflow: hidden;
+}
+
+/* ============= DIVIDER ============= */
+
+.exam-divider-v {
+  width: 3px;
+  background: #e2e8f0;
+  cursor: col-resize;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+[data-theme="dark"] .exam-divider-v {
+  background: #4a5568;
+}
+
+.exam-divider-v:hover,
+.exam-divider-v.active {
+  background: #38a169;
+  box-shadow: 0 0 8px rgba(56, 161, 105, 0.3);
+}
+
+.exam-divider-v.active {
+  box-shadow: 0 0 12px rgba(56, 161, 105, 0.4);
 }
 
 /* ============= PROBLEM PANEL ============= */
@@ -137,8 +161,8 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   background: white;
-  border-right: 1px solid #e2e8f0;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 [data-theme="dark"] .problem-panel {
@@ -458,6 +482,7 @@ html, body, #root {
   flex-direction: column;
   background: white;
   overflow: hidden;
+  flex: 1;
 }
 
 [data-theme="dark"] .editor-panel {

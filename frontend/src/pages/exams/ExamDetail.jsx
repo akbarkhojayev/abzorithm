@@ -33,11 +33,16 @@ function ExamDetail() {
   const [editorHeightPercent, setEditorHeightPercent] = useState(() =>
     parseFloat(localStorage.getItem("examEditorHeightPercent") || "60")
   );
+  const [leftPanelWidthPercent, setLeftPanelWidthPercent] = useState(() =>
+    parseFloat(localStorage.getItem("examLeftPanelWidth") || "35")
+  );
 
   const [isResizingEditor, setIsResizingEditor] = useState(false);
+  const [isResizingVertical, setIsResizingVertical] = useState(false);
   const editorRef = useRef(null);
   const panelRightRef = useRef(null);
-  const dragRef = useRef({ startY: 0, startPercent: 0 });
+  const containerRef = useRef(null);
+  const dragRef = useRef({ startY: 0, startPercent: 0, startX: 0 });
 
   const currentQuestion = exam?.questions[currentProblemIndex];
   const currentProblem = currentQuestion?.problem_detail;
@@ -95,6 +100,10 @@ function ExamDetail() {
   }, [editorHeightPercent]);
 
   useEffect(() => {
+    localStorage.setItem("examLeftPanelWidth", leftPanelWidthPercent.toFixed(2));
+  }, [leftPanelWidthPercent]);
+
+  useEffect(() => {
     if (currentProblemId) {
       const code = submissions[currentProblemId]?.code || "";
       localStorage.setItem(`exam_${examId}_problem_${currentProblemId}`, code);
@@ -121,23 +130,36 @@ function ExamDetail() {
     return () => clearInterval(timer);
   }, [exam, examId]);
 
-  // Editor resize
+  // Editor and panel resize
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (!isResizingEditor || !panelRightRef.current) return;
-      const height = panelRightRef.current.clientHeight;
-      const delta = e.clientY - dragRef.current.startY;
-      const deltaPercent = (delta / height) * 100;
-      const newPercent = Math.max(30, Math.min(70, dragRef.current.startPercent + deltaPercent));
-      setEditorHeightPercent(newPercent);
+      if (isResizingEditor && panelRightRef.current) {
+        const height = panelRightRef.current.clientHeight;
+        const delta = e.clientY - dragRef.current.startY;
+        const deltaPercent = (delta / height) * 100;
+        const newPercent = Math.max(30, Math.min(70, dragRef.current.startPercent + deltaPercent));
+        setEditorHeightPercent(newPercent);
+      }
+
+      if (isResizingVertical && containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const delta = e.clientX - dragRef.current.startX;
+        const deltaPercent = (delta / containerWidth) * 100;
+        const newPercent = dragRef.current.startPercent + deltaPercent;
+        const clampedPercent = Math.max(20, Math.min(newPercent, 70));
+        setLeftPanelWidthPercent(clampedPercent);
+      }
     };
 
-    const handleMouseUp = () => setIsResizingEditor(false);
+    const handleMouseUp = () => {
+      setIsResizingEditor(false);
+      setIsResizingVertical(false);
+    };
 
-    if (isResizingEditor) {
+    if (isResizingEditor || isResizingVertical) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "row-resize";
+      document.body.style.cursor = isResizingVertical ? "col-resize" : "row-resize";
       document.body.style.userSelect = "none";
       return () => {
         document.removeEventListener("mousemove", handleMouseMove);
@@ -146,7 +168,7 @@ function ExamDetail() {
         document.body.style.userSelect = "auto";
       };
     }
-  }, [isResizingEditor]);
+  }, [isResizingEditor, isResizingVertical]);
 
   const formatTime = (seconds) => {
     if (!seconds && seconds !== 0) return "00:00";
@@ -223,9 +245,9 @@ function ExamDetail() {
         </div>
       </header>
 
-      <main className="exam-main-area">
+      <main className="exam-main-area" ref={containerRef}>
         {/* LEFT PANEL */}
-        <div className="problem-panel">
+        <div className="problem-panel" style={{ width: `${leftPanelWidthPercent}%` }}>
           <div className="problem-content-scroll">
             <div className="problem-header-block">
               <div className="problem-title-block">
@@ -293,8 +315,17 @@ function ExamDetail() {
           </div>
         </div>
 
+        {/* VERTICAL DIVIDER */}
+        <div
+          className={`exam-divider-v ${isResizingVertical ? "active" : ""}`}
+          onMouseDown={(e) => {
+            setIsResizingVertical(true);
+            dragRef.current = { startX: e.clientX, startPercent: leftPanelWidthPercent, startY: 0 };
+          }}
+        />
+
         {/* RIGHT PANEL */}
-        <div className="editor-panel" ref={panelRightRef}>
+        <div className="editor-panel" ref={panelRightRef} style={{ width: `${100 - leftPanelWidthPercent}%` }}>
           <div className="editor-top" style={{ height: `${editorHeightPercent}%` }}>
             <div className="editor-toolbar">
               <div className="font-size-control">
