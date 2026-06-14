@@ -5,7 +5,7 @@ import { getToken } from "../services/token.js";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import Editor from "@monaco-editor/react";
-import { FaClock, FaCheck, FaTimes, FaChevronRight, FaChevronLeft, FaSync } from "react-icons/fa";
+import { FaClock, FaCheck, FaTimes, FaChevronRight, FaChevronLeft } from "react-icons/fa";
 
 function ExamDetail() {
   const { examId } = useParams();
@@ -15,7 +15,6 @@ function ExamDetail() {
   const [exam, setExam] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [examCompleted, setExamCompleted] = useState(false);
 
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [submissions, setSubmissions] = useState({});
@@ -30,19 +29,13 @@ function ExamDetail() {
   const [codeFontSize, setCodeFontSize] = useState(() =>
     parseInt(localStorage.getItem("examCodeFontSize") || "14")
   );
-  const [editorHeightPercent, setEditorHeightPercent] = useState(() =>
-    parseFloat(localStorage.getItem("examEditorHeightPercent") || "60")
-  );
   const [leftPanelWidthPercent, setLeftPanelWidthPercent] = useState(() =>
     parseFloat(localStorage.getItem("examLeftPanelWidth") || "35")
   );
 
-  const [isResizingEditor, setIsResizingEditor] = useState(false);
   const [isResizingVertical, setIsResizingVertical] = useState(false);
-  const editorRef = useRef(null);
-  const panelRightRef = useRef(null);
   const containerRef = useRef(null);
-  const dragRef = useRef({ startY: 0, startPercent: 0, startX: 0 });
+  const dragRef = useRef({ startX: 0, startPercent: 0 });
 
   const currentQuestion = exam?.questions[currentProblemIndex];
   const currentProblem = currentQuestion?.problem_detail;
@@ -96,10 +89,6 @@ function ExamDetail() {
   }, [codeFontSize]);
 
   useEffect(() => {
-    localStorage.setItem("examEditorHeightPercent", editorHeightPercent.toFixed(2));
-  }, [editorHeightPercent]);
-
-  useEffect(() => {
     localStorage.setItem("examLeftPanelWidth", leftPanelWidthPercent.toFixed(2));
   }, [leftPanelWidthPercent]);
 
@@ -118,7 +107,6 @@ function ExamDetail() {
     localStorage.setItem(`exam_${examId}_currentIndex`, currentProblemIndex.toString());
   }, [currentProblemIndex, examId]);
 
-  // Timer
   useEffect(() => {
     if (!exam) return;
     const timer = setInterval(() => {
@@ -130,17 +118,8 @@ function ExamDetail() {
     return () => clearInterval(timer);
   }, [exam, examId]);
 
-  // Editor and panel resize
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (isResizingEditor && panelRightRef.current) {
-        const height = panelRightRef.current.clientHeight;
-        const delta = e.clientY - dragRef.current.startY;
-        const deltaPercent = (delta / height) * 100;
-        const newPercent = Math.max(30, Math.min(70, dragRef.current.startPercent + deltaPercent));
-        setEditorHeightPercent(newPercent);
-      }
-
       if (isResizingVertical && containerRef.current) {
         const containerWidth = containerRef.current.clientWidth;
         const delta = e.clientX - dragRef.current.startX;
@@ -151,15 +130,12 @@ function ExamDetail() {
       }
     };
 
-    const handleMouseUp = () => {
-      setIsResizingEditor(false);
-      setIsResizingVertical(false);
-    };
+    const handleMouseUp = () => setIsResizingVertical(false);
 
-    if (isResizingEditor || isResizingVertical) {
+    if (isResizingVertical) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = isResizingVertical ? "col-resize" : "row-resize";
+      document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
       return () => {
         document.removeEventListener("mousemove", handleMouseMove);
@@ -168,7 +144,7 @@ function ExamDetail() {
         document.body.style.userSelect = "auto";
       };
     }
-  }, [isResizingEditor, isResizingVertical]);
+  }, [isResizingVertical]);
 
   const formatTime = (seconds) => {
     if (!seconds && seconds !== 0) return "00:00";
@@ -225,187 +201,176 @@ function ExamDetail() {
 
   if (loading) return <div className="exam-layout"><div className="loading-state">Yuklanmoqda...</div></div>;
   if (error && !exam) return <div className="exam-layout"><div className="error-state"><h2>{error}</h2></div></div>;
-  if (examCompleted) return <div className="exam-layout"><div className="loading-state">Imtixon yakunlandi</div></div>;
 
   const timeColor = timeLeft < 300 ? '#c53030' : timeLeft < 600 ? '#f59e0b' : '#38a169';
 
   return (
     <div className="exam-layout">
-      <header className="exam-top-header">
+      {/* HEADER */}
+      <header className="exam-header">
         <div className="header-left">
           <h1 className="exam-title">{exam?.title}</h1>
-          <span className="exam-lang-badge">{exam?.language?.toUpperCase()}</span>
+          <span className="exam-lang">{exam?.language?.toUpperCase()}</span>
         </div>
-        <div className="header-right">
-          <div className="exam-counter">{currentProblemIndex + 1}/{exam?.questions?.length}</div>
-          <div className="exam-timer-display" style={{ color: timeColor }}>
-            <FaClock />
-            <span>{formatTime(timeLeft)}</span>
-          </div>
-        </div>
-      </header>
 
-      <main className="exam-main-area" ref={containerRef}>
-        {/* LEFT PANEL */}
-        <div className="problem-panel" style={{ width: `${leftPanelWidthPercent}%` }}>
-          <div className="problem-content-scroll">
-            <div className="problem-header-block">
-              <div className="problem-title-block">
-                <span className="problem-num-circle">{currentProblemIndex + 1}</span>
-                <h2>{currentProblem?.title}</h2>
-              </div>
-              <span className={`difficulty-badge difficulty-${currentProblem?.difficulty?.toLowerCase()}`}>
-                {currentProblem?.difficulty}
-              </span>
-            </div>
+        <div className="header-center">
+          <div className="problem-nav">
+            <button
+              onClick={() => setCurrentProblemIndex(Math.max(0, currentProblemIndex - 1))}
+              disabled={currentProblemIndex === 0}
+              className="nav-btn"
+              title="Oldingi"
+            >
+              <FaChevronLeft />
+            </button>
 
-            <div className="problem-description-block">
-              <p>{currentProblem?.description}</p>
-            </div>
-
-            {currentProblem?.input_example && (
-              <div className="example-block">
-                <h4>Kirish Misoli</h4>
-                <pre>{currentProblem.input_example}</pre>
-              </div>
-            )}
-
-            {currentProblem?.output_example && (
-              <div className="example-block">
-                <h4>Chiqish Misoli</h4>
-                <pre>{currentProblem.output_example}</pre>
-              </div>
-            )}
-          </div>
-
-          <div className="problem-footer">
-            <div className="problem-tabs-nav">
+            <div className="problem-tabs">
               {exam?.questions?.map((q, idx) => {
                 const problemSolved = solvedProblems.has(q.problem);
                 return (
                   <button
                     key={q.id}
-                    className={`problem-tab ${idx === currentProblemIndex ? 'active' : ''} ${problemSolved ? 'solved' : ''}`}
                     onClick={() => setCurrentProblemIndex(idx)}
+                    className={`problem-tab ${idx === currentProblemIndex ? 'active' : ''} ${problemSolved ? 'solved' : ''}`}
                     title={q.problem_detail?.title}
                   >
-                    <span className="tab-number">{idx + 1}</span>
+                    {idx + 1}
                     {problemSolved && <FaCheck className="tab-check" />}
                   </button>
                 );
               })}
             </div>
 
-            <div className="problem-nav-buttons">
-              <button
-                className="btn-nav"
-                onClick={() => setCurrentProblemIndex(Math.max(0, currentProblemIndex - 1))}
-                disabled={currentProblemIndex === 0}
-              >
-                <FaChevronLeft /> Oldingi
-              </button>
-              <button
-                className="btn-nav"
-                onClick={() => setCurrentProblemIndex(Math.min(exam.questions.length - 1, currentProblemIndex + 1))}
-                disabled={currentProblemIndex === exam.questions.length - 1}
-              >
-                Keyingi <FaChevronRight />
-              </button>
-            </div>
+            <button
+              onClick={() => setCurrentProblemIndex(Math.min(exam.questions.length - 1, currentProblemIndex + 1))}
+              disabled={currentProblemIndex === exam.questions.length - 1}
+              className="nav-btn"
+              title="Keyingi"
+            >
+              <FaChevronRight />
+            </button>
           </div>
         </div>
 
-        {/* VERTICAL DIVIDER */}
+        <div className="header-right">
+          <div className="timer" style={{ color: timeColor }}>
+            <FaClock />
+            <span>{formatTime(timeLeft)}</span>
+          </div>
+          <button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="btn-submit"
+          >
+            {submitting ? "Yuborilmoqda..." : "Yuborish"}
+          </button>
+          <button
+            onClick={handleFinishExam}
+            className="btn-finish"
+          >
+            Tugatish
+          </button>
+        </div>
+      </header>
+
+      {/* MAIN AREA */}
+      <main className="exam-main-area" ref={containerRef}>
+        {/* PROBLEM PANEL */}
+        <div className="problem-panel" style={{ width: `${leftPanelWidthPercent}%` }}>
+          <div className="problem-scroll">
+            <div className="problem-heading">
+              <div className="problem-header">
+                <span className="problem-num">{currentProblemIndex + 1}</span>
+                <h2>{currentProblem?.title}</h2>
+              </div>
+              {currentProblem?.difficulty && (
+                <span className={`badge-difficulty badge-${currentProblem.difficulty.toLowerCase()}`}>
+                  {currentProblem.difficulty}
+                </span>
+              )}
+            </div>
+
+            {currentProblem?.description && (
+              <div className="problem-section">
+                <h3>Tavsif</h3>
+                <p>{currentProblem.description}</p>
+              </div>
+            )}
+
+            {currentProblem?.input_example && (
+              <div className="problem-section">
+                <h3>Kirish Misoli</h3>
+                <pre className="code-block">{currentProblem.input_example}</pre>
+              </div>
+            )}
+
+            {currentProblem?.output_example && (
+              <div className="problem-section">
+                <h3>Chiqish Misoli</h3>
+                <pre className="code-block">{currentProblem.output_example}</pre>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* DIVIDER */}
         <div
-          className={`exam-divider-v ${isResizingVertical ? "active" : ""}`}
+          className={`exam-divider ${isResizingVertical ? "active" : ""}`}
           onMouseDown={(e) => {
             setIsResizingVertical(true);
-            dragRef.current = { startX: e.clientX, startPercent: leftPanelWidthPercent, startY: 0 };
+            dragRef.current = { startX: e.clientX, startPercent: leftPanelWidthPercent };
           }}
         />
 
-        {/* RIGHT PANEL */}
-        <div className="editor-panel" ref={panelRightRef} style={{ width: `${100 - leftPanelWidthPercent}%` }}>
-          <div className="editor-top" style={{ height: `${editorHeightPercent}%` }}>
-            <div className="editor-toolbar">
-              <div className="font-size-control">
-                <button className="font-btn" onClick={() => setCodeFontSize(Math.max(12, codeFontSize - 1))}>−</button>
-                <span className="font-display">{codeFontSize}</span>
-                <button className="font-btn" onClick={() => setCodeFontSize(Math.min(22, codeFontSize + 1))}>+</button>
-                {currentQuestion?.template_code && (
-                  <button className="reset-template-btn" onClick={() => {
-                    setSubmissions(prev => ({
-                      ...prev,
-                      [currentProblemId]: {
-                        ...prev[currentProblemId],
-                        code: currentQuestion.template_code
-                      }
-                    }));
-                  }}>
-                    <FaSync />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div className="editor-workspace">
-              <Editor
-                height="100%"
-                language={exam?.language === 'javascript' ? 'javascript' : exam?.language === 'dart' ? 'dart' : 'python'}
-                value={submissions[currentProblemId]?.code || ""}
-                onChange={(value) => setSubmissions(prev => ({
-                  ...prev,
-                  [currentProblemId]: { ...prev[currentProblemId], code: value || "" }
-                }))}
-                onMount={(editor) => (editorRef.current = editor)}
-                theme={isDark ? "vs-dark" : "vs-light"}
-                options={{
-                  fontSize: codeFontSize,
-                  minimap: { enabled: false },
-                  wordWrap: 'on',
-                  scrollBeyondLastLine: false,
-                }}
-              />
+        {/* EDITOR PANEL */}
+        <div className="editor-panel" style={{ width: `${100 - leftPanelWidthPercent}%` }}>
+          <div className="editor-header">
+            <div className="font-controls">
+              <button
+                onClick={() => setCodeFontSize(Math.max(12, codeFontSize - 1))}
+                className="font-btn"
+              >
+                −
+              </button>
+              <span className="font-size">{codeFontSize}</span>
+              <button
+                onClick={() => setCodeFontSize(Math.min(22, codeFontSize + 1))}
+                className="font-btn"
+              >
+                +
+              </button>
             </div>
           </div>
 
-          <div
-            className={`editor-divider ${isResizingEditor ? 'active' : ''}`}
-            onMouseDown={(e) => {
-              setIsResizingEditor(true);
-              dragRef.current = { startY: e.clientY, startPercent: editorHeightPercent };
+          <Editor
+            height="100%"
+            language={exam?.language === 'javascript' ? 'javascript' : exam?.language === 'dart' ? 'dart' : 'python'}
+            value={submissions[currentProblemId]?.code || ""}
+            onChange={(value) => setSubmissions(prev => ({
+              ...prev,
+              [currentProblemId]: { ...prev[currentProblemId], code: value || "" }
+            }))}
+            theme={isDark ? "vs-dark" : "vs-light"}
+            options={{
+              fontSize: codeFontSize,
+              minimap: { enabled: false },
+              wordWrap: 'on',
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
             }}
           />
 
-          <div className="editor-bottom" style={{ height: `${100 - editorHeightPercent}%` }}>
-            <div className="test-tabs">
-              <button className="test-tab active">Natija</button>
+          {lastResult && (
+            <div className={`result-popup ${lastResult.status === 'Accepted' || lastResult.status === 'Passed' ? 'success' : 'error'}`}>
+              <div className="result-icon">
+                {lastResult.status === 'Accepted' || lastResult.status === 'Passed' ? <FaCheck /> : <FaTimes />}
+              </div>
+              <div className="result-text">
+                <strong>{lastResult.status === 'Accepted' || lastResult.status === 'Passed' ? 'To\'g\'ri!' : 'Xato'}</strong>
+                <p>{lastResult.message}</p>
+              </div>
             </div>
-
-            <div className="test-content">
-              {lastResult && (
-                <div className="test-status-display">
-                  <div className={`submission-status ${lastResult.status === 'Accepted' ? '' : 'error'}`}>
-                    <div className="status-icon-block">
-                      {lastResult.status === 'Accepted' ? <FaCheck className="status-check-icon" /> : <FaTimes className="status-error-icon" />}
-                    </div>
-                    <div className="status-text-block">
-                      <h3>{lastResult.status === 'Accepted' ? 'To\'g\'ri!' : 'Xato'}</h3>
-                      <p>{lastResult.message}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {!lastResult && <div className="empty-results">Kod yuborib natijasini ko'ring</div>}
-            </div>
-
-            <div className="editor-bottom-actions">
-              <button className="btn-submit" onClick={handleSubmit} disabled={submitting}>
-                {submitting ? 'Yuborilmoqda...' : 'Yuborish'}
-              </button>
-              <button className="btn-finish" onClick={handleFinishExam}>Tugatish</button>
-            </div>
-          </div>
+          )}
         </div>
       </main>
     </div>
