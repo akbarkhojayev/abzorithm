@@ -56,22 +56,23 @@ export const getMasala = async (id, language) => {
     headers: myHeaders,
     redirect: "follow",
   };
-  return fetch(
-    `${baseUrl}/submissions/template/${id}/${language}/`,
-    requestOptions
-  )
-    .then((response) => {
-      if (!response.ok) {
-        console.error("API ERROR:", response.status);
-        return null;
-      }
-      return response.json();
-    })
-    .then((result) => {
-      // console.log("Template:", result);
-      return result;
-    })
-    .catch((error) => console.error(error));
+  try {
+    const response = await fetch(
+      `${baseUrl}/submissions/template/${id}/${language}/`,
+      requestOptions
+    );
+
+    if (!response.ok) {
+      console.error("API ERROR:", response.status);
+      return null;
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("getMasala error:", error);
+    return null;
+  }
 };
 
 export const getTestCase = () => {

@@ -360,24 +360,36 @@ class SubmissionTemplateView(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, *args, **kwargs):
-        problem = self.get_object()
+        try:
+            problem = self.get_object()
 
-        language = kwargs.get('language') or request.query_params.get('language', 'python')
+            language = kwargs.get('language') or request.query_params.get('language', 'python')
 
-        if language == 'javascript':
-            template = generate_javascript_template(problem.function_name, problem.input_example,
-                                                    problem.output_example)
-        elif language == 'dart':
-            template = generate_dart_template(problem.function_name, problem.input_example, problem.output_example)
-        else:
-            template = generate_code_template(problem.function_name, problem.input_example, problem.output_example,
-                                              problem.description)
+            func_name = problem.function_name or 'solve'
+            input_ex = problem.input_example or ''
+            output_ex = problem.output_example or ''
+            desc = problem.description or ''
 
-        return Response({
-            "problem": problem.id,
-            "language": language,
-            "template_code": template
-        })
+            if language == 'javascript':
+                template = generate_javascript_template(func_name, input_ex, output_ex)
+            elif language == 'dart':
+                template = generate_dart_template(func_name, input_ex, output_ex)
+            else:
+                template = generate_code_template(func_name, input_ex, output_ex, desc)
+
+            if not template:
+                template = '# Kod yozish uchun bu joyni foydalaning\npass'
+
+            return Response({
+                "problem": problem.id,
+                "language": language,
+                "template_code": template
+            })
+        except Exception as e:
+            return Response(
+                {"error": f"Template yuklanishida xatolik: {str(e)}", "template_code": "# Xatolik"},
+                status=status.HTTP_200_OK
+            )
 
 class LeaderboardView(generics.ListAPIView):
     queryset = User.objects.all().order_by('-score', 'username')

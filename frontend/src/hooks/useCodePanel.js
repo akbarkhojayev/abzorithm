@@ -57,9 +57,13 @@ export function useCodePanel() {
           getTestCase(),
         ]);
 
-        if (masala) {
-          setCodeBy({ ...masala, selectedLanguage });
-        }
+        setCodeBy(
+          masala ? { ...masala, selectedLanguage } : {
+            problem: details.id,
+            language: selectedLanguage,
+            template_code: ""
+          }
+        );
 
         if (Array.isArray(cases)) {
           setTestCase(cases);

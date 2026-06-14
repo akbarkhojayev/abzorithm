@@ -95,12 +95,23 @@ function CodeEditor({
     if (!problemId) return;
     try {
       const res = await getMasala(problemId, lang);
-      if (!res) {
-        throw new Error("Template yuklanishi uchun xatolik");
+      if (res && res.template_code) {
+        setCodeBy(res);
+      } else {
+        console.warn("Template not received from API", res);
+        setCodeBy({
+          problem: problemId,
+          language: lang,
+          template_code: ""
+        });
       }
-      setCodeBy(res);
     } catch (err) {
       console.error("Template loading error:", err);
+      setCodeBy({
+        problem: problemId,
+        language: lang,
+        template_code: ""
+      });
     }
   }, [problemId, setCodeBy]);
 
