@@ -292,13 +292,13 @@ function ExamDetail() {
                 <button className="font-btn" onClick={() => setCodeFontSize(Math.max(12, codeFontSize - 1))}>−</button>
                 <span className="font-display">{codeFontSize}</span>
                 <button className="font-btn" onClick={() => setCodeFontSize(Math.min(22, codeFontSize + 1))}>+</button>
-                {currentProblem?.template && (
+                {currentQuestion?.template_code && (
                   <button className="reset-template-btn" onClick={() => {
                     setSubmissions(prev => ({
                       ...prev,
                       [currentProblemId]: {
                         ...prev[currentProblemId],
-                        code: currentProblem.template
+                        code: currentQuestion.template_code
                       }
                     }));
                   }}>
