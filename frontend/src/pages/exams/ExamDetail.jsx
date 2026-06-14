@@ -21,6 +21,10 @@ function ExamDetail() {
   const [submissions, setSubmissions] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [lastResult, setLastResult] = useState(null);
+  const [solvedProblems, setSolvedProblems] = useState(() => {
+    const saved = localStorage.getItem(`exam_${examId}_solved`);
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
 
   const [timeLeft, setTimeLeft] = useState(null);
   const [codeFontSize, setCodeFontSize] = useState(() =>
@@ -38,6 +42,7 @@ function ExamDetail() {
   const currentQuestion = exam?.questions[currentProblemIndex];
   const currentProblem = currentQuestion?.problem_detail;
   const currentProblemId = currentQuestion?.problem;
+  const isSolved = solvedProblems.has(currentProblemId);
 
   useEffect(() => {
     const loadExam = async () => {
@@ -54,8 +59,9 @@ function ExamDetail() {
         const initialSubmissions = {};
         data.questions.forEach(q => {
           const saved = localStorage.getItem(`exam_${examId}_problem_${q.problem}`);
+          const template = q.template_code || "";
           initialSubmissions[q.problem] = {
-            code: saved || q.template_code || "",
+            code: saved || template,
             language: data.language || "python",
           };
         });
@@ -89,6 +95,10 @@ function ExamDetail() {
       localStorage.setItem(`exam_${examId}_problem_${currentProblemId}`, code);
     }
   }, [submissions, currentProblemId, examId]);
+
+  useEffect(() => {
+    localStorage.setItem(`exam_${examId}_solved`, JSON.stringify(Array.from(solvedProblems)));
+  }, [solvedProblems, examId]);
 
   // Timer
   useEffect(() => {
@@ -159,10 +169,16 @@ function ExamDetail() {
       });
 
       const data = await response.json();
+      const status = data.status || "error";
+
       setLastResult({
-        status: data.status || "error",
+        status,
         message: data.message || "Xato",
       });
+
+      if (status === "Accepted" || status === "Passed") {
+        setSolvedProblems(prev => new Set([...prev, currentProblemId]));
+      }
     } catch (err) {
       setLastResult({ status: "error", message: "Yuborish xatosi" });
     } finally {
@@ -233,16 +249,20 @@ function ExamDetail() {
 
           <div className="problem-footer">
             <div className="problem-tabs-nav">
-              {exam?.questions?.map((q, idx) => (
-                <button
-                  key={q.id}
-                  className={`problem-tab ${idx === currentProblemIndex ? 'active' : ''}`}
-                  onClick={() => setCurrentProblemIndex(idx)}
-                  title={q.problem_detail?.title}
-                >
-                  {idx + 1}
-                </button>
-              ))}
+              {exam?.questions?.map((q, idx) => {
+                const problemSolved = solvedProblems.has(q.problem);
+                return (
+                  <button
+                    key={q.id}
+                    className={`problem-tab ${idx === currentProblemIndex ? 'active' : ''} ${problemSolved ? 'solved' : ''}`}
+                    onClick={() => setCurrentProblemIndex(idx)}
+                    title={q.problem_detail?.title}
+                  >
+                    <span className="tab-number">{idx + 1}</span>
+                    {problemSolved && <FaCheck className="tab-check" />}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="problem-nav-buttons">

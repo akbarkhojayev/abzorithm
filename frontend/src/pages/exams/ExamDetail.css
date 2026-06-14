@@ -374,6 +374,29 @@ html, body, #root {
   color: white;
 }
 
+.problem-tab.solved {
+  background: #c6f6d5;
+  border-color: #38a169;
+  color: #22543d;
+}
+
+[data-theme="dark"] .problem-tab.solved {
+  background: #22543d;
+  border-color: #38a169;
+  color: #86efac;
+}
+
+.problem-tab.solved.active {
+  background: #38a169;
+  color: white;
+}
+
+.problem-tab.solved .tab-check {
+  display: inline;
+  margin-left: 0.25rem;
+  font-size: 0.7rem;
+}
+
 .problem-nav-buttons {
   display: flex;
   gap: 0.75rem;
