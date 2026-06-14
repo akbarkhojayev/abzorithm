@@ -66,6 +66,11 @@ function ExamDetail() {
           };
         });
         setSubmissions(initialSubmissions);
+
+        const savedIndex = localStorage.getItem(`exam_${examId}_currentIndex`);
+        if (savedIndex) {
+          setCurrentProblemIndex(parseInt(savedIndex));
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -99,6 +104,10 @@ function ExamDetail() {
   useEffect(() => {
     localStorage.setItem(`exam_${examId}_solved`, JSON.stringify(Array.from(solvedProblems)));
   }, [solvedProblems, examId]);
+
+  useEffect(() => {
+    localStorage.setItem(`exam_${examId}_currentIndex`, currentProblemIndex.toString());
+  }, [currentProblemIndex, examId]);
 
   // Timer
   useEffect(() => {
