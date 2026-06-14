@@ -5,7 +5,7 @@ import { getToken } from "../services/token.js";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import Editor from "@monaco-editor/react";
-import { FaClock, FaCheck, FaTimes, FaChevronRight, FaChevronLeft } from "react-icons/fa";
+import { FaClock, FaCheck, FaTimes, FaChevronRight, FaChevronLeft, FaSync, FaCode, FaMoon, FaSun } from "react-icons/fa";
 
 function ExamDetail() {
   const { examId } = useParams();
@@ -35,6 +35,7 @@ function ExamDetail() {
 
   const [isResizingVertical, setIsResizingVertical] = useState(false);
   const containerRef = useRef(null);
+  const editorRef = useRef(null);
   const dragRef = useRef({ startX: 0, startPercent: 0 });
 
   const currentQuestion = exam?.questions[currentProblemIndex];
@@ -170,6 +171,38 @@ function ExamDetail() {
     return h > 0
       ? `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`
       : `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
+  const resetTemplate = () => {
+    if (currentQuestion?.template_code) {
+      if (confirm("Kod template-ga qaytarish kerakmi?")) {
+        setSubmissions(prev => ({
+          ...prev,
+          [currentProblemId]: {
+            ...prev[currentProblemId],
+            code: currentQuestion.template_code
+          }
+        }));
+      }
+    }
+  };
+
+  const formatCode = () => {
+    if (editorRef.current) {
+      editorRef.current.getAction('editor.action.formatDocument')?.run();
+    }
+  };
+
+  const undoCode = () => {
+    if (editorRef.current) {
+      editorRef.current.trigger('keyboard', 'undo', null);
+    }
+  };
+
+  const redoCode = () => {
+    if (editorRef.current) {
+      editorRef.current.trigger('keyboard', 'redo', null);
+    }
   };
 
   const handleSubmit = async () => {
@@ -356,21 +389,64 @@ function ExamDetail() {
 
         {/* EDITOR PANEL */}
         <div className="editor-panel" style={{ width: `${100 - leftPanelWidthPercent}%` }}>
-          <div className="editor-header">
-            <div className="font-controls">
+          <div className="editor-toolbar">
+            <div className="toolbar-section">
               <button
-                onClick={() => setCodeFontSize(Math.max(12, codeFontSize - 1))}
-                className="font-btn"
+                onClick={undoCode}
+                className="toolbar-btn"
+                title="Orqaga qaytarish (Ctrl+Z)"
               >
-                −
+                ↶
               </button>
-              <span className="font-size">{codeFontSize}</span>
               <button
-                onClick={() => setCodeFontSize(Math.min(22, codeFontSize + 1))}
-                className="font-btn"
+                onClick={redoCode}
+                className="toolbar-btn"
+                title="Oldinga qaytarish (Ctrl+Y)"
               >
-                +
+                ↷
               </button>
+              <div className="toolbar-divider" />
+              <button
+                onClick={formatCode}
+                className="toolbar-btn"
+                title="Kodni formatlash (Shift+Alt+F)"
+              >
+                <FaCode />
+              </button>
+              <div className="toolbar-divider" />
+              {currentQuestion?.template_code && (
+                <button
+                  onClick={resetTemplate}
+                  className="toolbar-btn"
+                  title="Template-ga qaytarish"
+                >
+                  <FaSync />
+                </button>
+              )}
+            </div>
+
+            <div className="toolbar-section">
+              <div className="font-controls">
+                <button
+                  onClick={() => setCodeFontSize(Math.max(12, codeFontSize - 1))}
+                  className="font-btn"
+                  title="Shrift o'lchamini kamaytirish"
+                >
+                  −
+                </button>
+                <span className="font-size">{codeFontSize}px</span>
+                <button
+                  onClick={() => setCodeFontSize(Math.min(22, codeFontSize + 1))}
+                  className="font-btn"
+                  title="Shrift o'lchamini oshirish"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div className="toolbar-section">
+              <span className="lang-badge">{exam?.language?.toUpperCase()}</span>
             </div>
           </div>
 
@@ -382,6 +458,7 @@ function ExamDetail() {
               ...prev,
               [currentProblemId]: { ...prev[currentProblemId], code: value || "" }
             }))}
+            onMount={(editor) => (editorRef.current = editor)}
             theme={isDark ? "vs-dark" : "vs-light"}
             options={{
               fontSize: codeFontSize,
@@ -389,6 +466,8 @@ function ExamDetail() {
               wordWrap: 'on',
               scrollBeyondLastLine: false,
               automaticLayout: true,
+              formatOnPaste: true,
+              formatOnType: true,
             }}
           />
 

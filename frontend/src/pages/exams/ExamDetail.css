@@ -496,16 +496,69 @@ html, body, #root {
   background: #2d3748;
 }
 
-.editor-header {
+.editor-toolbar {
   flex-shrink: 0;
-  padding: 1rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   border-bottom: 1px solid #e2e8f0;
   background: #f9fafc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-[data-theme="dark"] .editor-header {
+[data-theme="dark"] .editor-toolbar {
   border-bottom-color: #4a5568;
   background: #1a202c;
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #4a5568;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .toolbar-btn {
+  background: #2d3748;
+  border-color: #4a5568;
+  color: #a0aec0;
+}
+
+.toolbar-btn:hover {
+  background: #38a169;
+  border-color: #38a169;
+  color: white;
+}
+
+[data-theme="dark"] .toolbar-btn:hover {
+  background: #38a169;
+  color: white;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: #cbd5e0;
+}
+
+[data-theme="dark"] .toolbar-divider {
+  background: #4a5568;
 }
 
 .font-controls {
@@ -516,7 +569,6 @@ html, body, #root {
   padding: 0.5rem 0.75rem;
   border-radius: 5px;
   border: 1px solid #e2e8f0;
-  width: fit-content;
 }
 
 [data-theme="dark"] .font-controls {
@@ -542,9 +594,25 @@ html, body, #root {
 .font-size {
   font-weight: 700;
   color: #38a169;
-  min-width: 2.5rem;
+  min-width: 3rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+}
+
+.lang-badge {
+  padding: 0.4rem 0.8rem;
+  background: #c6f6d5;
+  color: #22543d;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+[data-theme="dark"] .lang-badge {
+  background: #22543d;
+  color: #c6f6d5;
 }
 
 .result-popup {
