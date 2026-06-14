@@ -14,46 +14,58 @@ function ExamList() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
 
-  useEffect(() => {
-    const fetchExamsAndStats = async () => {
-      try {
-        const examResponse = await fetch(`${baseUrl}/exams/`, {
-          headers: { Authorization: `Bearer ${getToken()}` },
+  const fetchExamsAndStats = async () => {
+    try {
+      const examResponse = await fetch(`${baseUrl}/exams/`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+
+      if (!examResponse.ok) throw new Error("Imtixonlar yuklanmadi");
+
+      const examData = await examResponse.json();
+      setExams(examData);
+
+      const statsResponse = await fetch(`${baseUrl}/exam-statistics/user/`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      }).catch(() => null);
+
+      if (statsResponse?.ok) {
+        const statsData = await statsResponse.json();
+        const statsMap = {};
+        statsData.forEach((stat) => {
+          statsMap[stat.exam] = stat;
         });
-
-        if (!examResponse.ok) throw new Error("Imtixonlar yuklanmadi");
-
-        const examData = await examResponse.json();
-        setExams(examData);
-
-        const statsResponse = await fetch(`${baseUrl}/exam-statistics/user/`, {
-          headers: { Authorization: `Bearer ${getToken()}` },
-        }).catch(() => null);
-
-        if (statsResponse?.ok) {
-          const statsData = await statsResponse.json();
-          const statsMap = {};
-          statsData.forEach((stat) => {
-            statsMap[stat.exam] = stat;
-          });
-          setStatistics(statsMap);
-        }
-
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-        setExams([]);
-      } finally {
-        setLoading(false);
+        setStatistics(statsMap);
       }
-    };
 
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      setExams([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (getToken()) {
       fetchExamsAndStats();
     } else {
       setLoading(false);
       setError("Tizimga kirish kerak");
     }
+  }, []);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setLoading(true);
+        fetchExamsAndStats();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   if (loading) {

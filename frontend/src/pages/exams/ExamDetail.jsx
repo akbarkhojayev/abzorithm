@@ -259,10 +259,20 @@ function ExamDetail() {
           Authorization: `Bearer ${getToken()}`,
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          submissions: Object.entries(submissions).map(([problemId, data]) => ({
+            problem: parseInt(problemId),
+            code: data.code,
+            language: data.language,
+          })),
+        }),
       });
 
       if (!completeResponse.ok) {
         console.warn(`Complete endpoint returned ${completeResponse.status}, continuing anyway`);
+      } else {
+        const result = await completeResponse.json();
+        console.log("Exam completed successfully:", result);
       }
     } catch (err) {
       console.error("Exam complete error (continuing):", err);
@@ -270,8 +280,8 @@ function ExamDetail() {
 
     // Delay slightly to ensure completion request is sent, then navigate
     setTimeout(() => {
-      navigate("/exams");
-    }, 300);
+      navigate("/exams", { replace: true });
+    }, 500);
   };
 
   const handleFinishExam = () => {
